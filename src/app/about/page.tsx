@@ -3,6 +3,7 @@
 import React from 'react';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+import { usePlatformData } from '@/lib/hooks/usePlatformData';
 import { 
   Target, Eye, Award, Users, 
   HeartHandshake
@@ -17,6 +18,10 @@ interface LeaderCard {
 }
 
 export default function AboutPage() {
+  const { data } = usePlatformData();
+  const totalSpecialists = data?.stats?.totalSpecialists ?? 150;
+  const totalPatients = data?.stats?.totalPatients ?? 10000;
+
   const leaders: LeaderCard[] = [
     {
       name: 'Dr. Sarah Bloom',
@@ -103,13 +108,13 @@ export default function AboutPage() {
 
             {/* Stat 2 with dynamic borders */}
             <div className="flex-1 flex flex-col items-center justify-center text-center p-2 border-t border-b md:border-t-0 md:border-b-0 md:border-l md:border-r border-[#C2C7D1]/40 py-4 md:py-0 w-full md:w-auto">
-              <span className="text-2xl sm:text-[32px] sm:leading-[40px] font-[700] text-brand-blue tracking-[-0.96px]">150+</span>
+              <span className="text-2xl sm:text-[32px] sm:leading-[40px] font-[700] text-brand-blue tracking-[-0.96px]">{totalSpecialists}+</span>
               <span className="text-[10px] sm:text-[12px] font-[600] uppercase text-[#42474F] tracking-[0.6px] mt-2">SPECIALISTS</span>
             </div>
 
             {/* Stat 3 */}
             <div className="flex-1 flex flex-col items-center justify-center text-center p-2">
-              <span className="text-2xl sm:text-[32px] sm:leading-[40px] font-[700] text-brand-blue tracking-[-0.96px]">10k+</span>
+              <span className="text-2xl sm:text-[32px] sm:leading-[40px] font-[700] text-brand-blue tracking-[-0.96px]">{totalPatients >= 1000 ? `${(totalPatients / 1000).toFixed(0)}k` : totalPatients}+</span>
               <span className="text-[10px] sm:text-[12px] font-[600] uppercase text-[#42474F] tracking-[0.6px] mt-2">PATIENTS SERVED</span>
             </div>
 

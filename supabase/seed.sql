@@ -93,3 +93,87 @@ INSERT INTO blog_posts (category, title, description, slug, published_at) VALUES
   ('NEWS',  'New Wellness Wing Open',     'We are excited to announce the grand opening of our advanced physical therapy and wellness center.',          'new-wellness-wing-open',     '2024-09-28'),
   ('TIPS',  'Understanding Heart Health', 'Dr. Arya Sharma shares lifestyle changes that significantly improve cardiovascular longevity.',               'understanding-heart-health', '2024-09-10')
 ON CONFLICT (slug) DO NOTHING;
+
+
+-- ============================================================
+-- ADMIN DASHBOARD TABLES
+-- ============================================================
+
+-- ─── PATIENTS ───────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS patients (
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  full_name    TEXT NOT NULL,
+  age          INTEGER NOT NULL DEFAULT 0,
+  gender       TEXT NOT NULL DEFAULT 'Unknown',
+  admission_id TEXT NOT NULL UNIQUE,
+  department   TEXT NOT NULL DEFAULT '',
+  status       TEXT NOT NULL DEFAULT 'Stable',  -- 'Stable' | 'Critical' | 'Observation' | 'Discharged'
+  bpm          INTEGER NOT NULL DEFAULT 72,
+  spo2         INTEGER NOT NULL DEFAULT 98,
+  admitted_at  TIMESTAMPTZ DEFAULT now(),
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read patients" ON patients FOR SELECT USING (true);
+
+-- ─── APPOINTMENTS ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS appointments (
+  id             UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  patient_name   TEXT NOT NULL,
+  specialist_id  UUID REFERENCES specialists(id) ON DELETE SET NULL,
+  department     TEXT NOT NULL DEFAULT '',
+  scheduled_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  status         TEXT NOT NULL DEFAULT 'Pending',  -- 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled'
+  created_at     TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read appointments" ON appointments FOR SELECT USING (true);
+
+-- ─── STAFF MEMBERS ───────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS staff_members (
+  id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  full_name  TEXT NOT NULL,
+  role       TEXT NOT NULL DEFAULT '',
+  department TEXT NOT NULL DEFAULT '',
+  is_on_duty BOOLEAN NOT NULL DEFAULT true,
+  initials   TEXT NOT NULL DEFAULT '',
+  color_bg   TEXT NOT NULL DEFAULT '#D2E4FF',
+  color_text TEXT NOT NULL DEFAULT '#00355F',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE staff_members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read staff_members" ON staff_members FOR SELECT USING (true);
+
+-- ─── SEED PATIENTS ───────────────────────────────────────────
+INSERT INTO patients (full_name, age, gender, admission_id, department, status, bpm, spo2) VALUES
+  ('Robert J. Henderson', 52, 'Male',   '#ADM-9021', 'Cardiology',  'Stable',      72,  98),
+  ('Elena Lockwood',      29, 'Female', '#ADM-8842', 'Emergency',   'Critical',    114, 89),
+  ('Marcus K. Chen',      41, 'Male',   '#ADM-9055', 'Neurology',   'Observation', 68,  99)
+ON CONFLICT (admission_id) DO NOTHING;
+
+-- ─── SEED APPOINTMENTS ───────────────────────────────────────
+INSERT INTO appointments (patient_name, department, scheduled_at, status) VALUES
+  ('Robert J. Henderson', 'Cardiology',  now() - interval '2 hours',  'Confirmed'),
+  ('Elena Lockwood',      'Emergency',   now() - interval '1 hour',   'Confirmed'),
+  ('Marcus K. Chen',      'Neurology',   now() - interval '30 minutes','Confirmed'),
+  ('Priya Nair',          'Pediatrics',  now() + interval '1 hour',   'Pending'),
+  ('James Okafor',        'Orthopedics', now() + interval '2 hours',  'Pending'),
+  ('Sofia Reyes',         'Dermatology', now() + interval '3 hours',  'Pending'),
+  ('Tom Briggs',          'Cardiology',  now() + interval '4 hours',  'Pending'),
+  ('Amara Diallo',        'Neurology',   now() + interval '5 hours',  'Pending'),
+  ('Chen Wei',            'Ophthalmology',now() + interval '6 hours', 'Pending'),
+  ('Fatima Al-Hassan',    'Cardiology',  now() + interval '7 hours',  'Pending'),
+  ('David Osei',          'Emergency',   now() + interval '8 hours',  'Pending'),
+  ('Lena Müller',         'Pediatrics',  now() + interval '9 hours',  'Pending')
+ON CONFLICT DO NOTHING;
+
+-- ─── SEED STAFF MEMBERS ──────────────────────────────────────
+INSERT INTO staff_members (full_name, role, department, is_on_duty, initials, color_bg, color_text) VALUES
+  ('Dr. Sarah Vance',   'Chief Surgeon', 'Surgery',    true,  'SV', '#D2E4FF', '#00355F'),
+  ('Dr. Michael Thorne','Cardiologist',  'Cardiology', true,  'MT', '#D5E3FC', '#00355F'),
+  ('NP Jamie Rollins',  'ER Triage',     'Emergency',  true,  'JR', '#D4E6E5', '#576867'),
+  ('Dr. Alan Gregson',  'Pediatrician',  'Pediatrics', false, 'AG', '#E0E3E5', '#42474F')
+ON CONFLICT DO NOTHING;
