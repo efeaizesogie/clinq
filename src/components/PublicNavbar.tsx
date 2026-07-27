@@ -1,14 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
 
 export default function PublicNavbar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const getLinkClass = (path: string) => {
+  const getLinkClass = (path: string, isMobile = false) => {
     const isActive = pathname === path;
+    if (isMobile) {
+      return `text-lg w-full py-3 border-b border-[#E2E8F0] transition font-[600] flex items-center ${
+        isActive ? 'text-brand-blue border-brand-blue' : 'text-[#516161] hover:text-brand-blue'
+      }`;
+    }
     return `text-base flex items-center h-[21px] transition ${
       isActive 
         ? 'text-brand-blue font-[600] border-b-2 border-brand-blue' 
@@ -18,15 +25,15 @@ export default function PublicNavbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-[81px] bg-brand-bg-light/90 border-b border-brand-muted/10 backdrop-blur-[6px] z-50 flex items-center">
-      <div className="w-[1280px] max-w-[1280px] mx-auto px-16 flex justify-between items-center h-20">
+      <div className="w-full max-w-[1280px] mx-auto px-6 md:px-16 flex justify-between items-center h-20">
         
         {/* Clinq Logo */}
         <Link href="/" className="text-2xl font-extrabold text-brand-blue tracking-[-0.6px] font-[800]">
           Clinq
         </Link>
 
-        {/* Navigation Middle Links */}
-        <nav className="flex items-center gap-10 h-[23px]">
+        {/* Navigation Middle Links (Desktop) */}
+        <nav className="hidden md:flex items-center gap-10 h-[23px]">
           <Link href="/" className={getLinkClass('/')}>
             Home
           </Link>
@@ -41,8 +48,8 @@ export default function PublicNavbar() {
           </Link>
         </nav>
 
-        {/* Right Book Appointment Buttons */}
-        <div className="flex items-center gap-4">
+        {/* Right Book Appointment Buttons (Desktop) */}
+        <div className="hidden md:flex items-center gap-4">
           <Link 
             href="/login" 
             className="text-sm font-[700] text-brand-blue hover:text-brand-blue/80 transition"
@@ -56,8 +63,56 @@ export default function PublicNavbar() {
             Book Appointment
           </Link>
         </div>
+
+        {/* Hamburger Menu Toggle (Mobile) */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex md:hidden text-brand-blue focus:outline-none p-1"
+          aria-label="Toggle navigation menu"
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
       </div>
+
+      {/* Slide-over Navigation Drawer (Mobile) */}
+      {isOpen && (
+        <div className="md:hidden fixed inset-0 top-[81px] bg-white z-40 flex flex-col px-6 py-8 h-[calc(100vh-81px)] w-full border-t border-[#E2E8F0] overflow-y-auto animate-fade-in">
+          <nav className="flex flex-col items-start w-full">
+            <Link href="/" onClick={() => setIsOpen(false)} className={getLinkClass('/', true)}>
+              Home
+            </Link>
+            <Link href="/departments" onClick={() => setIsOpen(false)} className={getLinkClass('/departments', true)}>
+              Departments
+            </Link>
+            <Link href="/specialists" onClick={() => setIsOpen(false)} className={getLinkClass('/specialists', true)}>
+              Specialists
+            </Link>
+            <Link href="/about" onClick={() => setIsOpen(false)} className={getLinkClass('/about', true)}>
+              About Us
+            </Link>
+          </nav>
+
+          <div className="flex flex-col gap-4 mt-8 w-full pt-6">
+            <Link 
+              href="/login" 
+              onClick={() => setIsOpen(false)}
+              className="w-full h-12 border border-brand-blue text-brand-blue font-[700] text-base rounded-[4px] flex items-center justify-center transition"
+            >
+              Sign In
+            </Link>
+            <Link 
+              href="/patient/appointments/book" 
+              onClick={() => setIsOpen(false)}
+              className="w-full h-12 bg-[#0F4C81] hover:bg-[#0F4C81]/95 text-[#EFF4FF] font-[700] text-base rounded-[4px] flex items-center justify-center transition shadow-sm"
+            >
+              Book Appointment
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
+
 

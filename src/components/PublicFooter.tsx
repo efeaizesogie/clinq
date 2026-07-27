@@ -6,13 +6,13 @@ import Link from 'next/link';
 export default function PublicFooter() {
   return (
     <footer className="w-full bg-brand-blue py-16 text-white/60 font-sans border-t border-white/10 shrink-0">
-      <div className="w-[1280px] max-w-[1280px] mx-auto px-16 flex flex-col gap-16">
+      <div className="w-full max-w-[1280px] mx-auto px-6 md:px-16 flex flex-col gap-12 md:gap-16">
         
         {/* Footer Top Grid */}
-        <div className="flex justify-between items-start gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 w-full">
           
           {/* Brand Info */}
-          <div className="flex flex-col gap-6 w-[252px]">
+          <div className="flex flex-col gap-6">
             <Link href="/" className="text-2xl font-[800] text-white tracking-[-0.6px]">
               Clinq
             </Link>
@@ -22,7 +22,7 @@ export default function PublicFooter() {
           </div>
 
           {/* Module Links */}
-          <div className="flex flex-col gap-6 w-[252px]">
+          <div className="flex flex-col gap-6">
             <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
               Internal Modules
             </h5>
@@ -46,7 +46,7 @@ export default function PublicFooter() {
           </div>
 
           {/* System Links */}
-          <div className="flex flex-col gap-6 w-[252px]">
+          <div className="flex flex-col gap-6">
             <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
               System
             </h5>
@@ -70,7 +70,7 @@ export default function PublicFooter() {
           </div>
 
           {/* Connect Links */}
-          <div className="flex flex-col gap-6 w-[252px]">
+          <div className="flex flex-col gap-6">
             <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
               Connect
             </h5>
@@ -99,8 +99,8 @@ export default function PublicFooter() {
         </div>
 
         {/* Footer Bottom Border */}
-        <div className="border-t border-white/10 pt-4 flex items-center justify-start text-[10px] uppercase font-[400] text-white/40 tracking-[1px] h-12">
-          © 2026 CLINQ MEDICAL SYSTEMS. ALL RIGHTS RESERVED.
+        <div className="border-t border-white/10 pt-4 flex items-center justify-start text-[10px] uppercase font-[400] text-white/40 tracking-[1px] min-h-[48px]">
+          © {new Date().getFullYear()} CLINQ MEDICAL SYSTEMS. ALL RIGHTS RESERVED.
         </div>
 
       </div>
