@@ -3,76 +3,30 @@
 import React, { useState } from 'react';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+import { usePlatformData } from '@/lib/hooks/usePlatformData';
 import { 
-  HeartPulse, Brain, Baby, Sparkles, Activity, Eye, 
+  HeartPulse, Brain, Baby, Sparkles, Activity, Eye, Stethoscope,
   Search, ArrowRight, ChevronDown, ClipboardCheck, ShieldCheck
 } from 'lucide-react';
 import Link from 'next/link';
 
-interface DeptItem {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  doctorsCount: number;
-  icon: React.ComponentType<{ className?: string }>;
+// Map icon_name strings from the database to Lucide components
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  HeartPulse, Brain, Baby, Sparkles, Activity, Eye, Stethoscope,
+  ClipboardCheck, ShieldCheck, Search,
+};
+
+function getIcon(iconName: string): React.ComponentType<{ className?: string }> {
+  return iconMap[iconName] || Stethoscope;
 }
 
 export default function DepartmentsPage() {
+  const { data, isLoading } = usePlatformData();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const departments: DeptItem[] = [
-    {
-      id: '1',
-      name: 'Cardiology',
-      category: 'Specialty',
-      description: 'Comprehensive heart care including diagnostic screenings, interventional procedures, and advanced cardiac…',
-      doctorsCount: 5,
-      icon: HeartPulse
-    },
-    {
-      id: '2',
-      name: 'Neurology',
-      category: 'Specialty',
-      description: 'Expert diagnosis and treatment for disorders of the nervous system, specializing in complex neurological…',
-      doctorsCount: 4,
-      icon: Brain
-    },
-    {
-      id: '3',
-      name: 'Pediatrics',
-      category: 'Primary Care',
-      description: 'Dedicated care for infants, children, and adolescents, focusing on physical growth, developmental milestones, and…',
-      doctorsCount: 6,
-      icon: Baby
-    },
-    {
-      id: '4',
-      name: 'Dermatology',
-      category: 'Clinical',
-      description: 'Advanced skincare solutions ranging from medical dermatology for chronic conditions to state-of-the-art cosmetic',
-      doctorsCount: 3,
-      icon: Sparkles
-    },
-    {
-      id: '5',
-      name: 'Orthopedics',
-      category: 'Specialty',
-      description: 'Specialized care for bones, joints, ligaments, tendons, and muscles, including joint replacement surgeries…',
-      doctorsCount: 5,
-      icon: Activity
-    },
-    {
-      id: '6',
-      name: 'Ophthalmology',
-      category: 'Clinical',
-      description: 'Comprehensive eye care and surgical expertise for vision restoration, glaucoma treatment, and advanced…',
-      doctorsCount: 4,
-      icon: Eye
-    }
-  ];
+  const departments = data?.departments ?? [];
 
   const filteredDepts = departments.filter(dept => {
     const matchesFilter = selectedFilter === 'All' || dept.category === selectedFilter;
@@ -166,9 +120,11 @@ export default function DepartmentsPage() {
                     className="bg-white border border-[#C2C7D1]/50 rounded-[8px] p-6 sm:p-8 flex flex-col gap-3 min-h-[343px] shadow-sm hover:shadow-md transition duration-200"
                   >
                     {/* Icon Block */}
+                    {(() => { const Icon = getIcon(dept.icon_name); return (
                     <div className="w-[56px] h-[56px] bg-[#E6EEFF] rounded-[4px] flex items-center justify-center shrink-0">
-                      <dept.icon className="w-7 h-7 text-brand-blue" />
+                      <Icon className="w-7 h-7 text-brand-blue" />
                     </div>
+                    ); })()}
 
                     {/* Title */}
                     <h3 className="text-[24px] leading-[32px] font-[600] text-brand-blue pt-3 text-left">
@@ -186,7 +142,7 @@ export default function DepartmentsPage() {
                       {/* Dr. count */}
                       <div className="flex items-center gap-1">
                         <span className="text-[12px] font-[600] text-[#516161] tracking-[0.6px] uppercase">
-                          {dept.doctorsCount} DOCTORS
+                          {dept.doctors_count} DOCTORS
                         </span>
                       </div>
 

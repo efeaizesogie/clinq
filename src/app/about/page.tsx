@@ -273,7 +273,7 @@ export default function AboutPage() {
           <div className="w-full max-w-[1152px] bg-[#0F4C81] rounded-[24px] py-12 px-6 sm:px-20 flex flex-col gap-6 items-center text-center relative overflow-hidden min-h-[350px] shadow-lg justify-center">
             
             {/* Absolute layout borders */}
-            <div className="absolute top-[-128px] right-[-128px] w-[256px] h-[256px] bg-white text-white/5 rounded-xl pointer-events-none" />
+            {/* <div className="absolute top-[-128px] right-[-128px] w-[256px] h-[256px] bg-white text-white/5 rounded-xl pointer-events-none" /> */}
 
             <h2 className="text-2xl sm:text-[32px] font-[700] text-white tracking-[-0.96px] leading-normal sm:leading-[48px]">
               Experience Clinical Precision

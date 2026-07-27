@@ -3,13 +3,7 @@
 import React, { useState } from 'react';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
-import { 
-  staticDepartments, 
-  staticDoctors, 
-  staticBlogs, 
-  Department, 
-  Doctor 
-} from '@/lib/mockData';
+import { usePlatformData } from '@/lib/hooks/usePlatformData';
 import { 
   Calendar, Check, ChevronDown, ChevronRight, Stethoscope, 
   HeartPulse, Search, MapPin, Phone, Mail, Award, 
@@ -18,9 +12,15 @@ import {
 import Link from 'next/link';
 
 export default function LandingPage() {
+  const { data, isLoading } = usePlatformData();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [selectedDeptId, setSelectedDeptId] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const departments = data?.departments ?? [];
+  const specialists = data?.specialists ?? [];
+  const blogPosts = data?.blogPosts ?? [];
+  const stats = data?.stats;
 
   const faqs = [
     {
@@ -37,8 +37,9 @@ export default function LandingPage() {
     }
   ];
 
-  const filteredDoctors = staticDoctors.filter(doc => {
-    const matchesDept = selectedDeptId === 'all' || doc.department_name.toLowerCase().includes(selectedDeptId.toLowerCase());
+  const filteredDoctors = specialists.filter(doc => {
+    const deptName = doc.department_name || '';
+    const matchesDept = selectedDeptId === 'all' || deptName.toLowerCase().includes(selectedDeptId.toLowerCase());
     const matchesSearch = doc.full_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           doc.specialty.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesDept && matchesSearch;
@@ -102,12 +103,12 @@ export default function LandingPage() {
           <div className="w-full max-w-[1280px] px-6 md:px-16 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             
             <div className="flex flex-col items-center gap-1 text-center">
-              <div className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue tracking-[-0.32px]">15+</div>
+              <div className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue tracking-[-0.32px]">{stats?.totalSpecialists ?? 15}+</div>
               <div className="text-[10px] sm:text-xs font-[600] text-[#42474F] tracking-[0.6px] uppercase">Specialists</div>
             </div>
 
             <div className="flex flex-col items-center gap-1 text-center">
-              <div className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue tracking-[-0.32px]">10k+</div>
+              <div className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue tracking-[-0.32px]">{stats ? `${(stats.totalPatients / 1000).toFixed(0)}k` : '10k'}+</div>
               <div className="text-[10px] sm:text-xs font-[600] text-[#42474F] tracking-[0.6px] uppercase">Happy Patients</div>
             </div>
 
@@ -436,7 +437,7 @@ export default function LandingPage() {
 
             {/* Blog Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-              {staticBlogs.map((blog) => (
+              {blogPosts.map((blog) => (
                 <article key={blog.id} className="w-full min-h-[390px] flex flex-col gap-3 pb-1">
                   <div className="w-full h-[204px] bg-[#E6EEFF] rounded-lg relative overflow-hidden flex flex-col justify-end p-4 shadow-sm border border-[#C2C7D1]/10">
                     <div className="absolute top-4 left-4 bg-brand-blue/5 border border-brand-blue/10 text-brand-blue font-[700] text-[10px] tracking-[1px] uppercase px-2 py-0.5 rounded-[2px]">
@@ -531,7 +532,7 @@ export default function LandingPage() {
                     <span className="text-sm font-[700] text-brand-blue shrink-0">View All</span>
                   </button>
 
-                  {staticDepartments.map((dept) => (
+                  {departments.map((dept) => (
                     <button 
                       key={dept.id}
                       onClick={() => setSelectedDeptId(dept.name)}

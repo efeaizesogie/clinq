@@ -3,27 +3,16 @@
 import React, { useState } from 'react';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+import { usePlatformData } from '@/lib/hooks/usePlatformData';
+import type { Specialist } from '@/lib/types';
 import { 
   Search, ChevronDown, Star, Calendar, 
   Grid, List, Check, HeartPulse
 } from 'lucide-react';
 import Link from 'next/link';
 
-interface DoctorCard {
-  id: string;
-  name: string;
-  specialty: string;
-  department: string;
-  experience: string;
-  rating: string;
-  available: boolean;
-  availabilityText: string;
-  bio: string;
-  initials: string;
-  colorGrad: string;
-}
-
 export default function SpecialistsPage() {
+  const { data, isLoading } = usePlatformData();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('All Departments');
   const [selectedAvailability, setSelectedAvailability] = useState('Any Availability');
@@ -35,106 +24,32 @@ export default function SpecialistsPage() {
   const [isAvailDropdownOpen, setIsAvailDropdownOpen] = useState(false);
   
   // Book Appointment dialog state
-  const [bookingDoctor, setBookingDoctor] = useState<DoctorCard | null>(null);
+  const [bookingDoctor, setBookingDoctor] = useState<Specialist | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
 
-  const specialists: DoctorCard[] = [
-    {
-      id: 'doc-1',
-      name: 'Dr. Aris Thorne',
-      specialty: 'Senior Cardiology Surgeon',
-      department: 'Cardiology',
-      experience: '15+ Years',
-      rating: '4.9',
-      available: true,
-      availabilityText: 'AVAILABLE TODAY',
-      bio: 'Specializing in minimally invasive cardiac surgery and heart failure management with a focus on...',
-      initials: 'AT',
-      colorGrad: 'from-blue-600 to-indigo-800'
-    },
-    {
-      id: 'doc-2',
-      name: 'Dr. Elena Vance',
-      specialty: 'Neurology Specialist',
-      department: 'Neurology',
-      experience: '12+ Years',
-      rating: '4.8',
-      available: true,
-      availabilityText: 'AVAILABLE TODAY',
-      bio: 'Expert in neurodegenerative disorders and advanced migraine treatments using state-of-...',
-      initials: 'EV',
-      colorGrad: 'from-purple-600 to-indigo-800'
-    },
-    {
-      id: 'doc-3',
-      name: 'Dr. Julian Marc',
-      specialty: 'Pediatrics Lead',
-      department: 'Pediatrics',
-      experience: '10+ Years',
-      rating: '4.7',
-      available: true,
-      availabilityText: 'AVAILABLE TODAY',
-      bio: 'Dedicated to holistic child healthcare from infancy through adolescence, specializing in...',
-      initials: 'JM',
-      colorGrad: 'from-emerald-500 to-teal-700'
-    },
-    {
-      id: 'doc-4',
-      name: 'Dr. Sarah Jenkins',
-      specialty: 'Interventional Cardiologist',
-      department: 'Cardiology',
-      experience: '8 Years',
-      rating: '4.9',
-      available: false,
-      availabilityText: 'NEXT SLOT: MON',
-      bio: 'Pioneered heart rhythm diagnostics and coronary angioplasty therapeutic treatments.',
-      initials: 'SJ',
-      colorGrad: 'from-teal-600 to-blue-800'
-    },
-    {
-      id: 'doc-5',
-      name: 'Dr. Marcus Vance',
-      specialty: 'Orthopedics Surgeon',
-      department: 'Orthopedics',
-      experience: '14+ Years',
-      rating: '4.8',
-      available: true,
-      availabilityText: 'AVAILABLE TODAY',
-      bio: 'Specializes in athletic joint reconstructive surgery and complex bone pathology therapeutic models.',
-      initials: 'MV',
-      colorGrad: 'from-orange-500 to-rose-700'
-    },
-    {
-      id: 'doc-6',
-      name: 'Dr. Clara Shore',
-      specialty: 'Clinical Dermatologist',
-      department: 'Dermatology',
-      experience: '11 Years',
-      rating: '4.9',
-      available: false,
-      availabilityText: 'NEXT SLOT: WED',
-      bio: 'Focuses on chronic skin restoration therapeutics, oncology screening, and cosmetic micro-sessions.',
-      initials: 'CS',
-      colorGrad: 'from-pink-500 to-purple-800'
-    }
-  ];
+  const specialists = data?.specialists ?? [];
+  const departments = data?.departments ?? [];
+
+  // Build unique department names for the dropdown filter
+  const departmentNames = ['All Departments', ...departments.map(d => d.name)];
 
   const filteredSpecialists = specialists.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = doc.full_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           doc.bio.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesDept = selectedDept === 'All Departments' || doc.department === selectedDept;
+    const deptName = doc.department_name || '';
+    const matchesDept = selectedDept === 'All Departments' || deptName === selectedDept;
 
     let matchesAvailability = true;
     if (selectedAvailability === 'Available Today') {
-      matchesAvailability = doc.available === true;
+      matchesAvailability = doc.is_available === true;
     }
 
     return matchesSearch && matchesDept && matchesAvailability;
   });
 
-  const handleBookClick = (doc: DoctorCard) => {
+  const handleBookClick = (doc: Specialist) => {
     setBookingDoctor(doc);
     setBookingStep(1);
   };
@@ -201,7 +116,7 @@ export default function SpecialistsPage() {
 
               {isDeptDropdownOpen && (
                 <div className="absolute top-[56px] left-0 w-full md:w-[276px] bg-white border border-[#C2C7D1]/30 rounded-[4px] shadow-lg flex flex-col z-50">
-                  {['All Departments', 'Cardiology', 'Neurology', 'Pediatrics', 'Dermatology', 'Orthopedics', 'Ophthalmology'].map((dept) => (
+                  {departmentNames.map((dept) => (
                     <button
                       key={dept}
                       onClick={() => {
@@ -306,7 +221,7 @@ export default function SpecialistsPage() {
                   >
                     
                     {/* Visual Graphic Block (Fills top/left) */}
-                    <div className={`relative bg-gradient-to-br ${doc.colorGrad} flex items-center justify-center shrink-0 ${
+                    <div className={`relative bg-gradient-to-br ${doc.color_grad} flex items-center justify-center shrink-0 ${
                       viewMode === 'grid' ? 'w-full h-[256px]' : 'w-full sm:w-[240px] h-[200px] sm:h-auto'
                     }`}>
                       
@@ -317,12 +232,12 @@ export default function SpecialistsPage() {
                       
                       {/* Availability status badge */}
                       <div className={`absolute top-4 right-4 px-3 py-1 flex items-center gap-1 rounded-full text-xs font-[600] tracking-[0.6px] uppercase ${
-                        doc.available 
+                        doc.is_available 
                           ? 'bg-[#D4E6E5] text-[#576867]' 
                           : 'bg-amber-100 text-amber-700'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${doc.available ? 'bg-[#576867]' : 'bg-amber-500'}`} />
-                        <span>{doc.availabilityText}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full ${doc.is_available ? 'bg-[#576867]' : 'bg-amber-500'}`} />
+                        <span>{doc.availability_text}</span>
                       </div>
 
                     </div>
@@ -333,7 +248,7 @@ export default function SpecialistsPage() {
                       {/* Top title area */}
                       <div className="flex flex-col gap-1 text-left">
                         <h3 className="text-[18px] leading-[32px] font-[600] text-brand-blue">
-                          {doc.name}
+                          {doc.full_name}
                         </h3>
                         <p className="text-sm font-[450] text-[#516161]">
                           {doc.specialty}
@@ -523,15 +438,15 @@ export default function SpecialistsPage() {
             {bookingStep === 1 ? (
               <>
                 <h3 className="text-lg sm:text-xl font-[600] text-brand-blue border-b border-[#C2C7D1]/30 pb-3 text-left">
-                  Book with {bookingDoctor.name}
+                  Book with {bookingDoctor.full_name}
                 </h3>
                 
                 <div className="flex items-center gap-3 bg-[#EFF4FF] p-3 rounded-lg border border-brand-blue/10">
-                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${bookingDoctor.colorGrad} flex items-center justify-center text-white text-xs font-bold`}>
+                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${bookingDoctor.color_grad} flex items-center justify-center text-white text-xs font-bold`}>
                     {bookingDoctor.initials}
                   </div>
                   <div className="text-left">
-                    <div className="text-xs font-bold text-brand-dark">{bookingDoctor.name}</div>
+                    <div className="text-xs font-bold text-brand-dark">{bookingDoctor.full_name}</div>
                     <div className="text-[10px] text-[#516161]">{bookingDoctor.specialty}</div>
                   </div>
                 </div>
