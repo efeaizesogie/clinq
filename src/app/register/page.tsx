@@ -5,8 +5,11 @@ import {
   User, Mail, Phone, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -19,6 +22,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -50,8 +55,8 @@ export default function RegisterPage() {
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
     }
-    if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     } else if (!/\d/.test(formData.password)) {
       newErrors.password = 'Password must contain at least one number';
     }
@@ -66,10 +71,37 @@ export default function RegisterPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerError('');
+    
     if (handleValidation()) {
-      setIsSubmitted(true);
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              fullName: formData.fullName,
+              phone: formData.phone,
+              role: 'patient'
+            }
+          }
+        });
+
+        if (error) {
+          setServerError(error.message);
+        } else {
+          // Redirect immediately to patient care dashboard
+          router.push('/patient');
+        }
+      } catch (err: any) {
+        setServerError('An unexpected error occurred. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -95,24 +127,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {isSubmitted ? (
-          <div className="flex flex-col items-center text-center py-8 gap-4 animate-scale-up">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
-            <h2 className="text-xl font-bold text-brand-blue">Registration Successful!</h2>
-            <p className="text-sm text-[#42474F] max-w-sm">
-              Your clinician profile is pending credential verification. We will send an email details checklist shortly.
-            </p>
-            <Link 
-              href="/login" 
-              className="mt-6 px-8 py-3 bg-brand-blue hover:bg-brand-blue/95 text-white font-semibold text-xs tracking-wider uppercase rounded-md shadow-sm transition"
-            >
-              Go to Login
-            </Link>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
             
             {/* Input Full Name */}
             <div className="flex flex-col gap-2 w-full">
@@ -285,17 +300,23 @@ export default function RegisterPage() {
               )}
             </div>
 
+            {serverError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+                {serverError}
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full h-12 bg-brand-blue hover:bg-brand-blue/95 text-white font-[600] text-xs uppercase tracking-[0.6px] rounded-lg flex items-center justify-center gap-2 cursor-pointer shadow-sm transition"
+              disabled={isLoading}
+              className="w-full h-12 bg-brand-blue hover:bg-brand-blue/95 disabled:bg-brand-blue/70 text-white font-[600] text-xs uppercase tracking-[0.6px] rounded-lg flex items-center justify-center gap-2 cursor-pointer shadow-sm transition"
             >
-              <span>Submit Registration</span>
-              <ArrowRight className="w-3 h-3 text-white" />
+              <span>{isLoading ? 'Creating Account...' : 'Submit Registration'}</span>
+              {!isLoading && <ArrowRight className="w-3 h-3 text-white" />}
             </button>
 
           </form>
-        )}
 
         {/* Separator / Redirect */}
         <div className="w-full border-t border-[#C2C7D1] pt-6 flex justify-center text-center">

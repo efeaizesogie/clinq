@@ -5,10 +5,13 @@ import {
   Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 type LoginRole = 'clinician' | 'patient';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [role, setRole] = useState<LoginRole>('clinician');
   
   const [formData, setFormData] = useState({
@@ -20,6 +23,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -47,18 +52,43 @@ export default function LoginPage() {
     }
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerError('');
+
     if (handleValidation()) {
-      setIsSuccess(true);
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) {
+          setServerError(error.message);
+        } else {
+          // Redirect immediately depending on the user's role on success
+          const userRole = data.user?.user_metadata?.role || 'patient';
+          if (userRole === 'admin' || userRole === 'clinician') {
+            router.push('/admin');
+          } else {
+            router.push('/patient');
+          }
+        }
+      } catch (err: any) {
+        setServerError('An unexpected error occurred. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -93,49 +123,15 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {isSuccess ? (
-          <div className="flex flex-col items-center text-center py-12 gap-4 animate-scale-up">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
-            <h2 className="text-xl font-bold text-brand-blue">Login Successful!</h2>
-            <p className="text-sm text-[#42474F] max-w-xs">
-              Redirecting you to the Clinq {role === 'clinician' ? 'Clinical Systems OS' : 'Patient Care Portal'}...
-            </p>
-            <Link 
-              href={role === 'clinician' ? '/admin' : '/patient'} 
-              className="mt-6 px-10 py-3 bg-brand-blue hover:bg-brand-blue/95 text-white font-semibold text-xs tracking-wider uppercase rounded-md shadow-sm transition"
-            >
-              Go to Dashboard
-            </Link>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
             
             {/* Practitioner/Clinician vs Patient Toggle tab switcher */}
             <div className="flex bg-[#E6EEFF] border border-[#C2C7D1] rounded-lg p-1 w-full h-[42px] relative items-center justify-between">
               <button
                 type="button"
-                onClick={() => setRole('clinician')}
-                className={`flex-1 h-8 rounded-[4px] text-xs font-[600] tracking-[0.6px] uppercase flex items-center justify-center transition cursor-pointer select-none ${
-                  role === 'clinician' 
-                    ? 'bg-white text-brand-blue shadow-xs' 
-                    : 'text-[#42474F] hover:text-brand-blue'
-                }`}
+                className={`flex-1 h-8 rounded-[4px] text-xs font-[600] tracking-[0.6px] uppercase flex items-center justify-center transition cursor-pointer select-none bg-white text-brand-blue shadow-xs`}
               >
-                Clinician
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setRole('patient')}
-                className={`flex-1 h-8 rounded-[4px] text-xs font-[600] tracking-[0.6px] uppercase flex items-center justify-center transition cursor-pointer select-none ${
-                  role === 'patient' 
-                    ? 'bg-white text-brand-blue shadow-xs' 
-                    : 'text-[#42474F] hover:text-brand-blue'
-                }`}
-              >
-                Patient
+                Log In to Clinq
               </button>
             </div>
 
@@ -223,17 +219,23 @@ export default function LoginPage() {
 
             </div>
 
+            {serverError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm mt-1">
+                {serverError}
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full h-12 bg-brand-blue hover:bg-brand-blue/95 text-white font-[600] text-xs uppercase tracking-[0.6px] rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm transition"
+              disabled={isLoading}
+              className="w-full h-12 bg-brand-blue hover:bg-brand-blue/95 disabled:bg-brand-blue/70 text-white font-[600] text-xs uppercase tracking-[0.6px] rounded flex items-center justify-center gap-2 cursor-pointer shadow-sm transition"
             >
-              <span>Log In</span>
-              <ArrowRight className="w-3 h-3 text-white" />
+              <span>{isLoading ? 'Logging In...' : 'Log In'}</span>
+              {!isLoading && <ArrowRight className="w-3 h-3 text-white" />}
             </button>
 
           </form>
-        )}
 
         {/* Separator / Signup Redirect */}
         <div className="w-full border-t border-[#C2C7D1] pt-6 flex justify-center text-center mt-auto">
