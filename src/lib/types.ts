@@ -29,8 +29,27 @@ export interface Specialist {
     color_grad: string;
     is_available: boolean;
     availability_text: string;
+    created_at?: string;
+    retention_rate?: number;
+    tag?: string;
+    status?: string;
+    shift?: string;
+    image_url?: string;
+}
+
+// ---------- Department Performance ----------
+export interface DepartmentPerformance {
+    id: string;
+    name: string;
+    location: string;
+    head_of_dept: string;
+    staff_count: number;
+    throughput: string;
+    efficiency: number;
+    status: string;
     created_at: string;
 }
+
 
 // ---------- Blog Post ----------
 export interface BlogPost {
