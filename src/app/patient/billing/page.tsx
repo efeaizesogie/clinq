@@ -1,0 +1,219 @@
+'use client';
+
+import { Download, Plus, Filter, CreditCard, Building2 } from 'lucide-react';
+
+const payments = [
+  { date: 'Oct 12, 2023', service: 'General Consultation', amount: '$150.00', status: 'Paid', statusColor: 'bg-[#D4E6E5] text-[#576867]' },
+  { date: 'Sep 28, 2023', service: 'Radiology - MRI Scan', amount: '$840.50', status: 'Pending', statusColor: 'bg-[#FFDAD6] text-[#93000A]' },
+  { date: 'Aug 15, 2023', service: 'Lab Work - Blood Panel', amount: '$250.00', status: 'Paid', statusColor: 'bg-[#D4E6E5] text-[#576867]' },
+];
+
+export default function BillingPage() {
+  return (
+    <div className="p-6 min-h-screen bg-[#F8F9FF]">
+      <div className="flex gap-8 items-start">
+
+        {/* Left Column */}
+        <div className="flex flex-col gap-8 flex-1 min-w-0">
+
+          {/* Outstanding Balance Hero */}
+          <div
+            className="relative rounded-lg overflow-hidden"
+            style={{ background: '#0F4C81', padding: '52px 32px', minHeight: 220 }}
+          >
+            {/* Blur blob */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: 256, height: 256,
+                right: -64, bottom: -64,
+                background: 'rgba(213,227,252,0.1)',
+                filter: 'blur(32px)',
+                borderRadius: 12,
+              }}
+            />
+            <div className="relative z-10 flex items-center justify-between">
+              <div className="flex flex-col gap-1">
+                <span
+                  className="text-white text-xs font-semibold tracking-widest uppercase rounded-full px-3 py-1 w-fit"
+                  style={{ background: 'rgba(213,227,252,0.2)', letterSpacing: '0.6px' }}
+                >
+                  Outstanding Balance
+                </span>
+                <div className="mt-1">
+                  <p className="text-white font-bold text-[40px] leading-[56px] tracking-[-0.96px]">$1,240.50</p>
+                  <p className="text-white text-base">Next due date: October 24, 2023</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-center">
+                <button className="bg-white text-[#00355F] font-bold text-base px-8 py-3 rounded-xl">
+                  Pay Now
+                </button>
+                <button className="border border-white text-white font-bold text-base px-8 py-3 rounded-xl">
+                  View Plan
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment History Table */}
+          <div className="bg-white border border-[#C2C7D1] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] overflow-hidden">
+            {/* Table Header */}
+            <div
+              className="flex items-center justify-between px-6 py-4 border-b border-[#C2C7D1]"
+              style={{ background: 'rgba(239,244,255,0.3)' }}
+            >
+              <h2 className="text-[#00355F] font-semibold text-lg">Payment History</h2>
+              <button className="flex items-center gap-1 text-[#00355F] text-xs font-semibold tracking-[0.6px]">
+                <Filter size={13} strokeWidth={2} />
+                Filter
+              </button>
+            </div>
+
+            {/* Column Headers */}
+            <div className="w-full" style={{ background: 'rgba(239,244,255,0.5)' }}>
+              <div className="grid grid-cols-5 text-[#42474F] text-xs font-semibold tracking-[0.6px]">
+                <div className="px-6 py-3">DATE</div>
+                <div className="px-6 py-3">SERVICE</div>
+                <div className="px-6 py-3">AMOUNT</div>
+                <div className="px-6 py-3">STATUS</div>
+                <div className="px-6 py-3">INVOICE</div>
+              </div>
+            </div>
+
+            {/* Rows */}
+            <div>
+              {payments.map((row, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-5 items-center border-t border-[#C2C7D1] first:border-t-0"
+                >
+                  <div className="px-6 py-4 text-[#0D1C2E] text-base">{row.date}</div>
+                  <div className="px-6 py-4 text-[#0D1C2E] text-base">{row.service}</div>
+                  <div className="px-6 py-4 text-[#0D1C2E] text-base">{row.amount}</div>
+                  <div className="px-6 py-4">
+                    <span className={`text-xs font-bold tracking-[0.6px] px-3 py-1 rounded-full ${row.statusColor}`}>
+                      {row.status}
+                    </span>
+                  </div>
+                  <div className="px-6 py-4">
+                    <button className="flex items-center gap-1 text-[#00355F] text-xs font-semibold tracking-[0.6px]">
+                      <Download size={13} strokeWidth={2} />
+                      PDF
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div
+              className="flex justify-center items-center py-4 border-t border-[#C2C7D1]"
+              style={{ background: 'rgba(239,244,255,0.3)' }}
+            >
+              <button className="text-[#00355F] text-xs font-semibold tracking-[0.6px]">
+                View All History
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="flex flex-col gap-8 w-[304px] shrink-0">
+
+          {/* Payment Methods */}
+          <div className="bg-white border border-[#C2C7D1] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] p-6 flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[#00355F] font-semibold text-lg">Payment Methods</h2>
+              <button className="text-[#00355F]">
+                <Plus size={14} strokeWidth={2.5} />
+              </button>
+            </div>
+            <div className="flex flex-col gap-4">
+              {/* Visa Card */}
+              <div className="border border-[#C2C7D1] rounded-lg p-4 flex items-center gap-4">
+                <div className="w-12 h-8 rounded-sm flex items-center justify-center" style={{ background: 'rgba(66,71,79,0.1)' }}>
+                  <CreditCard size={20} className="text-[#42474F]" />
+                </div>
+                <div>
+                  <p className="text-[#0D1C2E] font-bold text-base leading-6">Visa ending in 4242</p>
+                  <p className="text-[#42474F] text-xs font-semibold tracking-[0.6px]">Expires 12/25</p>
+                </div>
+              </div>
+              {/* Chase Checking */}
+              <div
+                className="border border-[#C2C7D1] rounded-lg p-4 flex items-center gap-4"
+                style={{ background: 'rgba(239,244,255,0.2)' }}
+              >
+                <div className="w-12 h-8 rounded-sm flex items-center justify-center" style={{ background: 'rgba(66,71,79,0.1)' }}>
+                  <Building2 size={20} className="text-[#42474F]" />
+                </div>
+                <div>
+                  <p className="text-[#0D1C2E] font-bold text-base leading-6">Chase Checking</p>
+                  <p className="text-[#42474F] text-xs font-semibold tracking-[0.6px]">Ending in 9876</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Insurance */}
+          <div className="bg-white border border-[#C2C7D1] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] p-6 flex flex-col gap-4">
+            <h2 className="text-[#00355F] font-semibold text-2xl">Insurance</h2>
+
+            {/* Digital Insurance Card */}
+            <div
+              className="relative rounded-lg overflow-hidden p-8 flex flex-col gap-10"
+              style={{ background: 'linear-gradient(135deg, #00355F 0%, #0F4C81 100%)', minHeight: 248 }}
+            >
+              {/* Texture overlay */}
+              <div className="absolute right-0 top-2 w-32 h-32 opacity-10 pointer-events-none flex items-center justify-center">
+                <div className="w-24 h-24 bg-white rounded-full" />
+              </div>
+
+              <div className="relative z-10 flex justify-between items-start">
+                <div>
+                  <p className="text-white text-xs font-semibold tracking-[1.2px] uppercase opacity-70">Primary Carrier</p>
+                  <p className="text-white font-bold text-lg leading-8 mt-1">Blue Cross<br />Blue Shield</p>
+                </div>
+                <div className="text-white opacity-30 text-3xl font-bold">✚</div>
+              </div>
+
+              <div className="relative z-10 flex gap-4">
+                <div>
+                  <p className="text-white text-xs font-semibold tracking-[0.6px] opacity-60">Member ID</p>
+                  <p className="text-white font-bold text-base leading-6 mt-1">ABC123456789</p>
+                </div>
+                <div>
+                  <p className="text-white text-xs font-semibold tracking-[0.6px] opacity-60">Group Number</p>
+                  <p className="text-white font-bold text-base leading-6 mt-1">GRP90021</p>
+                </div>
+              </div>
+            </div>
+
+            <button className="w-full border border-[#00355F] text-[#00355F] font-bold text-base py-3 rounded-xl">
+              Upload New Card
+            </button>
+            <p className="text-[#42474F] text-xs font-semibold tracking-[0.6px] text-center">Updated Oct 01, 2023</p>
+          </div>
+
+          {/* Billing Support */}
+          <div className="bg-[#EFF4FF] border border-[#C2C7D1] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] p-6 flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#00355F] rounded-xl flex items-center justify-center shrink-0">
+              <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+                <path d="M10 0C4.48 0 0 3.58 0 8c0 2.39 1.19 4.53 3.07 6.01L2 18l3.7-1.85C6.99 16.69 8.45 17 10 17c5.52 0 10-3.58 10-8s-4.48-8-10-8z" fill="white"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-[#00355F] font-bold text-base">Need Billing Help?</p>
+              <p className="text-[#42474F] text-xs font-semibold tracking-[0.6px] leading-4 mt-1">
+                Our concierge billing team is available Mon-Fri, 8am-6pm.
+              </p>
+              <p className="text-[#00355F] font-bold text-base mt-1">1-800-CLINQ-MED</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
