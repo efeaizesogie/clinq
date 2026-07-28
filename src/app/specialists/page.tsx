@@ -221,14 +221,16 @@ export default function SpecialistsPage() {
                   >
                     
                     {/* Visual Graphic Block (Fills top/left) */}
-                    <div className={`relative bg-gradient-to-br ${doc.color_grad} flex items-center justify-center shrink-0 ${
+                    <div className={`relative flex items-center justify-center shrink-0 ${
                       viewMode === 'grid' ? 'w-full h-[256px]' : 'w-full sm:w-[240px] h-[200px] sm:h-auto'
                     }`}>
+
+                       <img
+                          src={doc.image_url}
+                          alt={doc.full_name}
+                          className="w-full h-full object-cover"
+                        />
                       
-                      {/* Doctor Initials */}
-                      <span className="text-white text-5xl font-extrabold tracking-tight select-none">
-                        {doc.initials}
-                      </span>
                       
                       {/* Availability status badge */}
                       <div className={`absolute top-4 right-4 px-3 py-1 flex items-center gap-1 rounded-full text-xs font-[600] tracking-[0.6px] uppercase ${

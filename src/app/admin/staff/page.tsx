@@ -557,7 +557,7 @@ export default function StaffDirectoryPage() {
                 {/* Action button */}
                 <button
                   onClick={() => router.push(`/admin/staff/${spec.id}`)}
-                  className="w-full py-2 bg-[#EFF4FF] text-[#00355F] font-[600] text-[12px] uppercase rounded-[4px] mt-4 hover:bg-[#D2E4FF] transition-all text-center tracking-[0.5px]"
+                  className="w-full py-3 bg-[#EFF4FF] text-[#00355F] font-[700] text-[14px] rounded-[4px] mt-4 hover:bg-[#D2E4FF] transition-all text-center tracking-[0.5px]"
                 >
                   View Full Clinical Profile
                 </button>

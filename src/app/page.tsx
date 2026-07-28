@@ -671,11 +671,18 @@ export default function LandingPage() {
                         key={doc.id}
                         className="bg-white border border-[#C2C7D1]/20 rounded-lg p-5 sm:p-6 flex flex-row items-center gap-4 sm:gap-6 w-full"
                       >
-                        <div className="w-12 h-12 sm:w-[64px] sm:h-[64px] bg-brand-blue text-white rounded-lg flex items-center justify-center font-[700] text-base sm:text-xl shrink-0">
-                          {doc.full_name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
+                        <div className="w-12 h-12 sm:w-[64px] sm:h-[64px]  text-white rounded-lg flex items-center justify-center font-[700] text-base sm:text-xl shrink-0">
+                          {doc?.image_url ? (
+                            <img
+                              src={doc?.image_url}
+                              alt={doc?.full_name}
+                              className="w-14 h-14 rounded-[12px] object-cover shadow-sm"
+                            />
+                          ) : (
+                            <div className={`w-14 h-14 rounded-[12px] bg-gradient-to-br flex items-center justify-center text-white text-[20px] font-[700] shadow-sm`}>
+                              {doc?.initials || "MD"}
+                            </div>
+                          )}
                         </div>
                         <div className="flex-1 flex flex-col items-start gap-0.5">
                           <h4 className="text-sm sm:text-base font-[700] text-brand-dark">

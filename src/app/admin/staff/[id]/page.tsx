@@ -11,14 +11,7 @@ import {
   Info,
   Star,
   CheckCircle,
-  FileText,
-  Clock,
-  Compass,
-  Heart,
-  TrendingUp,
   MapPin,
-  ExternalLink,
-  ShieldCheck,
   Briefcase
 } from "lucide-react";
 import type { Specialist } from "@/lib/types";
@@ -105,10 +98,10 @@ export default function SpecialistProfilePage() {
       </div>
 
       {/* ── Main Canvas Content area ── */}
-      <main className="flex flex-col items-start gap-8 p-6 self-stretch w-full max-w-[1024px] mx-auto">
+      <main className="flex flex-col items-start gap-8 p-6 self-stretch w-full">
         
         {/* IDENTITY HEADER SECTION */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full bg-white border border-[#E2E8F0] rounded-[8px] p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full">
           <div className="flex items-center gap-6">
             {/* Profile Avatar Frame */}
             <div className="relative">
@@ -310,7 +303,7 @@ export default function SpecialistProfilePage() {
                   <span>Trust Index</span>
                   <span>{specialist.retention_rate || 98}%</span>
                 </div>
-                <div className="w-full h-1.5 bg-[#FFFFFF]/20 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#FFFFFF]/25 rounded-full overflow-hidden">
                   <div className="h-full bg-white rounded-full" style={{ width: `${specialist.retention_rate || 98}%` }} />
                 </div>
               </div>
