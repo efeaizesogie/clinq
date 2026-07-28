@@ -38,3 +38,30 @@ END
 $$;
 
 ALTER TABLE public.specialists ADD COLUMN IF NOT EXISTS image_url TEXT;
+
+-- Enable insert, update, and delete policies for specialists under RLS
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies 
+        WHERE tablename = 'specialists' AND policyname = 'Public insert specialists'
+    ) THEN
+        CREATE POLICY "Public insert specialists" ON public.specialists FOR INSERT WITH CHECK (true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies 
+        WHERE tablename = 'specialists' AND policyname = 'Public update specialists'
+    ) THEN
+        CREATE POLICY "Public update specialists" ON public.specialists FOR UPDATE USING (true);
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies 
+        WHERE tablename = 'specialists' AND policyname = 'Public delete specialists'
+    ) THEN
+        CREATE POLICY "Public delete specialists" ON public.specialists FOR DELETE USING (true);
+    END IF;
+END
+$$;
+

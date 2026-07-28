@@ -42,9 +42,12 @@ CREATE TABLE IF NOT EXISTS specialists (
 
 ALTER TABLE specialists ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read specialists"
-  ON specialists FOR SELECT
-  USING (true);
+CREATE POLICY "Public read specialists" ON specialists FOR SELECT USING (true);
+CREATE POLICY "Public insert specialists" ON specialists FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public update specialists" ON specialists FOR UPDATE USING (true);
+CREATE POLICY "Public delete specialists" ON specialists FOR DELETE USING (true);
+-- End of specialists RLS policies
+
 
 -- ─── BLOG POSTS ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS blog_posts (

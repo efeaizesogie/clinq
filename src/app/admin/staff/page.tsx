@@ -9,8 +9,6 @@ import {
   Check,
   ChevronDown,
   Download,
-  X,
-  AlertTriangle,
   Users,
   Calendar,
   Layers,
@@ -70,20 +68,8 @@ export default function StaffDirectoryPage() {
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [showAvailabilityDropdown, setShowAvailabilityDropdown] = useState(false);
 
-  // --- Add Staff Modal states ---
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [formName, setFormName] = useState("");
-  const [formSpecialty, setFormSpecialty] = useState("MD, FACC • Cardiology");
-  const [formTag, setFormTag] = useState("CONSULTANT");
-  const [formStatus, setFormStatus] = useState("Active");
-  const [formExperience, setFormExperience] = useState("10+ Years");
-  const [formRating, setFormRating] = useState("4.8");
-  const [formRetentionRate, setFormRetentionRate] = useState("95.0");
-  const [formShift, setFormShift] = useState("08:00 - 20:00 (Floor 4)");
-  const [formBio, setFormBio] = useState("");
+  // Modal navigation path is handled by router push
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState("");
 
   // Dropdown lists
   const specializationOptions = [
@@ -165,49 +151,7 @@ export default function StaffDirectoryPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Submit Handler for Add New Staff Detail
-  const handleAddStaffSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formName || !formSpecialty) {
-      setFormError("Full Name and Specialty qualification are required.");
-      return;
-    }
-    setIsSubmitting(true);
-    setFormError("");
 
-    try {
-      const response = await fetch("/api/admin/staff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          full_name: formName,
-          specialty: formSpecialty,
-          tag: formTag,
-          status: formStatus,
-          experience: formExperience,
-          bio: formBio || `${formTag} specialist on duty.`,
-          rating: parseFloat(formRating) || 5.0,
-          retention_rate: parseFloat(formRetentionRate) || 95.0,
-          shift: formShift
-        })
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Cannot create staff entry.");
-      }
-
-      await fetchStaffData();
-      setShowAddModal(false);
-      // Reset Modal Fields
-      setFormName("");
-      setFormBio("");
-    } catch (err: any) {
-      setFormError(err.message || "An unexpected error occurred.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Sparkline Trends rendering helper
   const defaultSparkline = [
@@ -288,7 +232,7 @@ export default function StaffDirectoryPage() {
             </button>
 
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => router.push("/admin/staff/new")}
               className="flex flex-row items-center justify-center px-6 py-2.5 gap-2 bg-[#00355F] shadow-sm rounded-[4px] text-white font-[600] text-[16px] uppercase tracking-[0.4px] hover:bg-[#002747] transition-all h-[48px]"
             >
               <Plus className="w-5 h-4 text-white" />
@@ -566,7 +510,7 @@ export default function StaffDirectoryPage() {
 
             {/* Dotted Box: Add New Member Button Card */}
             <div
-              onClick={() => setShowAddModal(true)}
+              onClick={() => router.push("/admin/staff/new")}
               className="border-2 border-dashed border-[#C2C7D1] hover:border-[#00355F] rounded-[8px] p-6 flex flex-col items-center justify-center h-[392px] cursor-pointer hover:bg-[#EEF4FF]/30 transition-all select-none group"
             >
               <div className="w-14 h-14 rounded-full bg-[#EFF4FF] group-hover:bg-[#D2E4FF] transition-all flex items-center justify-center text-[#00355F] mb-4">
@@ -643,184 +587,6 @@ export default function StaffDirectoryPage() {
           </div>
         </div>
       </main>
-
-      {/* ── ADD NEW STAFF POPUP MODAL ── */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-[#0D1C2E]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-2xl w-full max-w-[520px] overflow-hidden flex flex-col transform transition-transform duration-300">
-            {/* Modal Header */}
-            <div className="flex flex-row justify-between items-center px-6 py-4 bg-[#EFF4FF] border-b border-[#C2C7D1]">
-              <div className="flex items-center gap-2">
-                <Plus className="w-5 h-5 text-[#00355F]" />
-                <h3 className="text-[18px] font-[700] text-[#00355F]">Add New Staff Specialist</h3>
-              </div>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="w-8 h-8 rounded-full hover:bg-white flex items-center justify-center text-[#727780] hover:text-[#0D1C2E] transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleAddStaffSubmit} className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[75vh]">
-              {formError && (
-                <div className="p-3 bg-[#FEF2F2] border border-[#BA1A1A]/20 text-[#991B1B] text-[13px] rounded-[4px] flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-[#991B1B]" />
-                  <span>{formError}</span>
-                </div>
-              )}
-
-              {/* Full Name */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder="Dr. Julia Vance"
-                  className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] placeholder-[#727780] focus:outline-none focus:ring-2 focus:ring-[#00355F]/20"
-                />
-              </div>
-
-              {/* Specialty */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Specialty details *</label>
-                <input
-                  type="text"
-                  required
-                  value={formSpecialty}
-                  onChange={(e) => setFormSpecialty(e.target.value)}
-                  placeholder="MD, FACC • Cardiology"
-                  className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none focus:ring-2 focus:ring-[#00355F]/20"
-                />
-              </div>
-
-              {/* Experience and Shift Info row */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Seniority Tag</label>
-                  <select
-                    value={formTag}
-                    onChange={(e) => setFormTag(e.target.value)}
-                    className="px-4 py-2 border border-[#C2C7D1] bg-white rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  >
-                    <option value="CLINICAL FACULTY">Clinical Faculty</option>
-                    <option value="RESIDENT">Resident</option>
-                    <option value="FELLOW">Fellow</option>
-                    <option value="CONSULTANT">Consultant</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Status</label>
-                  <select
-                    value={formStatus}
-                    onChange={(e) => setFormStatus(e.target.value)}
-                    className="px-4 py-2 border border-[#C2C7D1] bg-white rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Off Duty">Off Duty</option>
-                    <option value="Emergency Leave">Emergency Leave</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Experience</label>
-                  <input
-                    type="text"
-                    value={formExperience}
-                    onChange={(e) => setFormExperience(e.target.value)}
-                    placeholder="10+ Years"
-                    className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Shift/Wing Details</label>
-                  <input
-                    type="text"
-                    value={formShift}
-                    onChange={(e) => setFormShift(e.target.value)}
-                    placeholder="08:00 - 20:00 (Floor 4)"
-                    className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Retention Rate (%)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="100"
-                    value={formRetentionRate}
-                    onChange={(e) => setFormRetentionRate(e.target.value)}
-                    placeholder="98.2"
-                    className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Initial Rating (out of 5)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="1"
-                    max="5"
-                    value={formRating}
-                    onChange={(e) => setFormRating(e.target.value)}
-                    placeholder="4.9"
-                    className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Bio summary */}
-              <div className="flex flex-col gap-1">
-                <label className="text-[12px] font-[700] text-[#42474F] uppercase tracking-[0.5px]">Short Biography</label>
-                <textarea
-                  value={formBio}
-                  onChange={(e) => setFormBio(e.target.value)}
-                  placeholder="Specializing in cardiovascular care, heart failure management, and clinical cardiology therapeutics..."
-                  rows={3}
-                  className="px-4 py-2 border border-[#C2C7D1] rounded-[4px] text-[14px] text-[#0D1C2E] placeholder-[#727780] focus:outline-none"
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex flex-row justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 border border-[#C2C7D1] text-[#42474F] font-[600] text-[14px] rounded-[4px] uppercase hover:bg-[#F8F9FF] transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2.5 bg-[#00355F] text-white font-[600] text-[14px] rounded-[4px] uppercase hover:bg-[#002747] transition-all flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <span>Add Member</span>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
