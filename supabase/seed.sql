@@ -177,3 +177,34 @@ INSERT INTO staff_members (full_name, role, department, is_on_duty, initials, co
   ('NP Jamie Rollins',  'ER Triage',     'Emergency',  true,  'JR', '#D4E6E5', '#576867'),
   ('Dr. Alan Gregson',  'Pediatrician',  'Pediatrics', false, 'AG', '#E0E3E5', '#42474F')
 ON CONFLICT DO NOTHING;
+
+-- ─── PATIENT RECORDS (Admin Directory) ──────────────────────
+CREATE TABLE IF NOT EXISTS patient_records (
+  id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  full_name        TEXT NOT NULL,
+  email            TEXT NOT NULL UNIQUE,
+  age              INTEGER NOT NULL DEFAULT 0,
+  gender           TEXT NOT NULL DEFAULT 'Unknown',
+  medical_id       TEXT NOT NULL UNIQUE,
+  assigned_doctor  TEXT NOT NULL DEFAULT '',
+  department       TEXT NOT NULL DEFAULT '',
+  last_visit       TEXT NOT NULL DEFAULT '',
+  admission_status TEXT NOT NULL DEFAULT 'Inpatient',
+  status           TEXT NOT NULL DEFAULT 'Active',
+  insurance        TEXT NOT NULL DEFAULT '',
+  initials         TEXT NOT NULL DEFAULT '',
+  created_at       TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE patient_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read patient_records"  ON patient_records FOR SELECT USING (true);
+CREATE POLICY "Public insert patient_records" ON patient_records FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public update patient_records" ON patient_records FOR UPDATE USING (true);
+
+INSERT INTO patient_records (full_name, email, age, gender, medical_id, assigned_doctor, department, last_visit, admission_status, status, insurance, initials) VALUES
+  ('Eleanor Watson',  'eleanor.watson@example.com',  42, 'F', '#MC-99201', 'Dr. Julian Marcus', 'Cardiology',  'Oct 24, 2023', 'Observation', 'Active',      'BlueShield', 'EW'),
+  ('Theodore Hughes', 'theodore.hughes@example.com', 68, 'M', '#MC-88312', 'Dr. Sarah Chen',    'Neurology',   'Oct 22, 2023', 'Outpatient',  'Archived',    'Aetna',      'TH'),
+  ('Miriam Santiago', 'miriam.santiago@example.com', 31, 'F', '#MC-12005', 'Dr. Julian Marcus', 'Pediatrics',  'Oct 25, 2023', 'Observation', 'Observation', 'Medicare',   'MS'),
+  ('Bradley Knight',  'bradley.knight@example.com',  55, 'M', '#MC-44567', 'Dr. Anita Varma',   'Orthopedics', 'Oct 21, 2023', 'Inpatient',   'Active',      'United',     'BK'),
+  ('Leah Franklin',   'leah.franklin@example.com',   19, 'F', '#MC-77811', 'Dr. Sarah Chen',    'Emergency',   'Oct 18, 2023', 'Emergency',   'ER/Critical', 'BlueShield', 'LF')
+ON CONFLICT (email) DO NOTHING;
