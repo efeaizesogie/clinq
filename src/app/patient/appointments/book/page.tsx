@@ -1393,18 +1393,18 @@ END:VCALENDAR`;
             <div className="w-full lg:flex-1 flex flex-col gap-8">
               
               {/* Section: Patient & Reason */}
-              <div className="bg-white border border-[#C2C7D1] rounded-lg p-8 flex flex-col gap-6 w-full min-h-[442px]">
+              <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg p-8 flex flex-col gap-6 w-full min-h-[442px] transition-colors">
                 <div className="flex justify-between items-center w-full">
                   <div className="flex items-center gap-3">
-                    <User className="w-4 h-4 text-[#00355F] stroke-[2.5]" />
-                    <h3 className="text-[18px] font-[600] text-[#0D1C2E] leading-8 font-sans">
+                    <User className="w-4 h-4 text-[#00355F] dark:text-[#5F9EA0] stroke-[2.5]" />
+                    <h3 className="text-[18px] font-[600] text-[#0D1C2E] dark:text-white leading-8 font-sans transition-colors">
                       Patient Information
                     </h3>
                   </div>
                   <button 
                     type="button" 
                     onClick={() => setIsEditingPatient(!isEditingPatient)} 
-                    className="text-[16px] font-[600] text-[#00355F] hover:underline cursor-pointer"
+                    className="text-[16px] font-[600] text-[#00355F] dark:text-[#5F9EA0] hover:underline cursor-pointer"
                   >
                     {isEditingPatient ? "Save" : "Edit"}
                   </button>
@@ -1413,97 +1413,97 @@ END:VCALENDAR`;
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {/* Full Name */}
                   <div className="flex flex-col gap-1 col-span-1">
-                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase leading-none">FULL NAME</span>
+                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase leading-none">FULL NAME</span>
                     {isEditingPatient ? (
                       <input
                         type="text"
-                        className="w-full bg-[#F8F9FF] border border-[#C2C7D1] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] mt-1"
+                        className="w-full bg-[#F8F9FF] dark:bg-[#080F18] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] mt-1 transition-colors"
                         value={patientName}
                         onChange={(e) => setPatientName(e.target.value)}
                       />
                     ) : (
-                      <strong className="text-[16px] font-[600] text-[#0D1C2E] font-sans mt-2">{patientName}</strong>
+                      <strong className="text-[16px] font-[600] text-[#0D1C2E] dark:text-white font-sans mt-2 transition-colors">{patientName}</strong>
                     )}
                   </div>
 
                   {/* Phone Number */}
                   <div className="flex flex-col gap-1 col-span-1">
-                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase leading-none">PHONE NUMBER</span>
+                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase leading-none">PHONE NUMBER</span>
                     {isEditingPatient ? (
                       <input
                         type="text"
-                        className="w-full bg-[#F8F9FF] border border-[#C2C7D1] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] mt-1"
+                        className="w-full bg-[#F8F9FF] dark:bg-[#080F18] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] mt-1 transition-colors"
                         value={patientPhone}
                         onChange={(e) => setPatientPhone(e.target.value)}
                       />
                     ) : (
-                      <strong className="text-[16px] font-[600] text-[#0D1C2E] font-sans mt-2">{patientPhone}</strong>
+                      <strong className="text-[16px] font-[600] text-[#0D1C2E] dark:text-white font-sans mt-2 transition-colors">{patientPhone}</strong>
                     )}
                   </div>
 
                   {/* Email */}
                   <div className="flex flex-col gap-1 col-span-2 pt-2">
-                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase leading-none">EMAIL ADDRESS</span>
+                    <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase leading-none">EMAIL ADDRESS</span>
                     {isEditingPatient ? (
                       <input
                         type="text"
-                        className="w-full bg-[#F8F9FF] border border-[#C2C7D1] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] mt-1"
+                        className="w-full bg-[#F8F9FF] dark:bg-[#080F18] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-2 text-[16px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] mt-1 transition-colors"
                         value={patientEmail}
                         onChange={(e) => setPatientEmail(e.target.value)}
                       />
                     ) : (
-                      <strong className="text-[16px] font-[600] text-[#0D1C2E] font-sans mt-2">{patientEmail}</strong>
+                      <strong className="text-[16px] font-[600] text-[#0D1C2E] dark:text-white font-sans mt-2 transition-colors">{patientEmail}</strong>
                     )}
                   </div>
                 </div>
 
                 {/* Reason for Visit */}
                 <div className="flex flex-col gap-2 w-full mt-1">
-                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase">REASON FOR VISIT</span>
+                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase">REASON FOR VISIT</span>
                   <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Please describe your symptoms or reason for visit (optional)"
-                    className="w-full h-[128px] bg-[#F8F9FF] border border-[#C2C7D1] rounded-[4px] p-4 text-[16px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] resize-none placeholder-[#6B7280]"
+                    className="w-full h-[128px] bg-[#F8F9FF] dark:bg-[#080F18] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-4 text-[16px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] resize-none placeholder-[#6B7280] dark:placeholder-[#A5AAB5]/50 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Section: Insurance */}
-              <div className="bg-white border border-[#C2C7D1] rounded-lg p-8 flex flex-col gap-6 w-full min-h-[204px]">
+              <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg p-8 flex flex-col gap-6 w-full min-h-[204px] transition-colors">
                 <div className="flex justify-between items-center w-full">
                   <div className="flex items-center gap-3">
-                    <Globe className="w-4 h-5 text-[#00355F] stroke-[2.5]" />
-                    <h3 className="text-[18px] font-[600] text-[#0D1C2E] leading-8 font-sans">
+                    <Globe className="w-4 h-5 text-[#00355F] dark:text-[#5F9EA0] stroke-[2.5]" />
+                    <h3 className="text-[18px] font-[600] text-[#0D1C2E] dark:text-white leading-8 font-sans transition-colors">
                       Insurance Information
                     </h3>
                   </div>
                   <button 
                     type="button"
                     onClick={() => setIsEditingInsurance(!isEditingInsurance)}
-                    className="text-[16px] font-[600] text-[#00355F] hover:underline cursor-pointer"
+                    className="text-[16px] font-[600] text-[#00355F] dark:text-[#5F9EA0] hover:underline cursor-pointer"
                   >
                     {isEditingInsurance ? "Save" : "Edit"}
                   </button>
                 </div>
 
                 {isEditingInsurance ? (
-                  <div className="flex flex-col gap-3 w-full border border-[#C2C7D1] rounded-[4px] p-4 bg-[#F8F9FF]">
+                  <div className="flex flex-col gap-3 w-full border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-4 bg-[#F8F9FF] dark:bg-[#080F18] transition-colors">
                     <div className="flex gap-4">
                       <div className="flex flex-col flex-1">
-                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase leading-none">PROVIDER</span>
+                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase leading-none">PROVIDER</span>
                         <input
                           type="text"
-                          className="w-full bg-white border border-[#C2C7D1] rounded-[4px] p-2 text-[14px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] mt-1"
+                          className="w-full bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-2 text-[14px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] mt-1 transition-colors"
                           value={insuranceProvider}
                           onChange={(e) => setInsuranceProvider(e.target.value)}
                         />
                       </div>
                       <div className="flex flex-col flex-grow">
-                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase leading-none">POLICY NUMBER / ID</span>
+                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase leading-none">POLICY NUMBER / ID</span>
                         <input
                           type="text"
-                          className="w-full bg-white border border-[#C2C7D1] rounded-[4px] p-2 text-[14px] font-[400] text-[#0D1C2E] focus:outline-none focus:border-[#00355F] mt-1"
+                          className="w-full bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-2 text-[14px] font-[400] text-[#0D1C2E] dark:text-white focus:outline-none focus:border-[#00355F] dark:focus:border-[#5F9EA0] mt-1 transition-colors"
                           value={insuranceId}
                           onChange={(e) => setInsuranceId(e.target.value)}
                         />
@@ -1511,18 +1511,18 @@ END:VCALENDAR`;
                     </div>
                   </div>
                 ) : (
-                  <div className="flex bg-white border border-[#C2C7D1] rounded-[4px] p-4 gap-4 items-center w-full h-[82px]">
-                    <div className="w-[48px] h-[48px] bg-[#DCE9FF] rounded-[2px] text-[#00355F] flex items-center justify-center shrink-0">
+                  <div className="flex bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] p-4 gap-4 items-center w-full h-[82px] transition-colors">
+                    <div className="w-[48px] h-[48px] bg-[#DCE9FF] dark:bg-[#1C2C3E] rounded-[2px] text-[#00355F] dark:text-[#5F9EA0] flex items-center justify-center shrink-0 transition-colors">
                       <Heart className="w-6 h-6 stroke-[2]" />
                     </div>
                     <div className="flex flex-col min-w-0 flex-grow">
                       <div className="flex gap-2 items-center">
-                        <strong className="text-[16px] font-[700] text-[#0D1C2E] font-sans truncate">{insuranceProvider}</strong>
-                        <span className="px-2 py-0.5 bg-[#D4E6E5] text-[#576867] rounded-[2px] text-[10px] uppercase font-[700]">
+                        <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans truncate transition-colors">{insuranceProvider}</strong>
+                        <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-[2px] text-[10px] uppercase font-[700] transition-colors">
                           ACTIVE
                         </span>
                       </div>
-                      <span className="text-[16px] font-[400] text-[#42474F] mt-1">
+                      <span className="text-[16px] font-[400] text-[#42474F] dark:text-[#A5AAB5] mt-1 transition-colors">
                         {insuranceId}
                       </span>
                     </div>
@@ -1535,10 +1535,10 @@ END:VCALENDAR`;
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 border border-[#727780] rounded-[2px] mt-0.5 text-[#00355F] cursor-pointer"
+                    className="w-5 h-5 border border-[#727780] dark:border-[#22354A] rounded-[2px] mt-0.5 text-[#00355F] cursor-pointer"
                     defaultChecked
                   />
-                  <span className="text-[14px] leading-[23px] text-[#42474F] font-[400]">
+                  <span className="text-[14px] leading-[23px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">
                     I authorize Clinq Healthcare to verify insurance benefits and schedule the appointment.
                   </span>
                 </label>
@@ -1546,13 +1546,13 @@ END:VCALENDAR`;
                 <div className="flex gap-4 items-center w-full h-[58px] mt-2">
                   <button
                     onClick={handleConfirmBooking}
-                    className="flex-1 h-[56px] bg-[#00355F] hover:bg-[#002645] text-white text-[16px] font-[700] rounded-[4px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] uppercase transition-colors cursor-pointer select-none"
+                    className="flex-1 h-[56px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white text-[16px] font-[700] rounded-[4px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] uppercase transition-colors cursor-pointer select-none"
                   >
                     Confirm Booking
                   </button>
                   <button
                     onClick={() => setStep(3)}
-                    className="w-[207.67px] h-[58px] border border-[#00355F] hover:bg-[#EFF4FF] text-[#00355F] text-[16px] font-[700] rounded-[4px] uppercase transition-colors cursor-pointer select-none"
+                    className="w-[207.67px] h-[58px] border border-[#00355F] dark:border-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0] text-[16px] font-[700] rounded-[4px] uppercase transition-colors cursor-pointer select-none"
                   >
                     Go Back
                   </button>
@@ -1565,12 +1565,12 @@ END:VCALENDAR`;
             <div className="w-full lg:w-[380px] flex flex-col gap-6 shrink-0 relative lg:sticky lg:top-5">
               
               {/* Booking Summary Card */}
-              <div className="bg-white border border-[#C2C7D1] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] rounded-lg overflow-hidden w-full min-h-[462px] flex flex-col">
-                <div className="bg-[#0F4C81] p-6 flex flex-col gap-1 w-full h-[100px] justify-center">
+              <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] dark:shadow-none rounded-lg overflow-hidden w-full min-h-[462px] flex flex-col transition-colors">
+                <div className="bg-[#0F4C81] dark:bg-[#1C2C3E] p-6 flex flex-col gap-1 w-full h-[100px] justify-center transition-colors">
                   <span className="text-[16px] font-[400] tracking-[3.2px] text-white/80 uppercase">
                     BOOKING SUMMARY
                   </span>
-                  <h4 className="text-[16px] font-[400] text-[#8EBDF9] font-sans">
+                  <h4 className="text-[16px] font-[400] text-[#8EBDF9] dark:text-[#5F9EA0] font-sans">
                     Appointment Details
                   </h4>
                 </div>
@@ -1582,37 +1582,37 @@ END:VCALENDAR`;
                       <img
                         src={selectedDoctor.image_url}
                         alt={selectedDoctor.name}
-                        className="w-16 h-16 rounded-[12px] object-cover border-2 border-[#C2C7D1] shrink-0"
+                        className="w-16 h-16 rounded-[12px] object-cover border-2 border-[#C2C7D1] dark:border-[#22354A] shrink-0"
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-[#D5E3FC] border-2 border-[#C2C7D1] rounded-[12px] flex items-center justify-center shrink-0 text-[#00355F] font-[800] text-[18px]">
+                      <div className="w-16 h-16 bg-[#D5E3FC] dark:bg-[#1E2D4A] border-2 border-[#C2C7D1] dark:border-[#22354A] rounded-[12px] flex items-center justify-center shrink-0 text-[#00355F] dark:text-white font-[800] text-[18px] transition-colors">
                         {selectedDoctor?.initials || "DR"}
                       </div>
                     )}
                     <div className="flex flex-col min-w-0">
-                      <strong className="text-[16px] font-[700] text-[#0D1C2E] font-sans">{selectedDoctor?.name || 'Dr. Aris Thorne'}</strong>
-                      <span className="text-[14px] text-[#42474F] mt-1">{selectedDoctor?.specialty}</span>
+                      <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans transition-colors">{selectedDoctor?.name || 'Dr. Aris Thorne'}</strong>
+                      <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] mt-1 transition-colors">{selectedDoctor?.specialty}</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-[#C2C7D1] w-full" />
+                  <div className="border-t border-[#C2C7D1] dark:border-[#22354A] w-full transition-colors" />
 
                   {/* Dates & Times */}
                   <div className="flex flex-col gap-3 w-full">
                     {/* Row 1 Date */}
                     <div className="flex gap-3 items-start w-full">
-                      <div className="w-5 h-5 flex items-center justify-center text-[#0F4C81] shrink-0 mt-0.5">
+                      <div className="w-5 h-5 flex items-center justify-center text-[#0F4C81] dark:text-[#5F9EA0] shrink-0 mt-0.5">
                         <Clock className="w-[18px] h-5" />
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <strong className="text-[16px] font-[600] text-[#0D1C2E] font-sans">{formatFullDate(selectedDateStr)}</strong>
-                        <span className="text-[14px] text-[#42474F] mt-0.5">{selectedTime} EST</span>
+                        <strong className="text-[16px] font-[600] text-[#0D1C2E] dark:text-white font-sans transition-colors">{formatFullDate(selectedDateStr)}</strong>
+                        <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 transition-colors">{selectedTime} EST</span>
                       </div>
                     </div>
 
                     {/* Row 2 Visit Type */}
                     <div className="flex gap-3 items-start w-full mt-1">
-                      <div className="w-5 h-5 flex items-center justify-center text-[#0F4C81] shrink-0 mt-0.5">
+                      <div className="w-5 h-5 flex items-center justify-center text-[#0F4C81] dark:text-[#5F9EA0] shrink-0 mt-0.5">
                         {visitType === "In-Person" ? (
                           <MapPin className="w-4 h-5" />
                         ) : (
@@ -1620,10 +1620,10 @@ END:VCALENDAR`;
                         )}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <strong className="text-[16px] font-[600] text-[#0D1C2E] font-sans">
+                        <strong className="text-[16px] font-[600] text-[#0D1C2E] dark:text-white font-sans transition-colors">
                           {visitType === "In-Person" ? "In-Person Consult" : "Telehealth Consultation"}
                         </strong>
-                        <span className="text-[14px] text-[#42474F] mt-0.5 leading-normal">
+                        <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 leading-normal transition-colors">
                           {visitType === "In-Person"
                             ? "MedCore Plaza, Suite 402"
                             : "Secure video email invitation format"}
@@ -1633,12 +1633,12 @@ END:VCALENDAR`;
                   </div>
 
                   {/* Co-pay amount block */}
-                  <div className="bg-[#E6EEFF] rounded-[4px] p-4 flex flex-col justify-between w-full h-[75px] shrink-0 mt-2">
+                  <div className="bg-[#E6EEFF] dark:bg-[#1E2D4A] rounded-[4px] p-4 flex flex-col justify-between w-full h-[75px] shrink-0 mt-2 transition-colors">
                     <div className="flex justify-between items-center w-full">
-                      <span className="text-[14px] text-[#42474F]">Est. Co-pay</span>
-                      <strong className="text-[16px] font-[700] text-[#0D1C2E] font-sans">$20.00</strong>
+                      <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5]">Est. Co-pay</span>
+                      <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans transition-colors">$20.00</strong>
                     </div>
-                    <span className="text-[10px] text-[#42474F] leading-none">
+                    <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5]/70 leading-none">
                       Final amount determined by provider at check-in.
                     </span>
                   </div>
@@ -1647,13 +1647,13 @@ END:VCALENDAR`;
               </div>
 
               {/* Help Widget */}
-              <div className="bg-[#EFF4FF] border border-[#C2C7D1]/20 rounded-[4px] p-4 flex gap-3 h-[72px] items-center w-full">
-                <div className="w-10 h-10 bg-transparent flex items-center justify-center shrink-0 text-[#00355F]">
+              <div className="bg-[#EFF4FF] dark:bg-[#1E2D4A] border border-[#C2C7D1]/20 dark:border-[#22354A]/20 rounded-[4px] p-4 flex gap-3 h-[72px] items-center w-full transition-colors">
+                <div className="w-10 h-10 bg-transparent flex items-center justify-center shrink-0 text-[#00355F] dark:text-[#5F9EA0]">
                   <HelpCircle className="w-6 h-6" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <strong className="text-[16px] font-[700] text-[#0D1C2E] font-sans leading-none">Need assistance?</strong>
-                  <span className="text-[11px] text-[#42474F] mt-2">
+                  <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans leading-none transition-colors">Need assistance?</strong>
+                  <span className="text-[11px] text-[#42474F] dark:text-[#A5AAB5] mt-2 transition-colors">
                     Call support at (800) 555-0199
                   </span>
                 </div>
