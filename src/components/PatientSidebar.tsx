@@ -1,10 +1,9 @@
-"use client";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Calendar, FileText, Settings, LogOut, Plus, X } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 interface PatientSidebarProps {
   isOpen?: boolean;
@@ -12,10 +11,9 @@ interface PatientSidebarProps {
 }
 
 type NavLink =
-  | { href: string; label: string; icon: React.ElementType; svgIcon?: never }
-  | { href: string; label: string; svgIcon: string; icon?: never };
+  { href: string; label: string; icon?: React.ElementType; svgIcon?: string | null };
 
-const navLinks: NavLink[] = [
+const defaultNavLinks: NavLink[] = [
   { href: "/patient", label: "DASHBOARD", icon: LayoutDashboard },
   { href: "/patient/appointments", label: "APPOINTMENTS", icon: Calendar },
   { href: "/patient/records", label: "MEDICAL RECORDS", icon: FileText },
@@ -30,8 +28,62 @@ const bottomLinks = [
   { href: "/login", label: "LOGOUT", icon: LogOut },
 ];
 
+const iconMap: Record<string, React.ElementType> = {
+  LayoutDashboard,
+  Calendar,
+  FileText,
+  Settings,
+  LogOut,
+};
+
 export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [navLinks, setNavLinks] = useState<NavLink[]>(defaultNavLinks);
+
+  useEffect(() => {
+    async function fetchMenus() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("patient_menus")
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (error) throw error;
+        if (data && data.length > 0) {
+          const mapped: NavLink[] = data.map((item: any) => ({
+            href: item.href,
+            label: item.label,
+            icon: item.icon ? iconMap[item.icon] : undefined,
+            svgIcon: item.svg_icon
+          }));
+          setNavLinks(mapped);
+        }
+      } catch (err) {
+        console.error("Error loading patient menus from database:", err);
+      }
+    }
+    fetchMenus();
+  }, []);
+
+  const handleBottomLinkClick = async (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    label: string
+  ) => {
+    if (label === "LOGOUT") {
+      e.preventDefault();
+      try {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        router.push("/login");
+      } catch (err) {
+        console.error("Logout error:", err);
+        router.push("/login");
+      }
+    }
+  };
 
   const renderContent = () => (
     <div className="flex flex-col h-full bg-[#EFF4FF]">
@@ -109,6 +161,7 @@ export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps)
               <Link
                 key={href}
                 href={href}
+                onClick={(e) => handleBottomLinkClick(e, href, label)}
                 className={`flex items-center gap-4 px-4 py-3 rounded-[8px] h-[42px] transition-colors cursor-pointer select-none ${
                   isActive
                     ? "bg-[#0F4C81] text-[#D9E6F8]"
