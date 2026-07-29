@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Phone, Video, Info, Plus, Smile, Send, Paperclip, FileText, Download, CreditCard } from "lucide-react";
+import { Phone, Video, Info, Plus, Smile, Send, Paperclip, FileText, Download, CreditCard, ArrowLeft } from "lucide-react";
 
 const conversations = [
   {
@@ -60,15 +60,16 @@ const tabs = ["Recent", "Unread", "Care Team"];
 
 export default function MessagesPage() {
   const [activeTab, setActiveTab] = useState("Recent");
+  const [mobileView, setMobileView] = useState<"inbox" | "chat">("inbox");
 
   return (
     <div className="flex w-full h-[calc(100vh-64px)] bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] overflow-hidden text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
 
       {/* ── Inbox List ── */}
-      <div className="flex flex-col w-[384px] shrink-0 bg-[#F8F9FF] dark:bg-[#080F18] border-r border-[#C2C7D1] dark:border-[#22354A] h-full transition-colors">
+      <div className={`flex flex-col w-full md:w-[384px] shrink-0 bg-[#F8F9FF] dark:bg-[#080F18] border-r border-[#C2C7D1] dark:border-[#22354A] h-full transition-colors ${mobileView === "chat" ? "hidden md:flex" : "flex"}`}>
 
         {/* Inbox Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div className="flex items-center justify-between px-4 md:px-6 pt-6 pb-4">
           <span className="text-[24px] font-[600] leading-8 text-[#00355F] dark:text-white transition-colors">Inboxes</span>
           <span className="px-2 py-0.5 bg-[#0F4C81] dark:bg-[#1B6CA8] rounded-[2px] text-[10px] font-[700] text-[#D9E6F8] dark:text-white transition-colors">
             4 NEW
@@ -76,7 +77,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Tabs */}
-        <div className="px-6 pb-4">
+        <div className="px-4 md:px-6 pb-4">
           <div className="flex items-center gap-2 p-1 bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 rounded-[8px] transition-colors">
             {tabs.map((tab) => (
               <button
@@ -99,7 +100,8 @@ export default function MessagesPage() {
           {conversations.map((conv) => (
             <div
               key={conv.id}
-              className={`flex flex-col px-6 py-6 cursor-pointer transition-colors ${
+              onClick={() => setMobileView("chat")}
+              className={`flex flex-col px-4 md:px-6 py-6 cursor-pointer transition-colors ${
                 conv.active
                   ? "bg-[#DCE9FF] dark:bg-[#1E2D4A] border-l-4 border-[#00355F] dark:border-[#5F9EA0]"
                   : "border-b border-[rgba(194,199,209,0.3)] dark:border-[#22354A]/30 hover:bg-[#EFF4FF] dark:hover:bg-[#121E2C]/50"
@@ -146,11 +148,18 @@ export default function MessagesPage() {
       </div>
 
       {/* ── Chat Window ── */}
-      <div className="flex flex-col flex-1 bg-white dark:bg-[#121E2C] h-full transition-colors">
+      <div className={`flex-col flex-1 bg-white dark:bg-[#121E2C] h-full transition-colors ${mobileView === "inbox" ? "hidden md:flex" : "flex"}`}>
 
         {/* Chat Header */}
-        <div className="flex items-center justify-between px-8 h-20 border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between px-4 md:px-8 h-20 border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
+          <div className="flex items-center gap-3 md:gap-4">
+            {/* Back button — mobile only */}
+            <button
+              onClick={() => setMobileView("inbox")}
+              className="flex md:hidden items-center justify-center w-9 h-9 rounded-[8px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0] transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="w-10 h-10 rounded-[12px] bg-[#DCE9FF] dark:bg-[#1E2D4A] flex items-center justify-center shrink-0 transition-colors">
               <span className="text-[13px] font-[700] text-[#00355F] dark:text-white">AT</span>
             </div>
@@ -162,21 +171,21 @@ export default function MessagesPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="flex items-center justify-center w-10 h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
-              <Phone className="w-[18px] h-[18px]" />
+          <div className="flex items-center gap-1 md:gap-2">
+            <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
+              <Phone className="w-[16px] h-[16px] md:w-[18px] md:h-[18px]" />
             </button>
-            <button className="flex items-center justify-center w-10 h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
+            <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
               <Video className="w-5 h-4" />
             </button>
-            <button className="flex items-center justify-center w-10 h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
+            <button className="hidden md:flex items-center justify-center w-10 h-10 rounded-[12px] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] transition-colors cursor-pointer">
               <Info className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Chat Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-8 flex flex-col gap-6 bg-[rgba(248,249,255,0.5)] dark:bg-[#080F18]/50 transition-colors">
+        <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-8 flex flex-col gap-6 bg-[rgba(248,249,255,0.5)] dark:bg-[#080F18]/50 transition-colors">
 
           {/* Date separator */}
           <div className="flex justify-center">
@@ -186,13 +195,13 @@ export default function MessagesPage() {
           </div>
 
           {/* Message Received 1 */}
-          <div className="flex items-start gap-4 max-w-[512px]">
+          <div className="flex items-start gap-3 md:gap-4 max-w-full md:max-w-[512px]">
             <div className="w-8 h-8 rounded-[12px] bg-[#DCE9FF] dark:bg-[#1C2C3E] flex items-center justify-center shrink-0 mt-1 transition-colors">
               <span className="text-[10px] font-[700] text-[#00355F] dark:text-white">AT</span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 min-w-0">
               <div className="bg-[#D5E3FC] dark:bg-[#1C2C3E] border border-[rgba(194,199,209,0.2)] dark:border-[#22354A]/30 shadow-[0px_1px_2px_rgba(0,0,0,0.05)] rounded-[0px_16px_16px_16px] px-4 py-4 transition-colors">
-                <p className="text-[16px] font-[400] leading-6 text-[#0D1C2E] dark:text-white transition-colors">
+                <p className="text-[14px] md:text-[16px] font-[400] leading-6 text-[#0D1C2E] dark:text-white transition-colors">
                   Hello! I've just reviewed your blood work results from Wednesday. Everything looks quite stable, but I've noticed a slight dip in your Vitamin D levels.
                 </p>
               </div>
@@ -201,10 +210,10 @@ export default function MessagesPage() {
           </div>
 
           {/* Message Sent */}
-          <div className="flex justify-end max-w-[512px] self-end">
-            <div className="flex flex-col gap-1 items-end">
+          <div className="flex justify-end max-w-full md:max-w-[512px] self-end">
+            <div className="flex flex-col gap-1 items-end min-w-0">
               <div className="bg-[#00355F] dark:bg-[#1B6CA8] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] rounded-[16px_0px_16px_16px] px-4 py-4 transition-colors">
-                <p className="text-[16px] font-[400] leading-6 text-white text-right">
+                <p className="text-[14px] md:text-[16px] font-[400] leading-6 text-white text-right">
                   That's good to hear. Should I increase my supplement dosage for the Vitamin D?
                 </p>
               </div>
@@ -213,13 +222,13 @@ export default function MessagesPage() {
           </div>
 
           {/* Message Received with Attachment */}
-          <div className="flex items-start gap-4 max-w-[512px]">
+          <div className="flex items-start gap-3 md:gap-4 max-w-full md:max-w-[512px]">
             <div className="w-8 h-8 rounded-[12px] bg-[#DCE9FF] dark:bg-[#1C2C3E] flex items-center justify-center shrink-0 mt-1 transition-colors">
               <span className="text-[10px] font-[700] text-[#00355F] dark:text-white">AT</span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 min-w-0">
               <div className="bg-[#D5E3FC] dark:bg-[#1C2C3E] border border-[rgba(194,199,209,0.2)] dark:border-[#22354A]/30 shadow-[0px_1px_2px_rgba(0,0,0,0.05)] rounded-[0px_16px_16px_16px] px-4 py-4 flex flex-col gap-4 transition-colors">
-                <p className="text-[16px] font-[400] leading-6 text-[#0D1C2E] dark:text-white transition-colors">
+                <p className="text-[14px] md:text-[16px] font-[400] leading-6 text-[#0D1C2E] dark:text-white transition-colors">
                   Yes, I've attached a revised care plan with the adjusted dosage. Please take a look and let me know if you have any questions.
                 </p>
                 {/* Attachment Card */}
@@ -228,7 +237,7 @@ export default function MessagesPage() {
                     <FileText className="w-5 h-5 text-[#BA1A1A] dark:text-[#FFB4AB] transition-colors" />
                   </div>
                   <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                    <span className="text-[14px] font-[700] leading-5 text-[#0D1C2E] dark:text-white truncate transition-colors">Revised_Care_Plan_Oct25.pdf</span>
+                    <span className="text-[13px] md:text-[14px] font-[700] leading-5 text-[#0D1C2E] dark:text-white truncate transition-colors">Revised_Care_Plan_Oct25.pdf</span>
                     <span className="text-[10px] font-[400] text-[#42474F] dark:text-[#A5AAB5] transition-colors">2.4 MB • PDF Document</span>
                   </div>
                   <button className="shrink-0 cursor-pointer">
@@ -241,7 +250,7 @@ export default function MessagesPage() {
           </div>
 
           {/* Typing Indicator */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <div className="w-8 h-8 rounded-[12px] bg-[#DCE9FF] dark:bg-[#1C2C3E] flex items-center justify-center shrink-0 transition-colors">
               <span className="text-[10px] font-[700] text-[#00355F] dark:text-white">AT</span>
             </div>
@@ -254,22 +263,22 @@ export default function MessagesPage() {
         </div>
 
         {/* Chat Footer / Input */}
-        <div className="px-8 py-8 border-t border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
+        <div className="px-4 md:px-8 py-4 md:py-8 border-t border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
           <div className="flex items-center gap-2 bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 border border-[rgba(194,199,209,0.5)] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-[16px] px-2 py-2 transition-all">
-            <button className="flex items-center justify-center w-10 h-10 shrink-0 cursor-pointer hover:bg-white/10 rounded-full transition-colors">
+            <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 cursor-pointer hover:bg-white/10 rounded-full transition-colors">
               <Plus className="w-[14px] h-[14px] text-[#42474F] dark:text-[#A5AAB5]" />
             </button>
             <input
               type="text"
-              placeholder="Write a secure message to your care team..."
-              className="flex-1 bg-transparent text-[16px] font-[400] text-[#0D1C2E] dark:text-white placeholder:text-[#727780] dark:placeholder:text-[#A5AAB5]/60 outline-none"
+              placeholder="Write a message..."
+              className="flex-1 bg-transparent text-[14px] md:text-[16px] font-[400] text-[#0D1C2E] dark:text-white placeholder:text-[#727780] dark:placeholder:text-[#A5AAB5]/60 outline-none min-w-0"
             />
             <div className="flex items-center gap-1 shrink-0">
-              <button className="flex items-center justify-center w-10 h-10 cursor-pointer hover:bg-white/10 rounded-full transition-colors">
+              <button className="hidden md:flex items-center justify-center w-10 h-10 cursor-pointer hover:bg-white/10 rounded-full transition-colors">
                 <Smile className="w-5 h-5 text-[#42474F] dark:text-[#A5AAB5]" />
               </button>
-              <button className="flex items-center justify-center w-10 h-10 bg-[#00355F] dark:bg-[#1B6CA8] rounded-[8px] hover:bg-[#002645] dark:hover:bg-[#2582C7] transition-colors cursor-pointer">
-                <Send className="w-[19px] h-4 text-white" />
+              <button className="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 bg-[#00355F] dark:bg-[#1B6CA8] rounded-[8px] hover:bg-[#002645] dark:hover:bg-[#2582C7] transition-colors cursor-pointer">
+                <Send className="w-[17px] h-[14px] md:w-[19px] md:h-4 text-white" />
               </button>
             </div>
           </div>

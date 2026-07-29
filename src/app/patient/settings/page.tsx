@@ -484,22 +484,22 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="w-full flex gap-6 px-6 py-6 bg-[#F8F9FF] dark:bg-[#0D1C2E] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#E3E3E3] min-h-screen transition-colors duration-300">
+    <div className="w-full flex flex-col md:flex-row gap-4 md:gap-6 px-4 md:px-6 py-4 md:py-6 bg-[#F8F9FF] dark:bg-[#0D1C2E] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#E3E3E3] min-h-screen transition-colors duration-300">
 
-      {/* ── Left Settings Nav ── */}
-      <div className="flex flex-col gap-2 w-[220px] shrink-0 sticky top-24 self-start">
+      {/* ── Settings Nav — horizontal scroll on mobile, vertical sidebar on desktop ── */}
+      <div className="flex md:flex-col gap-2 w-full md:w-[220px] shrink-0 md:sticky md:top-24 md:self-start overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
         {settingsNav.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => handleNavClick(id)}
-            className={`flex items-center gap-3 px-4 py-4 rounded-[8px] border text-left transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-3 md:py-4 rounded-[8px] border text-left transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               activeSection === id
                 ? "bg-white dark:bg-[#1E2D4A] border-[#00355F] dark:border-[#1B6CA8] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none text-[#00355F] dark:text-[#5F9EA0]"
                 : "bg-white dark:bg-[#121E2C] border-[#C2C7D1] dark:border-[#22354A] text-[#42474F] dark:text-[#A5AAB5] hover:border-[#00355F]/40 dark:hover:border-[#1B6CA8]/40"
             }`}
           >
             <Icon className={`w-4 h-4 shrink-0 ${activeSection === id ? "text-[#00355F] dark:text-[#5F9EA0]" : "text-[#42474F] dark:text-[#A5AAB5]"}`} />
-            <span className="text-[12px] font-[600] tracking-[0.6px]">{label}</span>
+            <span className="text-[11px] md:text-[12px] font-[600] tracking-[0.6px]">{label}</span>
           </button>
         ))}
       </div>
@@ -520,8 +520,8 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 transition-colors">
-            <div className="flex items-start gap-12">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-4 md:p-8 transition-colors">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
               {/* Avatar */}
               <div className="flex flex-col items-center gap-4 shrink-0">
                 <div className="w-32 h-32 rounded-[12px] border-4 border-[#DCE9FF] dark:border-[#22354A] bg-[#DCE9FF] dark:bg-[#1E2D4A] flex items-center justify-center overflow-hidden transition-colors">
@@ -549,7 +549,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Form Grid */}
-              <div className="grid grid-cols-2 gap-6 flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 flex-1 w-full">
                 <div className="flex flex-col gap-2">
                   <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">FULL NAME</label>
                   <input
@@ -614,7 +614,7 @@ export default function SettingsPage() {
           <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Security</h3>
           <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none transition-colors">
             {/* Password Row */}
-            <div className="flex items-center justify-between px-8 py-8 border-b border-[#C2C7D1] dark:border-[#22354A]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 md:px-8 py-6 md:py-8 border-b border-[#C2C7D1] dark:border-[#22354A]">
               <div className="flex flex-col gap-1">
                 <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white">Password</span>
                 <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Secure your account with a strong password</span>
@@ -625,7 +625,7 @@ export default function SettingsPage() {
             </div>
 
             {/* 2FA Row */}
-            <div className="flex items-center justify-between px-8 py-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 md:px-8 py-6 md:py-8">
               <div className="flex flex-col gap-1">
                 <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white">Two-Factor Authentication</span>
                 <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Add an extra layer of security to your account</span>
@@ -650,12 +650,13 @@ export default function SettingsPage() {
         <section id="notifications" className="flex flex-col gap-6 scroll-mt-24">
           <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Notification Preferences</h3>
           <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none overflow-hidden transition-colors">
+            <div className="overflow-x-auto">
             {/* Table Header */}
-            <div className="bg-[#EFF4FF] dark:bg-[#1E2D4A] grid grid-cols-[1fr_auto_auto_auto] transition-colors">
+            <div className="bg-[#EFF4FF] dark:bg-[#1E2D4A] grid grid-cols-[1fr_auto_auto_auto] transition-colors min-w-[520px]">
               <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">Notification</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[108px]">Email</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[92px]">SMS</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[103px]">Push</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[80px] md:w-[108px]">Email</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[70px] md:w-[92px]">SMS</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[70px] md:w-[103px]">Push</div>
             </div>
 
             {/* Table Body */}
@@ -666,17 +667,18 @@ export default function SettingsPage() {
             ].map((row, idx) => (
               <div
                 key={row.label}
-                className={`grid grid-cols-[1fr_auto_auto_auto] items-center ${idx > 0 ? "border-t border-[#C2C7D1] dark:border-[#22354A]" : ""}`}
+                className={`grid grid-cols-[1fr_auto_auto_auto] items-center min-w-[520px] ${idx > 0 ? "border-t border-[#C2C7D1] dark:border-[#22354A]" : ""}`}
               >
                 <div className="px-4 py-4 flex flex-col gap-1">
                   <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E] dark:text-white">{row.label}</span>
                   <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">{row.desc}</span>
                 </div>
-                <button onClick={() => handleToggleNotification(row.key, "email")} className="flex justify-center items-center w-[108px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].email} /></button>
-                <button onClick={() => handleToggleNotification(row.key, "sms")} className="flex justify-center items-center w-[92px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].sms} /></button>
-                <button onClick={() => handleToggleNotification(row.key, "push")} className="flex justify-center items-center w-[103px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].push} /></button>
+                <button onClick={() => handleToggleNotification(row.key, "email")} className="flex justify-center items-center w-[80px] md:w-[108px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].email} /></button>
+                <button onClick={() => handleToggleNotification(row.key, "sms")} className="flex justify-center items-center w-[70px] md:w-[92px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].sms} /></button>
+                <button onClick={() => handleToggleNotification(row.key, "push")} className="flex justify-center items-center w-[70px] md:w-[103px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].push} /></button>
               </div>
             ))}
+            </div>
           </div>
         </section>
 
@@ -751,7 +753,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Privacy Card */}
-          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-6 transition-colors">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-4 md:p-8 flex flex-col gap-6 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Lock className="w-[19px] h-[22px] text-[#00355F] dark:text-[#5F9EA0]" />
@@ -797,14 +799,14 @@ export default function SettingsPage() {
 
         {/* ── Destructive Actions ── */}
         <section className="border-t border-[#C2C7D1] dark:border-[#22354A] pt-12">
-          <div className="flex items-center justify-between bg-[rgba(255,218,214,0.2)] dark:bg-[rgba(186,26,26,0.05)] border border-[rgba(186,26,26,0.2)] dark:border-[rgba(186,26,26,0.4)] rounded-[8px] px-8 py-8 transition-colors">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[rgba(255,218,214,0.2)] dark:bg-[rgba(186,26,26,0.05)] border border-[rgba(186,26,26,0.2)] dark:border-[rgba(186,26,26,0.4)] rounded-[8px] px-4 md:px-8 py-6 md:py-8 transition-colors">
             <div className="flex flex-col gap-2">
-              <span className="text-[18px] font-[700] leading-7 text-[#BA1A1A] dark:text-[#E85B5B]">Delete Account</span>
-              <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] max-w-[511px]">
+              <span className="text-[16px] md:text-[18px] font-[700] leading-7 text-[#BA1A1A] dark:text-[#E85B5B]">Delete Account</span>
+              <p className="text-[13px] md:text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] max-w-[511px]">
                 Permanently delete your Clinq account and all associated health records. This action cannot be undone.
               </p>
             </div>
-            <button onClick={handleDeleteAccount} className="flex items-center gap-2 px-6 py-2 bg-[#BA1A1A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#9b1515] transition-colors shrink-0 cursor-pointer">
+            <button onClick={handleDeleteAccount} className="flex items-center gap-2 px-5 md:px-6 py-2 bg-[#BA1A1A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#9b1515] transition-colors shrink-0 cursor-pointer">
               <Trash2 className="w-3.5 h-3.5" />
               Delete
             </button>
