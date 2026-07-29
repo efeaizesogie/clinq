@@ -107,16 +107,16 @@ export default function AppointmentsPage() {
   const getDisplayStatus = (appt: any): { label: string; bg: string; text: string } => {
     if (!isPast(appt)) {
       // Future appointments
-      if (appt.status === "Confirmed") return { label: "CONFIRMED",  bg: "bg-[#D4E6E5]", text: "text-[#576867]" };
-      return { label: "PENDING", bg: "bg-[#E6EEFF]", text: "text-[#00355F]" };
+      if (appt.status === "Confirmed") return { label: "CONFIRMED",  bg: "bg-[#D4E6E5] dark:bg-[#1E2E2D]", text: "text-[#576867] dark:text-[#A3B3B2]" };
+      return { label: "PENDING", bg: "bg-[#E6EEFF] dark:bg-[#1B2F45]", text: "text-[#00355F] dark:text-[#8EBDF9]" };
     }
     // Past appointments — derive from stored status
     switch (appt.status) {
-      case "Confirmed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7]", text: "text-[#15803D]" };
-      case "Completed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7]", text: "text-[#15803D]" };
-      case "Cancelled":  return { label: "CANCELLED",     bg: "bg-[#FFDAD6]", text: "text-[#93000A]" };
-      case "Pending":    return { label: "MISSED",        bg: "bg-[#FEF3C7]", text: "text-[#B45309]" };
-      default:           return { label: "EXPIRED",       bg: "bg-[#E0E3E5]", text: "text-[#42474F]" };
+      case "Confirmed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7] dark:bg-[#183525]", text: "text-[#15803D] dark:text-[#4ADE80]" };
+      case "Completed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7] dark:bg-[#183525]", text: "text-[#15803D] dark:text-[#4ADE80]" };
+      case "Cancelled":  return { label: "CANCELLED",     bg: "bg-[#FFDAD6] dark:bg-[#451B1B]", text: "text-[#93000A] dark:text-[#FF8989]" };
+      case "Pending":    return { label: "MISSED",        bg: "bg-[#FEF3C7] dark:bg-[#3C2E1B]", text: "text-[#B45309] dark:text-[#FBBF24]" };
+      default:           return { label: "EXPIRED",       bg: "bg-[#E0E3E5] dark:bg-[#2A2B2D]", text: "text-[#42474F] dark:text-[#A5AAB5]" };
     }
   };
 
@@ -138,32 +138,32 @@ export default function AppointmentsPage() {
 
   if (loading) {
     return (
-      <div className="w-full px-4 py-8 md:p-12 lg:p-16 flex flex-col gap-10 bg-[#F8F9FF] font-sans antialiased text-[#42474F] h-screen justify-center items-center">
+      <div className="w-full px-4 py-8 md:p-12 lg:p-16 flex flex-col gap-10 bg-[#F8F9FF] dark:bg-[#080F18] font-sans antialiased text-[#42474F] dark:text-[#A5AAB5] h-screen justify-center items-center transition-colors duration-300">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 border-4 border-[#00355F] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-[600] text-[#00355F]">Loading dynamic appointment timeline...</span>
+          <div className="w-12 h-12 border-4 border-[#00355F] dark:border-[#1B6CA8] border-t-transparent dark:border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-[600] text-[#00355F] dark:text-[#5F9EA0]">Loading dynamic appointment timeline...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full px-4 py-4 md:p-6 lg:p-8 flex flex-col gap-10 md:gap-16 bg-[#F8F9FF] font-sans antialiased text-[#42474F]">
+    <div className="w-full px-4 py-4 md:p-6 lg:p-8 flex flex-col gap-10 md:gap-16 bg-[#F8F9FF] dark:bg-[#080F18] font-sans antialiased text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
       
       {/* ── Header Section ── */}
       <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 w-full shrink-0">
         <div className="flex flex-col gap-2 max-w-[672px]">
-          <h2 className="text-[24px] font-[600] leading-10 tracking-[-0.8px] text-[#00355F] font-sans">
+          <h2 className="text-[24px] font-[600] leading-10 tracking-[-0.8px] text-[#00355F] dark:text-[#5F9EA0] font-sans transition-colors">
             Appointments
           </h2>
-          <p className="text-[16px] font-[400] leading-6 text-[#42474F]">
+          <p className="text-[16px] font-[400] leading-6 text-[#42474F] dark:text-[#A5AAB5] transition-colors">
             Manage your scheduled visits, consultations, and medical appointments. Keep track of your treatment timeline and support.
           </p>
         </div>
 
         <Link
           href="/patient/appointments/book"
-          className="flex items-center justify-center gap-2 h-[56px] px-[32px] bg-[#00355F] text-white rounded-[12px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),_0px_4px_6px_-4px_rgba(0,0,0,0.1)] hover:bg-[#002645] transition-colors font-sans select-none shrink-0 w-full sm:w-auto cursor-pointer"
+          className="flex items-center justify-center gap-2 h-[56px] px-[32px] bg-[#00355F] dark:bg-[#1B6CA8] text-white rounded-[12px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),_0px_4px_6px_-4px_rgba(0,0,0,0.1)] hover:bg-[#002645] dark:hover:bg-[#2582C7] transition-all font-sans select-none shrink-0 w-full sm:w-auto cursor-pointer"
         >
           <Plus className="w-[14px] h-[14px] stroke-[2.5]" />
           <span className="text-[16px] font-[700] leading-6 tracking-[0.2px] cursor-pointer">
@@ -182,17 +182,17 @@ export default function AppointmentsPage() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
-                <h3 className="text-[18px] font-[600] leading-8 text-[#0D1C2E] font-sans">
+                <h3 className="text-[18px] font-[600] leading-8 text-[#0D1C2E] dark:text-white font-sans transition-colors">
                   Upcoming Visits
                 </h3>
-                <div className="flex items-center justify-center min-w-[24px] h-[20px] px-2 bg-[#D2E4FF] rounded-full">
-                  <span className="text-[12px] font-[700] tracking-[0.6px] text-[#001C37]">
+                <div className="flex items-center justify-center min-w-[24px] h-[20px] px-2 bg-[#D2E4FF] dark:bg-[#1E2D4A] rounded-full transition-colors">
+                  <span className="text-[12px] font-[700] tracking-[0.6px] text-[#001C37] dark:text-[#8EBDF9] transition-colors">
                     {upcomingAppointments.length}
                   </span>
                 </div>
               </div>
               
-              <button className="flex items-center justify-center w-9 h-9 border border-[#C2C7D1] rounded-[4px] text-[#0D1C2E] hover:bg-[#EFF4FF] transition-colors cursor-pointer">
+              <button className="flex items-center justify-center w-9 h-9 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[#0D1C2E] dark:text-white hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] transition-colors cursor-pointer">
                 <Grid className="w-[18px] h-[12px] cursor-pointer" />
               </button>
             </div>
@@ -209,12 +209,12 @@ export default function AppointmentsPage() {
                   const displayStatus = getDisplayStatus(appt);
 
                   return (
-                    <div key={appt.id} className="flex flex-col sm:flex-row bg-white border border-[#C2C7D1] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] rounded-lg overflow-hidden shrink-0">
+                    <div key={appt.id} className="flex flex-col sm:flex-row bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-lg overflow-hidden shrink-0 transition-colors">
                       {/* Date Sidebar */}
-                      <div className="flex flex-row sm:flex-col justify-center items-center gap-2 sm:gap-0.5 px-6 py-4 sm:py-6 sm:w-[120px] bg-[#0F4C81] border-b sm:border-b-0 sm:border-r border-[#C2C7D1] justify-around sm:justify-center">
-                        <span className="text-[10px] font-[700] uppercase tracking-[0.6px] text-[#D9E6F8]">{monthStr}</span>
-                        <span className="text-[36px] sm:text-[48px] font-[800] tracking-[-0.96px] text-white leading-none my-1">{dayNum}</span>
-                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#D9E6F8]">{timeDisplay}</span>
+                      <div className="flex flex-row sm:flex-col justify-center items-center gap-2 sm:gap-0.5 px-6 py-4 sm:py-6 sm:w-[120px] bg-[#0F4C81] dark:bg-[#1E2D4A] border-b sm:border-b-0 sm:border-r border-[#C2C7D1] dark:border-[#22354A] justify-around sm:justify-center transition-colors">
+                        <span className="text-[10px] font-[700] uppercase tracking-[0.6px] text-[#D9E6F8] dark:text-[#A5AAB5] transition-colors">{monthStr}</span>
+                        <span className="text-[36px] sm:text-[48px] font-[800] tracking-[-0.96px] text-white leading-none my-1 transition-colors">{dayNum}</span>
+                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#D9E6F8] dark:text-[#A5AAB5] transition-colors">{timeDisplay}</span>
                       </div>
                       
                       {/* Content & Action Area */}
@@ -228,13 +228,13 @@ export default function AppointmentsPage() {
                               {displayStatus.label}
                             </span>
                           </div>
-                          <h4 className="text-[18px] font-[700] leading-8 text-[#00355F] font-sans">
+                          <h4 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-white font-sans transition-colors">
                             {doctorName}
                           </h4>
-                          <div className="flex items-center gap-2 text-[#42474F] text-[14px]">
+                          <div className="flex items-center gap-2 text-[#42474F] dark:text-[#A5AAB5] text-[14px] transition-colors">
                             {isTelehealth ? (
                               <>
-                                <Video className="w-4 h-4 text-[#42474F]" />
+                                <Video className="w-4 h-4 text-[#42474F] dark:text-[#A5AAB5]" />
                                 <span>Virtual Consultation</span>
                               </>
                             ) : (
@@ -248,10 +248,10 @@ export default function AppointmentsPage() {
                         
                         {/* Actions */}
                         <div className="flex items-center gap-3 self-end sm:self-center">
-                          <Link href="/patient/appointments" className="h-[34px] px-4 border border-[#C2C7D1] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] hover:bg-[#F8F9FF] transition-colors uppercase cursor-pointer flex items-center justify-center">
+                          <Link href="/patient/appointments" className="h-[34px] px-4 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A] transition-all uppercase cursor-pointer flex items-center justify-center">
                             Reschedule
                           </Link>
-                          <Link href="/patient/messages" className="h-[34px] px-6 bg-[#00355F] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#002645] transition-colors uppercase cursor-pointer flex items-center justify-center">
+                          <Link href="/patient/messages" className="h-[34px] px-6 bg-[#00355F] dark:bg-[#1B6CA8] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#002645] dark:hover:bg-[#2582C7] transition-all uppercase cursor-pointer flex items-center justify-center">
                             Message Doctor
                           </Link>
                         </div>
@@ -260,7 +260,7 @@ export default function AppointmentsPage() {
                   );
                 })
               ) : (
-                <div className="p-10 bg-white border border-[#C2C7D1] rounded-lg text-center text-[#42474F]">
+                <div className="p-10 bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg text-center text-[#42474F] dark:text-[#A5AAB5] transition-colors">
                   You have no upcoming appointments. Click &quot;Book Appointment&quot; to schedule a visit.
                 </div>
               )}
@@ -269,55 +269,55 @@ export default function AppointmentsPage() {
 
           {/* Past Appointments Section */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-[18px] font-[600] leading-8 text-[#0D1C2E] font-sans select-none">
+            <h3 className="text-[18px] font-[600] leading-8 text-[#0D1C2E] dark:text-white font-sans select-none transition-colors">
               Past Appointments
             </h3>
 
-            <div className="flex flex-col bg-white border border-[#C2C7D1] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] rounded-lg overflow-hidden w-full">
+            <div className="flex flex-col bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-lg overflow-hidden w-full transition-colors">
               {/* Responsive Table Wrapper */}
               <div className="w-full overflow-x-auto">
                 <table className="w-full min-w-[600px] border-collapse text-left">
                   <thead>
-                    <tr className="bg-[#EFF4FF] border-b border-[#C2C7D1] h-12">
-                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase select-none">Date / Time</th>
-                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase select-none">Provider</th>
-                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase select-none">Type</th>
-                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase select-none">Status</th>
-                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase text-right select-none">Action</th>
+                    <tr className="bg-[#EFF4FF] dark:bg-[#1E2D4A] border-b border-[#C2C7D1] dark:border-[#22354A] h-12 transition-colors">
+                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase select-none transition-colors">Date / Time</th>
+                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase select-none transition-colors">Provider</th>
+                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase select-none transition-colors">Type</th>
+                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase select-none transition-colors">Status</th>
+                      <th className="px-6 text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase text-right select-none transition-colors">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#C2C7D1]">
+                  <tbody className="divide-y divide-[#C2C7D1] dark:divide-[#22354A] transition-colors">
                     {pastAppointments.length > 0 ? (
                       pastAppointments.map((appt) => {
                         const displayStatus = getDisplayStatus(appt);
                         const dateStr = appt.date || appt.scheduled_at?.split("T")[0];
                         const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
                         return (
-                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] transition-colors ${displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? "opacity-70" : ""}`}>
+                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A]/50 transition-colors ${displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? "opacity-70" : ""}`}>
                             <td className="px-6 py-2">
                               <div className="flex flex-col">
-                                <span className="text-[16px] font-[700] text-[#0D1C2E]">{formatLongDate(dateStr)}</span>
-                                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] mt-1">{timeDisplay}</span>
+                                <span className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white transition-colors">{formatLongDate(dateStr)}</span>
+                                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] mt-1 transition-colors">{timeDisplay}</span>
                               </div>
                             </td>
-                            <td className="px-6 py-2 text-[14px] text-[#0D1C2E]">
+                            <td className="px-6 py-2 text-[14px] text-[#0D1C2E] dark:text-white transition-colors">
                               {appt.specialists?.full_name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
                             </td>
-                            <td className="px-6 py-2 text-[14px] text-[#0D1C2E]">
+                            <td className="px-6 py-2 text-[14px] text-[#0D1C2E] dark:text-white transition-colors">
                               {appt.department || "Consultation"}
                             </td>
                             <td className="px-6 py-2">
-                              <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.2px] uppercase select-none font-sans`}>
+                              <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.2px] uppercase select-none font-sans transition-colors`}>
                                 {displayStatus.label}
                               </span>
                             </td>
                             <td className="px-6 py-2 text-right">
                               {displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? (
-                                <Link href="/patient/appointments/book" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] hover:underline uppercase cursor-pointer">
+                                <Link href="/patient/appointments/book" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] hover:underline uppercase cursor-pointer transition-colors">
                                   Rebook
                                 </Link>
                               ) : (
-                                <Link href="/patient/records" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] hover:underline uppercase cursor-pointer">
+                                <Link href="/patient/records" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] hover:underline uppercase cursor-pointer transition-colors">
                                   View Summary
                                 </Link>
                               )}
@@ -337,7 +337,7 @@ export default function AppointmentsPage() {
               </div>
 
               {/* Table Footer */}
-              <Link href="/patient/records" className="w-full py-[16px] bg-[#EFF4FF] text-[12px] font-[700] text-[#00355F] hover:bg-[#D9E6F8] transition-colors tracking-[0.6px] uppercase select-none font-sans text-center cursor-pointer">
+              <Link href="/patient/records" className="w-full py-[16px] bg-[#EFF4FF] dark:bg-[#1E2D4A] text-[12px] font-[700] text-[#00355F] dark:text-[#5F9EA0] hover:bg-[#D9E6F8] dark:hover:bg-[#1F3C64] transition-colors tracking-[0.6px] uppercase select-none font-sans text-center cursor-pointer">
                 View All Visit History
               </Link>
             </div>
@@ -350,24 +350,24 @@ export default function AppointmentsPage() {
         <div className="flex flex-col gap-8">
           
           {/* Widget 1: Calendar View Widget */}
-          <div className="flex flex-col gap-4 bg-white border border-[#C2C7D1] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] rounded-lg p-6">
+          <div className="flex flex-col gap-4 bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-lg p-6 transition-colors">
             <div className="flex items-center justify-between w-full pb-2">
-              <h4 className="text-[18px] font-[700] leading-7 text-[#0D1C2E] font-sans">
+              <h4 className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white font-sans transition-colors">
                 Calendar Overview
               </h4>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={handlePrevMonth}
-                  className="flex items-center justify-center p-1 rounded-full text-[#42474F] hover:bg-[#EFF4FF] cursor-pointer"
+                  className="flex items-center justify-center p-1 rounded-full text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] cursor-pointer transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4 cursor-pointer" />
                 </button>
-                <span className="text-[14px] font-[700] text-[#0D1C2E] min-w-[100px] text-center select-none">
+                <span className="text-[14px] font-[700] text-[#0D1C2E] dark:text-white min-w-[100px] text-center select-none transition-colors">
                   {viewDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
                 </span>
                 <button 
                   onClick={handleNextMonth}
-                  className="flex items-center justify-center p-1 rounded-full text-[#42474F] hover:bg-[#EFF4FF] cursor-pointer"
+                  className="flex items-center justify-center p-1 rounded-full text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] cursor-pointer transition-colors"
                 >
                   <ChevronRight className="w-4 h-4 cursor-pointer" />
                 </button>
@@ -375,9 +375,9 @@ export default function AppointmentsPage() {
             </div>
 
             {/* Calendar Grid headers */}
-            <div className="grid grid-cols-7 gap-1 text-center border-t border-[#C2C7D1] pt-3">
+            <div className="grid grid-cols-7 gap-1 text-center border-t border-[#C2C7D1] dark:border-[#22354A] pt-3 transition-colors">
               {weekdays.map((day, idx) => (
-                <span key={idx} className="text-[12px] font-[700] tracking-[0.6px] text-[#42474F]">
+                <span key={idx} className="text-[12px] font-[700] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] transition-colors">
                   {day}
                 </span>
               ))}
@@ -423,8 +423,8 @@ export default function AppointmentsPage() {
                       onClick={() => setSelectedDate(dayStr)}
                       className={`flex items-center justify-center rounded-[4px] h-[36px] w-[36px] text-[14px] font-[700] transition-all select-none cursor-pointer ${
                         isActive
-                          ? "bg-[#00355F] text-white"
-                          : "text-[#0D1C2E] hover:bg-[#EFF4FF]"
+                          ? "bg-[#00355F] dark:bg-[#1B6CA8] text-white dark:text-white"
+                          : "text-[#0D1C2E] dark:text-white hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A]"
                       }`}
                     >
                       {day}
@@ -439,65 +439,65 @@ export default function AppointmentsPage() {
             </div>
 
             {/* Legend Indicators */}
-            <div className="mt-4 pt-4 border-t border-[#C2C7D1] flex flex-col gap-2">
+            <div className="mt-4 pt-4 border-t border-[#C2C7D1] dark:border-[#22354A] flex flex-col gap-2 transition-colors">
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#00355F]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Confirmed</span>
+                <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">Confirmed</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#8EBDF9]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Pending</span>
+                <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">Pending</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#15803D]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Attended</span>
+                <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">Attended</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#B45309]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Missed</span>
+                <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">Missed</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#BA1A1A]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Cancelled</span>
+                <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">Cancelled</span>
               </div>
             </div>
           </div>
 
           {/* Widget 2: Priority Lab Access Promo */}
-          <div className="relative flex flex-col justify-end p-6 min-h-[350px] bg-[#0F4C81] rounded-lg overflow-hidden shadow-[0px_4px_20px_rgba(15,76,129,0.04)]">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C81] via-transparent to-transparent opacity-90 z-10" />
+          <div className="relative flex flex-col justify-end p-6 min-h-[350px] bg-[#0F4C81] dark:bg-[#121E2C] border dark:border-[#22354A] rounded-lg overflow-hidden shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none transition-colors">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C81] dark:from-[#121E2C] via-transparent to-transparent opacity-90 z-10" />
             <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay opacity-20 pointer-events-none" />
 
             <div className="relative z-20 flex flex-col gap-4">
-              <span className="px-2.5 py-1 bg-[#00355F] text-white text-[10px] font-[700] tracking-[0.5px] uppercase rounded-full select-none w-max">
+              <span className="px-2.5 py-1 bg-[#00355F] dark:bg-[#1B6CA8] text-white text-[10px] font-[700] tracking-[0.5px] uppercase rounded-full select-none w-max transition-colors">
                 Featured
               </span>
-              <h4 className="text-[18px] font-[600] leading-8 text-[#D3DDEA] font-sans">
+              <h4 className="text-[18px] font-[600] leading-8 text-[#D3DDEA] dark:text-white font-sans transition-colors">
                 Priority Lab Access
               </h4>
-              <p className="text-[14px] leading-5 text-[#D3DDEA] opacity-90">
+              <p className="text-[14px] leading-5 text-[#D3DDEA] dark:text-[#A5AAB5] opacity-90 transition-colors">
                 Upgrade to Pro to skip wait times for routine blood work and get same-day result analysis.
               </p>
-              <button className="w-full py-3 bg-white text-[#0F4C81] hover:bg-[#EFF4FF] font-[700] text-[16px] rounded-lg transition-colors mt-2 text-center uppercase tracking-[0.6px] cursor-pointer">
+              <button className="w-full py-3 bg-white dark:bg-[#1B6CA8] text-[#0F4C81] dark:text-white hover:bg-[#EFF4FF] dark:hover:bg-[#2582C7] font-[700] text-[16px] rounded-lg transition-colors mt-2 text-center uppercase tracking-[0.6px] cursor-pointer">
                 Upgrade Now
               </button>
             </div>
           </div>
 
           {/* Widget 3: Clinical Support Card */}
-          <div className="flex flex-col gap-4 bg-[#EFF4FF] border border-[#C2C7D1] rounded-lg p-6">
-            <h4 className="text-[18px] font-[700] leading-7 text-[#0D1C2E] font-sans select-none">
+          <div className="flex flex-col gap-4 bg-[#EFF4FF] dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg p-6 transition-colors font-sans">
+            <h4 className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white font-sans select-none transition-colors">
               Scheduling Support
             </h4>
             <div className="flex flex-col gap-4 mt-2">
               {/* Call */}
               <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center w-8 h-9 text-[#00355F] shrink-0 mt-0.5">
+                <div className="flex items-center justify-center w-8 h-9 text-[#00355F] dark:text-[#5F9EA0] shrink-0 mt-0.5 transition-colors">
                   <Phone className="w-[18px] h-[18px]" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase">CALL CLINIC</span>
-                  <a href="tel:18005550199" className="text-[16px] font-[700] text-[#00355F] hover:underline cursor-pointer">
+                <div className="flex flex-col font-sans">
+                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase transition-colors">CALL CLINIC</span>
+                  <a href="tel:18005550199" className="text-[16px] font-[700] text-[#00355F] dark:text-[#1B6CA8] hover:underline cursor-pointer transition-colors">
                     1-800-CLINQ-MD
                   </a>
                 </div>
@@ -505,12 +505,12 @@ export default function AppointmentsPage() {
 
               {/* Portal */}
               <div className="flex items-start gap-4">
-                <div className="flex items-center justify-center w-8 h-9 text-[#00355F] shrink-0 mt-0.5">
+                <div className="flex items-center justify-center w-8 h-9 text-[#00355F] dark:text-[#5F9EA0] shrink-0 mt-0.5 transition-colors">
                   <HelpCircle className="w-[18px] h-[18px]" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] uppercase">ONLINE SUPPORT</span>
-                  <Link href="/help" className="text-[16px] font-[700] text-[#00355F] hover:underline cursor-pointer">
+                <div className="flex flex-col font-sans">
+                  <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] uppercase transition-colors">ONLINE SUPPORT</span>
+                  <Link href="/help" className="text-[16px] font-[700] text-[#00355F] dark:text-[#1B6CA8] hover:underline cursor-pointer transition-colors">
                     Visit Support Portal
                   </Link>
                 </div>

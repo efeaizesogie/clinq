@@ -114,6 +114,7 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState("profile");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [sessionUser, setSessionUser] = useState<any>(null);
 
   // Reusable custom modal state
@@ -136,6 +137,7 @@ export default function SettingsPage() {
     email: "",
     phone: "",
     dob: "",
+    gender: "Male",
     avatarUrl: "",
   });
   
@@ -184,6 +186,7 @@ export default function SettingsPage() {
             email: user.email || "",
             phone: profileData.phone_number || "",
             dob: profileData.date_birth || "",
+            gender: profileData.gender || "Male",
             avatarUrl: profileData.avatar_url || "",
           });
         }
@@ -232,6 +235,14 @@ export default function SettingsPage() {
     }
     fetchSettings();
   }, [router]);
+
+  // Synchronize theme changes locally for instant visual feedback
+  useEffect(() => {
+    if (!preferences.theme) return;
+    window.dispatchEvent(
+      new CustomEvent("clinq-theme-change", { detail: preferences.theme })
+    );
+  }, [preferences.theme]);
 
   // Setup intersection observer to highlight side nav automatically on scroll
   useEffect(() => {
@@ -321,7 +332,7 @@ export default function SettingsPage() {
         phone_number: profile.phone,
         date_birth: profile.dob,
         avatar_url: profile.avatarUrl,
-        gender: "Male"
+        gender: profile.gender
       });
       if (profileError) throw profileError;
 
@@ -416,6 +427,8 @@ export default function SettingsPage() {
   };
 
   const executeAccountDeletion = async () => {
+    setModal(prev => ({ ...prev, isOpen: false }));
+    setIsDeleting(true);
     try {
       const supabase = createClient();
       const { data } = await supabase.auth.getSession();
@@ -433,8 +446,12 @@ export default function SettingsPage() {
       }
       
       await supabase.auth.signOut();
-      router.push("/login");
+      setTimeout(() => {
+        setIsDeleting(false);
+        router.push("/register");
+      }, 2500);
     } catch (error: any) {
+      setIsDeleting(false);
       setModal({
         isOpen: true,
         type: "error",
@@ -467,7 +484,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="w-full flex gap-6 px-6 py-6 bg-[#F8F9FF] font-[Manrope,sans-serif] text-[#42474F] min-h-screen">
+    <div className="w-full flex gap-6 px-6 py-6 bg-[#F8F9FF] dark:bg-[#0D1C2E] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#E3E3E3] min-h-screen transition-colors duration-300">
 
       {/* ── Left Settings Nav ── */}
       <div className="flex flex-col gap-2 w-[220px] shrink-0 sticky top-24 self-start">
@@ -477,11 +494,11 @@ export default function SettingsPage() {
             onClick={() => handleNavClick(id)}
             className={`flex items-center gap-3 px-4 py-4 rounded-[8px] border text-left transition-colors cursor-pointer ${
               activeSection === id
-                ? "bg-white border-[#00355F] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] text-[#00355F]"
-                : "bg-white border-[#C2C7D1] text-[#42474F] hover:border-[#00355F]/40"
+                ? "bg-white dark:bg-[#1E2D4A] border-[#00355F] dark:border-[#1B6CA8] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none text-[#00355F] dark:text-[#5F9EA0]"
+                : "bg-white dark:bg-[#121E2C] border-[#C2C7D1] dark:border-[#22354A] text-[#42474F] dark:text-[#A5AAB5] hover:border-[#00355F]/40 dark:hover:border-[#1B6CA8]/40"
             }`}
           >
-            <Icon className={`w-4 h-4 shrink-0 ${activeSection === id ? "text-[#00355F]" : "text-[#42474F]"}`} />
+            <Icon className={`w-4 h-4 shrink-0 ${activeSection === id ? "text-[#00355F] dark:text-[#5F9EA0]" : "text-[#42474F] dark:text-[#A5AAB5]"}`} />
             <span className="text-[12px] font-[600] tracking-[0.6px]">{label}</span>
           </button>
         ))}
@@ -493,26 +510,26 @@ export default function SettingsPage() {
         {/* ── Profile Settings ── */}
         <section id="profile" className="flex flex-col gap-6 scroll-mt-24">
           <div className="flex items-center justify-between">
-            <h2 className="text-[24px] font-[700] leading-8 text-[#00355F]">Profile Settings</h2>
+            <h2 className="text-[24px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Profile Settings</h2>
             <button 
               onClick={handleSaveChanges} 
               disabled={isSaving}
-              className="px-6 py-2 bg-[#00355F] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#002645] transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-6 py-2 bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white transition-colors disabled:opacity-50 cursor-pointer"
             >
               {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
 
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] p-8">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 transition-colors">
             <div className="flex items-start gap-12">
               {/* Avatar */}
               <div className="flex flex-col items-center gap-4 shrink-0">
-                <div className="w-32 h-32 rounded-[12px] border-4 border-[#DCE9FF] bg-[#DCE9FF] flex items-center justify-center overflow-hidden">
+                <div className="w-32 h-32 rounded-[12px] border-4 border-[#DCE9FF] dark:border-[#22354A] bg-[#DCE9FF] dark:bg-[#1E2D4A] flex items-center justify-center overflow-hidden transition-colors">
                   {profile.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={profile.avatarUrl} alt="Patient Avatar" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-[32px] font-[700] text-[#00355F]">{getUserInitials()}</span>
+                    <span className="text-[32px] font-[700] text-[#00355F] dark:text-white">{getUserInitials()}</span>
                   )}
                 </div>
                 <button 
@@ -534,38 +551,58 @@ export default function SettingsPage() {
               {/* Form Grid */}
               <div className="grid grid-cols-2 gap-6 flex-1">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F]">FULL NAME</label>
+                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">FULL NAME</label>
                   <input
                     value={profile.fullName}
                     onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
-                    className="px-3 py-3 bg-white border border-[#C2C7D1] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] outline-none focus:border-[#00355F] transition-colors"
+                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F]">EMAIL ADDRESS</label>
+                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">EMAIL ADDRESS</label>
                   <input
                     value={profile.email}
                     readOnly
                     disabled
-                    className="px-3 py-3 bg-[#F1F3F9] border border-[#C2C7D1] rounded-[4px] text-[16px] font-[400] text-[#767F8D] outline-none cursor-not-allowed select-none"
+                    className="px-3 py-3 bg-[#F1F3F9] dark:bg-[#111A24] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#767F8D] dark:text-[#6B7280] outline-none cursor-not-allowed select-none transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F]">PHONE NUMBER</label>
+                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">PHONE NUMBER</label>
                   <input
                     value={profile.phone}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                    className="px-3 py-3 bg-white border border-[#C2C7D1] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] outline-none focus:border-[#00355F] transition-colors"
+                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F]">DATE OF BIRTH</label>
+                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">DATE OF BIRTH</label>
                   <input
                     type="date"
                     value={profile.dob}
                     onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
-                    className="px-3 py-3 bg-white border border-[#C2C7D1] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] outline-none focus:border-[#00355F] transition-colors"
+                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">GENDER</label>
+                  <div className="relative">
+                    <select
+                      value={profile.gender}
+                      onChange={(e) => setProfile({ ...profile, gender: e.target.value })}
+                      className="w-full px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white appearance-none outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors cursor-pointer"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path d="M1 1L6 6L11 1" stroke="#6B7280" strokeWidth="1.8" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -574,15 +611,15 @@ export default function SettingsPage() {
 
         {/* ── Security ── */}
         <section id="security" className="flex flex-col gap-6 scroll-mt-24">
-          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F]">Security</h3>
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)]">
+          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Security</h3>
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none transition-colors">
             {/* Password Row */}
-            <div className="flex items-center justify-between px-8 py-8 border-b border-[#C2C7D1]">
+            <div className="flex items-center justify-between px-8 py-8 border-b border-[#C2C7D1] dark:border-[#22354A]">
               <div className="flex flex-col gap-1">
-                <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E]">Password</span>
-                <span className="text-[14px] font-[400] leading-5 text-[#42474F]">Secure your account with a strong password</span>
+                <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white">Password</span>
+                <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Secure your account with a strong password</span>
               </div>
-              <button onClick={handleResetPassword} className="px-6 py-2 border border-[#00355F] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#00355F] hover:bg-[#EFF4FF] transition-colors whitespace-nowrap cursor-pointer">
+              <button onClick={handleResetPassword} className="px-6 py-2 border border-[#00355F] dark:border-[#1B6CA8] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1C2C3D] transition-colors whitespace-nowrap cursor-pointer">
                 Change Password
               </button>
             </div>
@@ -590,22 +627,20 @@ export default function SettingsPage() {
             {/* 2FA Row */}
             <div className="flex items-center justify-between px-8 py-8">
               <div className="flex flex-col gap-1">
-                <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E]">Two-Factor Authentication</span>
-                <span className="text-[14px] font-[400] leading-5 text-[#42474F]">Add an extra layer of security to your account</span>
+                <span className="text-[18px] font-[700] leading-7 text-[#0D1C2E] dark:text-white">Two-Factor Authentication</span>
+                <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Add an extra layer of security to your account</span>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F]">
+                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">
                   {security.twoFA ? "Enabled" : "Disabled"}
                 </span>
                 <button
+                  type="button"
                   onClick={() => setSecurity({ ...security, twoFA: !security.twoFA })}
-                  className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${security.twoFA ? "bg-[#00355F]" : "bg-[#D5E3FC]"}`}
+                  className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${security.twoFA ? "bg-[#00355F] dark:bg-[#1B6CA8]" : "bg-[#D5E3FC] dark:bg-[#1E2D4A]"}`}
                 >
-                  <span className={`absolute top-0.5 w-5 h-5 bg-white border border-[#D1D5DB] rounded-full shadow transition-transform ${security.twoFA ? "translate-x-5" : "translate-x-0.5"}`} />
+                  <span className={`absolute top-0.5 w-5 h-5 bg-white border border-[#D1D5DB] rounded-full shadow transition-transform ${security.twoFA ? "translate-x-0.5" : "translate-x-[-20px]"}`} />
                 </button>
-                <span className="text-[12px] font-[700] tracking-[0.6px] text-[#00355F]">
-                  {security.twoFA ? "Enabled" : "Enable"}
-                </span>
               </div>
             </div>
           </div>
@@ -613,14 +648,14 @@ export default function SettingsPage() {
 
         {/* ── Notification Preferences ── */}
         <section id="notifications" className="flex flex-col gap-6 scroll-mt-24">
-          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F]">Notification Preferences</h3>
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] overflow-hidden">
+          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Notification Preferences</h3>
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none overflow-hidden transition-colors">
             {/* Table Header */}
-            <div className="bg-[#EFF4FF] grid grid-cols-[1fr_auto_auto_auto]">
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F]">Notification</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] text-center w-[108px]">Email</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] text-center w-[92px]">SMS</div>
-              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] text-center w-[103px]">Push</div>
+            <div className="bg-[#EFF4FF] dark:bg-[#1E2D4A] grid grid-cols-[1fr_auto_auto_auto] transition-colors">
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5]">Notification</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[108px]">Email</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[92px]">SMS</div>
+              <div className="px-4 py-4 text-[12px] font-[600] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] text-center w-[103px]">Push</div>
             </div>
 
             {/* Table Body */}
@@ -631,11 +666,11 @@ export default function SettingsPage() {
             ].map((row, idx) => (
               <div
                 key={row.label}
-                className={`grid grid-cols-[1fr_auto_auto_auto] items-center ${idx > 0 ? "border-t border-[#C2C7D1]" : ""}`}
+                className={`grid grid-cols-[1fr_auto_auto_auto] items-center ${idx > 0 ? "border-t border-[#C2C7D1] dark:border-[#22354A]" : ""}`}
               >
                 <div className="px-4 py-4 flex flex-col gap-1">
-                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E]">{row.label}</span>
-                  <span className="text-[14px] font-[400] leading-5 text-[#42474F]">{row.desc}</span>
+                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E] dark:text-white">{row.label}</span>
+                  <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">{row.desc}</span>
                 </div>
                 <button onClick={() => handleToggleNotification(row.key, "email")} className="flex justify-center items-center w-[108px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].email} /></button>
                 <button onClick={() => handleToggleNotification(row.key, "sms")} className="flex justify-center items-center w-[92px] py-4 cursor-pointer"><Checkbox checked={notifications[row.key].sms} /></button>
@@ -647,20 +682,20 @@ export default function SettingsPage() {
 
         {/* ── Account Preferences ── */}
         <section id="preferences" className="flex flex-col gap-6 scroll-mt-24">
-          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F]">Account Preferences</h3>
+          <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Account Preferences</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Language Card */}
-            <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] p-8 flex flex-col gap-4">
+            <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-4 transition-colors">
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-[#00355F]" />
-                <span className="text-[18px] font-[700] leading-7 text-[#00355F]">Language</span>
+                <Globe className="w-5 h-5 text-[#00355F] dark:text-[#5F9EA0]" />
+                <span className="text-[18px] font-[700] leading-7 text-[#00355F] dark:text-[#5F9EA0]">Language</span>
               </div>
               <div className="relative">
                 <select 
                   value={preferences.language}
                   onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
-                  className="w-full px-3 py-3 bg-white border border-[#C2C7D1] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] appearance-none outline-none focus:border-[#00355F] transition-colors cursor-pointer"
+                  className="w-full px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white appearance-none outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors cursor-pointer"
                 >
                   <option value="English (United States)">English (United States)</option>
                   <option value="Spanish">Spanish</option>
@@ -672,58 +707,60 @@ export default function SettingsPage() {
                   </svg>
                 </div>
               </div>
-              <p className="text-[14px] font-[400] leading-5 text-[#42474F]">
+              <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">
                 This will change the interface language across the portal.
               </p>
             </div>
 
             {/* Theme Card */}
-            <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] p-8 flex flex-col gap-4">
+            <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-4 transition-colors">
               <div className="flex items-center gap-3">
-                <Sun className="w-[18px] h-[18px] text-[#00355F]" />
-                <span className="text-[18px] font-[700] leading-7 text-[#00355F]">Display Theme</span>
+                <Sun className="w-[18px] h-[18px] text-[#00355F] dark:text-[#5F9EA0]" />
+                <span className="text-[18px] font-[700] leading-7 text-[#00355F] dark:text-[#5F9EA0]">Display Theme</span>
               </div>
-              <div className="flex items-center gap-1 p-1 bg-[#EFF4FF] rounded-[4px]">
+              <div className="flex items-center gap-1 p-1 bg-[#EFF4FF] dark:bg-[#1E2D4A] rounded-[4px] transition-colors">
                 <button
+                  type="button"
                   onClick={() => setPreferences({ ...preferences, theme: "light" })}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[2px] text-[12px] tracking-[0.6px] transition-all cursor-pointer ${
                     preferences.theme === "light"
-                      ? "bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F]"
-                      : "font-[600] text-[#42474F]"
+                      ? "bg-white dark:bg-[#0D1C2E] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F] dark:text-white"
+                      : "font-[600] text-[#42474F] dark:text-[#A5AAB5]"
                   }`}
                 >
                   <Sun className="w-[22px] h-[22px]" />
                   Light
                 </button>
                 <button
+                  type="button"
                   onClick={() => setPreferences({ ...preferences, theme: "dark" })}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[2px] text-[12px] tracking-[0.6px] transition-all cursor-pointer ${
                     preferences.theme === "dark"
-                      ? "bg-white shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F]"
-                      : "font-[600] text-[#42474F]"
+                      ? "bg-white dark:bg-[#0D1C2E] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F] dark:text-white"
+                      : "font-[600] text-[#42474F] dark:text-[#A5AAB5]"
                   }`}
                 >
                   <Moon className="w-[18px] h-[18px]" />
                   Dark
                 </button>
               </div>
-              <p className="text-[14px] font-[400] leading-5 text-[#42474F]">
+              <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">
                 Switch between light and dark clinical interface styles.
               </p>
             </div>
           </div>
 
           {/* Privacy Card */}
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] p-8 flex flex-col gap-6">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-6 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Lock className="w-[19px] h-[22px] text-[#00355F]" />
-                <span className="text-[18px] font-[700] leading-7 text-[#00355F]">Data Privacy Options</span>
+                <Lock className="w-[19px] h-[22px] text-[#00355F] dark:text-[#5F9EA0]" />
+                <span className="text-[18px] font-[700] leading-7 text-[#00355F] dark:text-[#5F9EA0]">Data Privacy Options</span>
               </div>
               <DownloadPDFButton
                 filename={`clinq-personal-data-${profile.fullName.toLowerCase().replace(/\s+/g, "-")}`}
                 label="Download My Data"
-                className="text-[12px] font-[700] flex items-center gap-2 tracking-[0.6px] text-[#BA1A1A] hover:underline bg-transparent border-0 cursor-pointer p-0"
+                className="text-[12px] font-[700] flex items-center gap-2 tracking-[0.6px] text-[#BA1A1A] dark:text-[#E85B5B] hover:underline bg-transparent border-0 cursor-pointer p-0"
                 buildDoc={buildHealthPDF(profile, security, notifications, preferences, privacy)}
               />
             </div>
@@ -731,27 +768,27 @@ export default function SettingsPage() {
             <div className="flex flex-col gap-4">
               <button 
                 onClick={() => setPrivacy({ ...privacy, research: !privacy.research })} 
-                className="flex items-start gap-4 p-4 border border-[#C2C7D1] rounded-[4px] cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-[#00355F]"
+                className="flex items-start gap-4 p-4 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-[#00355F] dark:focus:ring-[#1B6CA8] bg-transparent transition-colors"
               >
                 <div className="pt-0.5 shrink-0">
                   <Checkbox checked={privacy.research} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E]">Allow anonymized data for research</span>
-                  <span className="text-[14px] font-[400] leading-5 text-[#42474F]">Help improve clinical outcomes by sharing de-identified health data</span>
+                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E] dark:text-white">Allow anonymized data for research</span>
+                  <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Help improve clinical outcomes by sharing de-identified health data</span>
                 </div>
               </button>
               
               <button 
                 onClick={() => setPrivacy({ ...privacy, providers: !privacy.providers })} 
-                className="flex items-start gap-4 p-4 border border-[#C2C7D1] rounded-[4px] cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-[#00355F]"
+                className="flex items-start gap-4 p-4 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] cursor-pointer text-left focus:outline-none focus:ring-1 focus:ring-[#00355F] dark:focus:ring-[#1B6CA8] bg-transparent transition-colors"
               >
                 <div className="pt-0.5 shrink-0">
                   <Checkbox checked={privacy.providers} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E]">Share data with connected providers</span>
-                  <span className="text-[14px] font-[400] leading-5 text-[#42474F]">Allow your care team to access records across affiliated clinics</span>
+                  <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E] dark:text-white">Share data with connected providers</span>
+                  <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">Allow your care team to access records across affiliated clinics</span>
                 </div>
               </button>
             </div>
@@ -759,11 +796,11 @@ export default function SettingsPage() {
         </section>
 
         {/* ── Destructive Actions ── */}
-        <section className="border-t border-[#C2C7D1] pt-12">
-          <div className="flex items-center justify-between bg-[rgba(255,218,214,0.2)] border border-[rgba(186,26,26,0.2)] rounded-[8px] px-8 py-8">
+        <section className="border-t border-[#C2C7D1] dark:border-[#22354A] pt-12">
+          <div className="flex items-center justify-between bg-[rgba(255,218,214,0.2)] dark:bg-[rgba(186,26,26,0.05)] border border-[rgba(186,26,26,0.2)] dark:border-[rgba(186,26,26,0.4)] rounded-[8px] px-8 py-8 transition-colors">
             <div className="flex flex-col gap-2">
-              <span className="text-[18px] font-[700] leading-7 text-[#BA1A1A]">Delete Account</span>
-              <p className="text-[14px] font-[400] leading-5 text-[#42474F] max-w-[511px]">
+              <span className="text-[18px] font-[700] leading-7 text-[#BA1A1A] dark:text-[#E85B5B]">Delete Account</span>
+              <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] max-w-[511px]">
                 Permanently delete your Clinq account and all associated health records. This action cannot be undone.
               </p>
             </div>
@@ -776,25 +813,35 @@ export default function SettingsPage() {
 
       </div>
 
+      {isDeleting && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 dark:bg-[#0D1C2E]/95 backdrop-blur-sm transition-all duration-300">
+          <div className="flex flex-col items-center gap-4 max-w-sm text-center px-6">
+            <div className="w-12 h-12 border-[3px] border-[#00355F] dark:border-[#1B6CA8] border-t-transparent dark:border-t-transparent rounded-full animate-spin" />
+            <h3 className="text-[20px] font-[700] text-[#0D1C2E] dark:text-white mt-2">Deleting your account...</h3>
+            <p className="text-[14px] font-[400] text-[#42474F] dark:text-[#A5AAB5]">Please wait while we permanently remove your patient profile and medical records from Clinq.</p>
+          </div>
+        </div>
+      )}
+
       {/* ── Custom Dialog Modal ── */}
       {modal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs px-4">
-          <div className="bg-white border border-[#C2C7D1] rounded-[12px] shadow-2xl w-full max-w-[480px] p-8 flex flex-col gap-6 animate-scale-in">
-            <div className="flex flex-col gap-2 border-b border-[#F1F3F9] pb-4">
-              <h3 className={`text-[20px] font-[700] ${modal.type === "error" || modal.type === "confirmDelete" ? "text-[#BA1A1A]" : "text-[#00355F]"}`}>
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[12px] shadow-2xl w-full max-w-[480px] p-8 flex flex-col gap-6 animate-scale-in transition-colors">
+            <div className="flex flex-col gap-2 border-b border-[#F1F3F9] dark:border-[#22354A] pb-4">
+              <h3 className={`text-[20px] font-[700] ${modal.type === "error" || modal.type === "confirmDelete" ? "text-[#BA1A1A] dark:text-[#E85B5B]" : "text-[#00355F] dark:text-[#5F9EA0]"}`}>
                 {modal.title}
               </h3>
             </div>
-            <div className="text-[14px] leading-6 text-[#42474F]">
+            <div className="text-[14px] leading-6 text-[#42474F] dark:text-[#A5AAB5]">
               {modal.message}
             </div>
             
-            <div className="flex gap-4 pt-4 border-t border-[#F1F3F9]">
+            <div className="flex gap-4 pt-4 border-t border-[#F1F3F9] dark:border-[#22354A]">
               {modal.type === "confirmDelete" ? (
                 <>
                   <button
                     onClick={() => setModal({ ...modal, isOpen: false })}
-                    className="flex-grow py-2.5 border border-[#C2C7D1] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] hover:bg-[#F8F9FF] transition-colors cursor-pointer"
+                    className="flex-grow py-2.5 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#F8F9FF] dark:hover:bg-[#1C2C3D] transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -812,7 +859,7 @@ export default function SettingsPage() {
                 <button
                   onClick={() => setModal({ ...modal, isOpen: false })}
                   className={`w-full py-2.5 rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white transition-colors cursor-pointer ${
-                    modal.type === "error" ? "bg-[#BA1A1A] hover:bg-[#9b1515]" : "bg-[#00355F] hover:bg-[#002645]"
+                    modal.type === "error" ? "bg-[#BA1A1A] hover:bg-[#9b1515]" : "bg-[#00355F] hover:bg-[#002645] dark:bg-[#1B6CA8] dark:hover:bg-[#2582C7]"
                   }`}
                 >
                   Close

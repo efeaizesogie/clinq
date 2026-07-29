@@ -74,15 +74,15 @@ function getTimeDisplay(appt: Appointment) {
 
 function getStatusStyle(status: string | undefined, isPast: boolean) {
   if (!isPast) {
-    if (status === "Confirmed") return { label: "CONFIRMED", bg: "bg-[#D4E6E5]", text: "text-[#576867]" };
-    return { label: "PENDING", bg: "bg-[#E6EEFF]", text: "text-[#00355F]" };
+    if (status === "Confirmed") return { label: "CONFIRMED", bg: "bg-[#D4E6E5] dark:bg-[#1E2E2D]", text: "text-[#576867] dark:text-[#A3B3B2]" };
+    return { label: "PENDING", bg: "bg-[#E6EEFF] dark:bg-[#1B2F45]", text: "text-[#00355F] dark:text-[#8EBDF9]" };
   }
   switch (status) {
     case "Confirmed":
-    case "Completed": return { label: "ATTENDED", bg: "bg-[#DCFCE7]", text: "text-[#15803D]" };
-    case "Cancelled": return { label: "CANCELLED", bg: "bg-[#FFDAD6]", text: "text-[#93000A]" };
-    case "Pending":   return { label: "MISSED", bg: "bg-[#FEF3C7]", text: "text-[#B45309]" };
-    default:          return { label: "EXPIRED", bg: "bg-[#E0E3E5]", text: "text-[#42474F]" };
+    case "Completed": return { label: "ATTENDED", bg: "bg-[#DCFCE7] dark:bg-[#183525]", text: "text-[#15803D] dark:text-[#4ADE80]" };
+    case "Cancelled": return { label: "CANCELLED", bg: "bg-[#FFDAD6] dark:bg-[#451B1B]", text: "text-[#93000A] dark:text-[#FF8989]" };
+    case "Pending":   return { label: "MISSED", bg: "bg-[#FEF3C7] dark:bg-[#3C2E1B]", text: "text-[#B45309] dark:text-[#FBBF24]" };
+    default:          return { label: "EXPIRED", bg: "bg-[#E0E3E5] dark:bg-[#2A2B2D]", text: "text-[#42474F] dark:text-[#A5AAB5]" };
   }
 }
 
@@ -248,24 +248,24 @@ export default function HealthRecordsPage() {
 
   if (loading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#F8F9FF]">
+      <div className="w-full h-screen flex items-center justify-center bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 border-4 border-[#00355F] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-[600] text-[#00355F]">Loading health records...</span>
+          <div className="w-12 h-12 border-4 border-[#00355F] dark:border-[#1B6CA8] border-t-transparent dark:border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-[600] text-[#00355F] dark:text-[#5F9EA0]">Loading health records...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-16 px-6 py-6 bg-[#F8F9FF] font-[Manrope,sans-serif] text-[#42474F]">
+    <div className="w-full flex flex-col gap-16 px-6 py-6 bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 w-full">
         <div className="flex flex-col gap-2 max-w-[672px]">
-          <h2 className="text-[24px] font-[600] leading-[40px] tracking-[-0.32px] text-[#00355F]">
+          <h2 className="text-[24px] font-[600] leading-[40px] tracking-[-0.32px] text-[#00355F] dark:text-[#5F9EA0]">
             My Health Records
           </h2>
-          <p className="text-[16px] font-[400] leading-[24px] text-[#42474F]">
+          <p className="text-[16px] font-[400] leading-[24px] text-[#42474F] dark:text-[#A5AAB5]">
             A centralized view of your medical history, clinical documentation, and health summaries managed by Clinq Medical.
           </p>
         </div>
@@ -281,27 +281,27 @@ export default function HealthRecordsPage() {
         {/* Left: Allergies + Immunizations */}
         <div className="flex flex-col gap-6">
           {/* Allergies */}
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] p-6 flex flex-col gap-6">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] p-6 flex flex-col gap-6 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-[22px] h-[19px] text-[#BA1A1A] shrink-0" />
-                <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E]">Allergies</span>
+                <AlertTriangle className="w-[22px] h-[19px] text-[#BA1A1A] dark:text-[#FF8989] shrink-0" />
+                <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E] dark:text-white transition-colors">Allergies</span>
               </div>
-              <span className="px-3 py-1 bg-[#FFDAD6] rounded-[12px] text-[12px] font-[600] leading-4 tracking-[0.6px] text-[#93000A]">
+              <span className="px-3 py-1 bg-[#FFDAD6] dark:bg-[#451B1B] rounded-[12px] text-[12px] font-[600] leading-4 tracking-[0.6px] text-[#93000A] dark:text-[#FF8989] transition-colors">
                 {allergies.length} Active
               </span>
             </div>
             <div className="flex flex-col gap-4">
               {allergies.length === 0 ? (
-                <p className="text-[14px] text-[#42474F]">No allergies on record.</p>
+                <p className="text-[14px] text-[#42474F] dark:text-[#A5AAB5]">No allergies on record.</p>
               ) : (
                 allergies.map((item, idx) => (
                   <div
                     key={item.id}
-                    className={`flex flex-col gap-1 pb-4 ${idx < allergies.length - 1 ? "border-b border-[#C2C7D1]" : ""}`}
+                    className={`flex flex-col gap-1 pb-4 ${idx < allergies.length - 1 ? "border-b border-[#C2C7D1] dark:border-[#22354A]" : ""}`}
                   >
-                    <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#00355F]">{item.allergy_name}</span>
-                    <span className="text-[14px] font-[400] leading-5 text-[#42474F]">{item.reaction}</span>
+                    <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] transition-colors">{item.allergy_name}</span>
+                    <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] transition-colors">{item.reaction}</span>
                   </div>
                 ))
               )}
@@ -309,22 +309,22 @@ export default function HealthRecordsPage() {
           </div>
 
           {/* Immunizations */}
-          <div className="bg-white border border-[#C2C7D1] rounded-[8px] p-6 flex flex-col gap-4">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] p-6 flex flex-col gap-4 transition-colors">
             <div className="flex items-center gap-2">
-              <Syringe className="w-[19px] h-[20px] text-[#516161] shrink-0" />
-              <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E]">Immunizations</span>
+              <Syringe className="w-[19px] h-[20px] text-[#516161] dark:text-[#A5AAB5] shrink-0 transition-colors" />
+              <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E] dark:text-white transition-colors">Immunizations</span>
             </div>
             <div className="flex flex-col gap-3">
               {immunizations.length === 0 ? (
-                <p className="text-[14px] text-[#42474F]">No immunization records found.</p>
+                <p className="text-[14px] text-[#42474F] dark:text-[#A5AAB5]">No immunization records found.</p>
               ) : (
                 immunizations.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between px-3 py-3 bg-[#EFF4FF] rounded-[4px]">
+                  <div key={item.id} className="flex items-center justify-between px-3 py-3 bg-[#EFF4FF] dark:bg-[#1E2D4A] rounded-[4px] transition-colors">
                     <div className="flex flex-col gap-1">
-                      <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#0D1C2E]">{item.name}</span>
-                      <span className="text-[14px] font-[400] leading-5 text-[#42474F]">{fmtShortDate(item.date_administered)}</span>
+                      <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#0D1C2E] dark:text-white transition-colors">{item.name}</span>
+                      <span className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] transition-colors">{fmtShortDate(item.date_administered)}</span>
                     </div>
-                    <CheckCircle2 className="w-5 h-5 text-[#00355F] shrink-0" />
+                    <CheckCircle2 className="w-5 h-5 text-[#00355F] dark:text-[#5F9EA0] shrink-0 transition-colors" />
                   </div>
                 ))
               )}
@@ -333,12 +333,12 @@ export default function HealthRecordsPage() {
         </div>
 
         {/* Right: Clinical Timeline */}
-        <div className="bg-white border border-[#C2C7D1] rounded-[8px] p-6 flex flex-col gap-6">
+        <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] p-6 flex flex-col gap-6 transition-colors">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-[#00355F]" />
-              <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E]">Clinical Timeline</span>
-              <span className="px-2 py-0.5 bg-[#D2E4FF] rounded-full text-[12px] font-[700] tracking-[0.6px] text-[#001C37]">
+              <Calendar className="w-5 h-5 text-[#00355F] dark:text-[#5F9EA0]" />
+              <span className="text-[18px] font-[600] leading-8 text-[#0D1C2E] dark:text-white transition-colors">Clinical Timeline</span>
+              <span className="px-2 py-0.5 bg-[#D2E4FF] dark:bg-[#1C2C3E] rounded-full text-[12px] font-[700] tracking-[0.6px] text-[#001C37] dark:text-[#8EBDF9] transition-colors">
                 {appointments.length}
               </span>
             </div>
@@ -347,8 +347,8 @@ export default function HealthRecordsPage() {
                 <button
                   key={f}
                   onClick={() => setActiveFilter(f)}
-                  className={`px-3 py-1 border border-[#C2C7D1] rounded-[12px] text-[12px] font-[600] tracking-[0.6px] transition-colors ${
-                    activeFilter === f ? "bg-[#00355F] text-white border-[#00355F]" : "text-[#42474F] hover:bg-[#EFF4FF]"
+                  className={`px-3 py-1 border border-[#C2C7D1] dark:border-[#22354A] rounded-[12px] text-[12px] font-[600] tracking-[0.6px] transition-colors cursor-pointer ${
+                    activeFilter === f ? "bg-[#00355F] dark:bg-[#1B6CA8] text-white border-[#00355F] dark:border-[#1B6CA8]" : "text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A]"
                   }`}
                 >
                   {f}
@@ -359,11 +359,10 @@ export default function HealthRecordsPage() {
 
           <div className="relative flex flex-col gap-6">
             <div
-              className="absolute left-[19px] top-0 bottom-0 w-[2px] pointer-events-none"
-              style={{ background: "linear-gradient(180deg, #00355F 0%, #C2C7D1 60%, rgba(194,199,209,0) 100%)" }}
+              className="absolute left-[19px] top-0 bottom-0 w-[2px] pointer-events-none bg-gradient-to-b from-[#00355F] via-[#C2C7D1] dark:via-[#22354A] to-transparent"
             />
             {filtered.length === 0 ? (
-              <p className="pl-14 text-[14px] text-[#42474F]">No appointments found.</p>
+              <p className="pl-14 text-[14px] text-[#42474F] dark:text-[#A5AAB5]">No appointments found.</p>
             ) : (
               filtered.map((appt) => {
                 const past = isPast(appt);
@@ -385,26 +384,26 @@ export default function HealthRecordsPage() {
                     <div className={`flex items-center justify-center w-10 h-10 ${dotColor} rounded-[10px] shadow-sm shrink-0`}>
                       <Calendar className="w-[15px] h-[15px] text-white" />
                     </div>
-                    <div className="flex-1 bg-[#EFF4FF] border border-[#C2C7D1] rounded-[8px] p-4 flex flex-col gap-2">
+                    <div className="flex-1 bg-[#EFF4FF] dark:bg-[#1E2D4A] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] p-4 flex flex-col gap-2 transition-colors">
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex flex-col gap-1">
-                          <span className="text-[16px] font-[700] leading-6 text-[#00355F]">{doctor}</span>
-                          <span className="text-[13px] font-[500] text-[#42474F]">{dept}</span>
+                          <span className="text-[16px] font-[700] leading-6 text-[#00355F] dark:text-white transition-colors">{doctor}</span>
+                          <span className="text-[13px] font-[500] text-[#42474F] dark:text-[#A5AAB5] transition-colors">{dept}</span>
                         </div>
                         <div className="flex flex-col items-end gap-1 shrink-0">
-                          <span className={`px-2 py-0.5 ${st.bg} ${st.text} rounded-[2px] text-[10px] font-[700] tracking-[0.6px] uppercase`}>
+                          <span className={`px-2 py-0.5 ${st.bg} ${st.text} rounded-[2px] text-[10px] font-[700] tracking-[0.6px] uppercase transition-colors`}>
                             {st.label}
                           </span>
-                          <span className="text-[11px] font-[600] text-[#42474F]">{fmtDate(dateStr)}</span>
+                          <span className="text-[11px] font-[600] text-[#42474F] dark:text-[#A5AAB5] transition-colors">{fmtDate(dateStr)}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-4 flex-wrap">
                         {time && (
-                          <div className="flex items-center gap-1 text-[12px] text-[#42474F]">
+                          <div className="flex items-center gap-1 text-[12px] text-[#42474F] dark:text-[#A5AAB5] transition-colors">
                             <Clock className="w-3 h-3" /><span>{time}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-1 text-[12px] text-[#42474F]">
+                        <div className="flex items-center gap-1 text-[12px] text-[#42474F] dark:text-[#A5AAB5] transition-colors">
                           {isTelehealth ? (
                             <><Video className="w-3 h-3" /><span>Virtual Consultation</span></>
                           ) : (
@@ -418,7 +417,7 @@ export default function HealthRecordsPage() {
                         )}
                       </div>
                       {appt.notes && (
-                        <p className="text-[13px] text-[#42474F] leading-5 pt-1 border-t border-[#C2C7D1]">{appt.notes}</p>
+                        <p className="text-[13px] text-[#42474F] dark:text-[#A5AAB5] leading-5 pt-1 border-t border-[#C2C7D1] dark:border-[#22354A] transition-colors">{appt.notes}</p>
                       )}
                     </div>
                   </div>
@@ -430,11 +429,11 @@ export default function HealthRecordsPage() {
       </div>
 
       {/* ── Export Hub ── */}
-      <div className="w-full bg-[#00355F] rounded-[16px] px-8 py-12">
+      <div className="w-full bg-[#00355F] dark:bg-[#121E2C] border dark:border-[#22354A] rounded-[16px] px-8 py-12 transition-colors">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           <div className="flex flex-col gap-2 max-w-[576px]">
             <h3 className="text-[24px] font-[600] leading-[40px] tracking-[-0.32px] text-white">Secure Export Hub</h3>
-            <p className="text-[18px] font-[400] leading-7 text-white/80">
+            <p className="text-[18px] font-[400] leading-7 text-white/80 dark:text-[#A5AAB5] transition-colors">
               Generate a secure export of your Clinq Health Records for specialists or personal backup.
             </p>
           </div>
@@ -442,9 +441,9 @@ export default function HealthRecordsPage() {
             filename="clinq-health-summary"
             label="Comprehensive PDF"
             buildDoc={buildHealthSummaryPDF}
-            className="relative flex flex-col items-center justify-center gap-3 w-[215px] h-[130px] bg-white rounded-[8px] shadow-lg hover:shadow-xl transition-shadow"
+            className="relative flex flex-col items-center justify-center gap-3 w-[215px] h-[130px] bg-white dark:bg-[#1B6CA8] text-[#00355F] dark:text-white rounded-[8px] shadow-lg hover:shadow-xl transition-all cursor-pointer border dark:border-[#2582C7]/30"
           >
-            <FileText className="w-4 h-5 text-[#00355F]" />
+            <FileText className="w-4 h-5 text-[#00355F] dark:text-white" />
           </DownloadPDFButton>
         </div>
       </div>
