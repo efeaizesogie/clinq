@@ -472,7 +472,7 @@ export default function PatientDashboardPage() {
             <h3 className="text-[18px] font-[600] leading-[18px] text-[#00355F] font-sans">
               Lab Results
             </h3>
-            <Link href="/patient/records" className="text-[12px] font-[700] tracking-[0.6px] text-[#00355F] hover:underline uppercase cursor-pointer">
+            <Link href="/patient/lab-results" className="text-[12px] font-[700] tracking-[0.6px] text-[#00355F] hover:underline uppercase cursor-pointer">
               See All
             </Link>
           </div>
@@ -495,7 +495,7 @@ export default function PatientDashboardPage() {
                       </div>
                     </div>
                     {lab.status === "Reviewed" ? (
-                      <Link href="/patient/records" className="px-3 py-1 bg-[#00355F] hover:bg-[#002b4d] text-white rounded-[12px] text-[9px] font-[700] uppercase tracking-[0.2px] select-none transition-colors cursor-pointer flex items-center justify-center">
+                      <Link href="/patient/lab-results" className="px-3 py-1 bg-[#00355F] hover:bg-[#002b4d] text-white rounded-[12px] text-[9px] font-[700] uppercase tracking-[0.2px] select-none transition-colors cursor-pointer flex items-center justify-center">
                         View Report
                       </Link>
                     ) : (

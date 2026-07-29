@@ -351,3 +351,8 @@ CREATE POLICY "Authenticated users or admin can update specialist_schedules" ON 
 CREATE POLICY "Admin or service role can insert specialist_schedules" ON public.specialist_schedules
   FOR INSERT WITH CHECK (true);
 
+ 
+
+-- Added for dynamic patient settings UI
+ALTER TABLE public.patient_settings ADD COLUMN IF NOT EXISTS privacy_research BOOLEAN DEFAULT false;
+ALTER TABLE public.patient_settings ADD COLUMN IF NOT EXISTS privacy_providers BOOLEAN DEFAULT false;

@@ -1,13 +1,53 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Bell, Settings, Menu } from "lucide-react";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 interface PatientTopNavProps {
   onMenuToggle?: () => void;
 }
 
 export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
+  const [initials, setInitials] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchUserInitials() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const { data: profile } = await supabase
+          .from("patient_profiles")
+          .select("full_name, avatar_url")
+          .eq("id", user.id)
+          .single();
+          
+        if (profile?.avatar_url) {
+          setAvatarUrl(profile.avatar_url);
+        }
+        if (profile?.full_name) {
+          const nameParts = profile.full_name.split(" ");
+          if (nameParts.length > 1) {
+            setInitials(`${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`);
+          } else {
+            setInitials(nameParts[0].substring(0, 2).toUpperCase());
+          }
+        } else {
+          // Fallback to email or generic
+          const fb = user.email ? user.email.substring(0, 2).toUpperCase() : "PA";
+          setInitials(fb);
+        }
+      } catch (err) {
+        console.error("Error fetching patient initials:", err);
+      }
+    }
+    fetchUserInitials();
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between w-full h-16 bg-[#F8F9FF] border-b border-[#C2C7D1] px-4 md:px-[64px] shrink-0">
       {/* Search Input Area */}
@@ -45,14 +85,19 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
         </button>
 
         {/* Settings Button */}
-        <button className="flex items-center justify-center w-8 h-8 rounded-lg text-[#00355F] hover:bg-[#EFF4FF] transition-colors">
+        <Link href="/patient/settings" className="flex items-center justify-center w-8 h-8 rounded-lg text-[#00355F] hover:bg-[#EFF4FF] transition-colors">
           <Settings className="w-5 h-5" />
-        </button>
+        </Link>
 
         {/* User Profile Info Card */}
-        <div className="flex items-center justify-center w-8 h-8 rounded-[12px] bg-[#D5E3FC] border border-[#C2C7D1] overflow-hidden cursor-pointer select-none">
-          <span className="text-[12px] font-[700] text-[#00355F]">RH</span>
-        </div>
+        <Link href="/patient/settings" className="flex items-center justify-center w-8 h-8 rounded-[12px] bg-[#D5E3FC] border border-[#C2C7D1] overflow-hidden cursor-pointer select-none">
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-[12px] font-[700] text-[#00355F]">{initials || "..."}</span>
+          )}
+        </Link>
       </div>
     </header>
   );
