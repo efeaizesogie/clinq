@@ -133,19 +133,27 @@ export default function BookAppointmentPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("Cardiology");
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   
-  // Date and Week/Month Pagination tracking: YYYY-MM-DD format
-  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
-    // Snap to Monday of the current week
-    const now = new Date();
-    const day = now.getDay(); // 0=Sun … 6=Sat
+  // Timezone-safe date formatter (avoids UTC shift from toISOString)
+  const fmtLocalDate = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  const getMonday = (d: Date) => {
+    const dt = new Date(d);
+    const day = dt.getDay(); // 0=Sun … 6=Sat
     const diff = day === 0 ? -6 : 1 - day;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday;
-  });
+    dt.setDate(dt.getDate() + diff);
+    dt.setHours(0, 0, 0, 0);
+    return dt;
+  };
+
+  // Date and Week/Month Pagination tracking: YYYY-MM-DD format
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => getMonday(new Date()));
   const [selectedDateStr, setSelectedDateStr] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    fmtLocalDate(new Date())
   );
   const [selectedTime, setSelectedTime] = useState<string>("11:15 AM"); // Default selected
   const [visitType, setVisitType] = useState<"In-Person" | "Telehealth">("In-Person");
@@ -201,8 +209,7 @@ export default function BookAppointmentPage() {
     const prev = new Date(currentWeekStart);
     prev.setDate(prev.getDate() - 7);
     setCurrentWeekStart(prev);
-    // Auto select first day on the previous week
-    setSelectedDateStr(prev.toISOString().split("T")[0]);
+    setSelectedDateStr(fmtLocalDate(prev));
     setSelectedTime("");
   };
 
@@ -210,8 +217,7 @@ export default function BookAppointmentPage() {
     const next = new Date(currentWeekStart);
     next.setDate(next.getDate() + 7);
     setCurrentWeekStart(next);
-    // Auto select first day on the next week
-    setSelectedDateStr(next.toISOString().split("T")[0]);
+    setSelectedDateStr(fmtLocalDate(next));
     setSelectedTime("");
   };
 
@@ -316,7 +322,7 @@ export default function BookAppointmentPage() {
   const weekdaysData = Array.from({ length: 7 }).map((_, idx) => {
     const d = new Date(currentWeekStart);
     d.setDate(currentWeekStart.getDate() + idx);
-    const dateStr = d.toISOString().split("T")[0];
+    const dateStr = fmtLocalDate(d);
     const hasSlots = dbSchedules.some(s => s.available_date === dateStr);
     return {
       dayName: DAY_LABELS[d.getDay()],
@@ -342,6 +348,10 @@ export default function BookAppointmentPage() {
   const handleSelectDoctor = (doc: any) => {
     setSelectedDoctor(doc);
     setSelectedTime(""); // Reset selected slot
+    // Default to today's date and its week
+    const today = new Date();
+    setSelectedDateStr(fmtLocalDate(today));
+    setCurrentWeekStart(getMonday(today));
     setStep(3);
   };
 
