@@ -51,9 +51,9 @@ export default function PatientDashboardPage() {
         // Fetch Appointments
         const { data: apptData } = await supabase
           .from("appointments")
-          .select("*, specialists(name, image_url)")
+          .select("*, specialists(full_name, image_url)")
           .eq("patient_id", user.id)
-          .order("date", { ascending: true })
+          .order("scheduled_at", { ascending: true })
           .limit(3);
         if (apptData) {
           setAppointments(apptData);
@@ -147,8 +147,10 @@ export default function PatientDashboardPage() {
   const nextApp = appointments[0];
   let bannerMessage = "Welcome to your Patient Portal. View your diagnostic records, request prescription refills, or contact your care team.";
   if (nextApp) {
-    const formattedDate = nextApp.date ? new Date(nextApp.date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) : "";
-    bannerMessage = `You have an upcoming consultation with ${nextApp.specialists?.name || nextApp.assigned_doctor || "Dr. Sarah Miller, MD"} on ${formattedDate} at ${nextApp.time_start || "2:00 PM"}.`;
+    const rawDate = nextApp.date || nextApp.scheduled_at?.split("T")[0];
+    const formattedDate = rawDate ? new Date(rawDate + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) : "";
+    const timeDisplay = nextApp.time_start || (nextApp.scheduled_at ? new Date(nextApp.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "2:00 PM");
+    bannerMessage = `You have an upcoming consultation with ${nextApp.specialists?.full_name || nextApp.assigned_doctor || "Dr. Sarah Miller, MD"} on ${formattedDate} at ${timeDisplay}.`;
   }
 
   return (
@@ -320,8 +322,10 @@ export default function PatientDashboardPage() {
           <div className="flex flex-col gap-6">
             {appointments.length > 0 ? (
               appointments.map((appt) => {
-                const { dayName, dayNum } = formatDateSidebar(appt.date);
+                const rawDate = appt.date || appt.scheduled_at?.split("T")[0];
+                const { dayName, dayNum } = formatDateSidebar(rawDate);
                 const isTelehealth = appt.location?.toLowerCase().includes("telehealth") || !appt.location;
+                const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
                 
                 return (
                   <div key={appt.id} className="flex flex-col sm:flex-row bg-white border border-[#C2C7D1] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] rounded-lg overflow-hidden shrink-0">
@@ -329,7 +333,7 @@ export default function PatientDashboardPage() {
                     <div className="flex flex-row sm:flex-col justify-center items-center gap-2 sm:gap-0.5 px-6 py-4 sm:py-6 sm:w-[120px] bg-[#DCE9FF] border-b sm:border-b-0 sm:border-r border-[#C2C7D1] justify-around sm:justify-center">
                       <span className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F]">{dayName}</span>
                       <span className="text-[36px] sm:text-[48px] font-[700] tracking-[-0.96px] text-[#00355F] leading-none my-1">{dayNum}</span>
-                      <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F]">{appt.time_start}</span>
+                      <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F]">{timeDisplay}</span>
                     </div>
                     
                     {/* Info & Action area */}
@@ -339,7 +343,7 @@ export default function PatientDashboardPage() {
                           {appt.is_urgent ? "URGENT VISIT" : "CLINICAL VISIT"}
                         </span>
                         <h4 className="text-[16px] font-[600] leading-8 text-[#0D1C2E]">
-                          {appt.specialists?.name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
+                          {appt.specialists?.full_name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
                         </h4>
                         <div className="flex items-center gap-2 text-[#42474F]">
                           {isTelehealth ? (

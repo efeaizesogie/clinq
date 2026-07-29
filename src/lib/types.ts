@@ -29,6 +29,7 @@ export interface Specialist {
     color_grad: string;
     is_available: boolean;
     availability_text: string;
+    availability_days?: number[];  // day_of_week values doctor works e.g. [1,3,5]
     created_at?: string;
     retention_rate?: number;
     tag?: string;

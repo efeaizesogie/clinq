@@ -299,35 +299,50 @@ export default function BookAppointmentPage() {
     loadSpecs();
   }, [selectedSpecialty]);
 
-  // Fetch slots for selected specialist
+  // Fetch slots + availability template for selected specialist
   useEffect(() => {
     if (!selectedDoctor) return;
     async function loadSchedules() {
       try {
-        const { data } = await supabase
+        // Fetch the dated slots for the current 4-week window
+        const { data: schedData } = await supabase
           .from("specialist_schedules")
           .select("*")
           .eq("specialist_id", selectedDoctor.id);
-        if (data) {
-          setDbSchedules(data);
+        if (schedData) setDbSchedules(schedData);
+
+        // Fetch the weekly availability template to know active days
+        const { data: availData } = await supabase
+          .from("specialist_availability")
+          .select("day_of_week")
+          .eq("specialist_id", selectedDoctor.id);
+        if (availData) {
+          setSelectedDoctor((prev: any) => ({
+            ...prev,
+            availability_days: availData.map((r: any) => r.day_of_week)
+          }));
         }
       } catch (err) {
         console.error("Load schedules error:", err);
       }
     }
     loadSchedules();
-  }, [selectedDoctor]);
+  }, [selectedDoctor?.id]);
 
   const DAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const weekdaysData = Array.from({ length: 7 }).map((_, idx) => {
     const d = new Date(currentWeekStart);
     d.setDate(currentWeekStart.getDate() + idx);
     const dateStr = fmtLocalDate(d);
-    const hasSlots = dbSchedules.some(s => s.available_date === dateStr);
+    const dow = d.getDay();
+    // Use availability_days template if loaded, otherwise fall back to checking dbSchedules
+    const hasSlots = selectedDoctor?.availability_days
+      ? selectedDoctor.availability_days.includes(dow)
+      : dbSchedules.some(s => s.available_date === dateStr);
     return {
-      dayName: DAY_LABELS[d.getDay()],
+      dayName: DAY_LABELS[dow],
       dateVal: d.getDate(),
-      dateStr: dateStr,
+      dateStr,
       active: hasSlots
     };
   });
@@ -437,6 +452,9 @@ export default function BookAppointmentPage() {
             specialist_id: selectedDoctor.id,
             department: selectedSpecialty,
             scheduled_at: `${formattedDate}T${formatTimeTo24h(selectedTime)}`,
+            date: formattedDate,
+            time_start: selectedTime,
+            location: visitType === "Telehealth" ? "Telehealth" : "MedCore Main Plaza, Tower A, Suite 402",
             status: "Pending"
           }
         ]);

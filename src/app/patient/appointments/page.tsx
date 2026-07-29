@@ -37,9 +37,9 @@ export default function AppointmentsPage() {
         // Fetch user's appointments
         const { data: apptData, error } = await supabase
           .from("appointments")
-          .select("*, specialists(name, image_url)")
+          .select("*, specialists(full_name, image_url)")
           .eq("patient_id", user.id)
-          .order("date", { ascending: true });
+          .order("scheduled_at", { ascending: true });
 
         if (apptData) {
           setAppointments(apptData);
@@ -87,16 +87,41 @@ export default function AppointmentsPage() {
     }
   };
 
-  // Separate upcoming and past appointments
-  // Upcoming status: Confirmed, Pending
-  // Past status: Completed, Cancelled
-  const upcomingAppointments = appointments.filter(
-    appt => appt.status === "Confirmed" || appt.status === "Pending"
-  );
-  
-  const pastAppointments = appointments.filter(
-    appt => appt.status === "Completed" || appt.status === "Cancelled"
-  );
+  // Derive a display status for any appointment whose date has passed
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const getApptDate = (appt: any): Date | null => {
+    const raw = appt.date || appt.scheduled_at?.split("T")[0];
+    if (!raw) return null;
+    const d = new Date(raw + "T00:00:00");
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const isPast = (appt: any) => {
+    const d = getApptDate(appt);
+    return d ? d < today : false;
+  };
+
+  // Display status: what the user sees in the UI
+  const getDisplayStatus = (appt: any): { label: string; bg: string; text: string } => {
+    if (!isPast(appt)) {
+      // Future appointments
+      if (appt.status === "Confirmed") return { label: "CONFIRMED",  bg: "bg-[#D4E6E5]", text: "text-[#576867]" };
+      return { label: "PENDING", bg: "bg-[#E6EEFF]", text: "text-[#00355F]" };
+    }
+    // Past appointments — derive from stored status
+    switch (appt.status) {
+      case "Confirmed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7]", text: "text-[#15803D]" };
+      case "Completed":  return { label: "ATTENDED",      bg: "bg-[#DCFCE7]", text: "text-[#15803D]" };
+      case "Cancelled":  return { label: "CANCELLED",     bg: "bg-[#FFDAD6]", text: "text-[#93000A]" };
+      case "Pending":    return { label: "MISSED",        bg: "bg-[#FEF3C7]", text: "text-[#B45309]" };
+      default:           return { label: "EXPIRED",       bg: "bg-[#E0E3E5]", text: "text-[#42474F]" };
+    }
+  };
+
+  const upcomingAppointments = appointments.filter(appt => !isPast(appt));
+  const pastAppointments     = appointments.filter(appt => isPast(appt));
 
   // Calendar rendering math
   const year = viewDate.getFullYear();
@@ -176,9 +201,12 @@ export default function AppointmentsPage() {
             <div className="flex flex-col gap-6">
               {upcomingAppointments.length > 0 ? (
                 upcomingAppointments.map((appt) => {
-                  const { monthStr, dayNum } = formatDateSidebar(appt.date);
+                  const { monthStr, dayNum } = formatDateSidebar(appt.date || appt.scheduled_at?.split("T")[0]);
                   const isTelehealth = appt.location?.toLowerCase().includes("telehealth") || !appt.location;
                   const isUrgent = appt.is_urgent;
+                  const doctorName = appt.specialists?.full_name || appt.assigned_doctor || "Dr. Sarah Miller, MD";
+                  const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
+                  const displayStatus = getDisplayStatus(appt);
 
                   return (
                     <div key={appt.id} className="flex flex-col sm:flex-row bg-white border border-[#C2C7D1] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] rounded-lg overflow-hidden shrink-0">
@@ -186,7 +214,7 @@ export default function AppointmentsPage() {
                       <div className="flex flex-row sm:flex-col justify-center items-center gap-2 sm:gap-0.5 px-6 py-4 sm:py-6 sm:w-[120px] bg-[#0F4C81] border-b sm:border-b-0 sm:border-r border-[#C2C7D1] justify-around sm:justify-center">
                         <span className="text-[10px] font-[700] uppercase tracking-[0.6px] text-[#D9E6F8]">{monthStr}</span>
                         <span className="text-[36px] sm:text-[48px] font-[800] tracking-[-0.96px] text-white leading-none my-1">{dayNum}</span>
-                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#D9E6F8]">{appt.time_start}</span>
+                        <span className="text-[12px] font-[600] tracking-[0.6px] text-[#D9E6F8]">{timeDisplay}</span>
                       </div>
                       
                       {/* Content & Action Area */}
@@ -196,12 +224,12 @@ export default function AppointmentsPage() {
                             <span className={`px-2 py-0.5 ${isUrgent ? "bg-[#FFDAD6] text-[#93000A]" : "bg-[#D4E6E5] text-[#576867]"} rounded-[2px] text-[12px] font-[700] tracking-[0.6px] uppercase select-none`}>
                               {isUrgent ? "URGENT VISIT" : "CLINICAL VISIT"}
                             </span>
-                            <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F]">
-                              {isTelehealth ? "Telehealth" : "In-Person"}
+                            <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.6px] uppercase select-none`}>
+                              {displayStatus.label}
                             </span>
                           </div>
                           <h4 className="text-[18px] font-[700] leading-8 text-[#00355F] font-sans">
-                            {appt.specialists?.name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
+                            {doctorName}
                           </h4>
                           <div className="flex items-center gap-2 text-[#42474F] text-[14px]">
                             {isTelehealth ? (
@@ -261,28 +289,30 @@ export default function AppointmentsPage() {
                   <tbody className="divide-y divide-[#C2C7D1]">
                     {pastAppointments.length > 0 ? (
                       pastAppointments.map((appt) => {
-                        const isCancelled = appt.status === "Cancelled";
+                        const displayStatus = getDisplayStatus(appt);
+                        const dateStr = appt.date || appt.scheduled_at?.split("T")[0];
+                        const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
                         return (
-                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] transition-colors ${isCancelled ? "opacity-60" : ""}`}>
+                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] transition-colors ${displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? "opacity-70" : ""}`}>
                             <td className="px-6 py-2">
                               <div className="flex flex-col">
-                                <span className="text-[16px] font-[700] text-[#0D1C2E]">{formatLongDate(appt.date)}</span>
-                                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] mt-1">{appt.time_start}</span>
+                                <span className="text-[16px] font-[700] text-[#0D1C2E]">{formatLongDate(dateStr)}</span>
+                                <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] mt-1">{timeDisplay}</span>
                               </div>
                             </td>
                             <td className="px-6 py-2 text-[14px] text-[#0D1C2E]">
-                              {appt.specialists?.name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
+                              {appt.specialists?.full_name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
                             </td>
                             <td className="px-6 py-2 text-[14px] text-[#0D1C2E]">
                               {appt.department || "Consultation"}
                             </td>
                             <td className="px-6 py-2">
-                              <span className={`px-2 py-0.5 ${isCancelled ? "bg-[#FFDAD6] text-[#93000A]" : "bg-[#D4E6E5] text-[#576867]"} rounded-[2px] text-[10px] font-[700] tracking-[0.2px] uppercase select-none font-sans`}>
-                                {appt.status.toUpperCase()}
+                              <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.2px] uppercase select-none font-sans`}>
+                                {displayStatus.label}
                               </span>
                             </td>
                             <td className="px-6 py-2 text-right">
-                              {isCancelled ? (
+                              {displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? (
                                 <Link href="/patient/appointments/book" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] hover:underline uppercase cursor-pointer">
                                   Rebook
                                 </Link>
@@ -370,19 +400,21 @@ export default function AppointmentsPage() {
                 const isActive = isSelected || (!selectedDate && isToday);
 
                 // Check if patient has any appointment on this specific day
-                const dayAppointments = appointments.filter(appt => appt.date === dayStr);
+                const dayAppointments = appointments.filter(appt => {
+                  const d = appt.date || appt.scheduled_at?.split("T")[0];
+                  return d === dayStr;
+                });
                 const hasDot = dayAppointments.length > 0;
-                
-                // Color dots depending on status code
+
+                // Dot colour: priority order — missed > cancelled > attended > pending > confirmed
                 let dotColor = "bg-[#00355F]";
                 if (hasDot) {
-                  const urgentExists = dayAppointments.some(a => a.is_urgent);
-                  const isCompleted = dayAppointments.every(a => a.status === "Completed");
-                  if (urgentExists) {
-                    dotColor = "bg-[#BA1A1A]";
-                  } else if (isCompleted) {
-                    dotColor = "bg-[#15803D]";
-                  }
+                  const statuses = dayAppointments.map(a => getDisplayStatus(a).label);
+                  if (statuses.includes("MISSED"))     dotColor = "bg-[#B45309]";
+                  else if (statuses.includes("CANCELLED")) dotColor = "bg-[#BA1A1A]";
+                  else if (statuses.includes("ATTENDED"))  dotColor = "bg-[#15803D]";
+                  else if (statuses.includes("PENDING"))   dotColor = "bg-[#8EBDF9]";
+                  else if (statuses.includes("CONFIRMED")) dotColor = "bg-[#00355F]";
                 }
 
                 return (
@@ -410,15 +442,23 @@ export default function AppointmentsPage() {
             <div className="mt-4 pt-4 border-t border-[#C2C7D1] flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#00355F]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Confirmed Visit</span>
+                <span className="text-[14px] text-[#42474F] font-[400]">Confirmed</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-[#BA1A1A]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Urgent Visit</span>
+                <span className="w-3 h-3 rounded-full bg-[#8EBDF9]" />
+                <span className="text-[14px] text-[#42474F] font-[400]">Pending</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="w-3 h-3 rounded-full bg-[#15803D]" />
-                <span className="text-[14px] text-[#42474F] font-[400]">Completed Visit</span>
+                <span className="text-[14px] text-[#42474F] font-[400]">Attended</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-[#B45309]" />
+                <span className="text-[14px] text-[#42474F] font-[400]">Missed</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-[#BA1A1A]" />
+                <span className="text-[14px] text-[#42474F] font-[400]">Cancelled</span>
               </div>
             </div>
           </div>
