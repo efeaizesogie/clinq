@@ -2,11 +2,11 @@
 
 @theme {
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --color-brand-blue: #00355F;
-  --color-brand-dark: #0D1C2E;
-  --color-brand-muted: #42474F;
-  --color-brand-accent: #0F4C81;
-  --color-brand-bg-light: #F8F9FF;
+  --color-brand-blue: #00355f;
+  --color-brand-dark: #0d1c2e;
+  --color-brand-muted: #42474f;
+  --color-brand-accent: #0f4c81;
+  --color-brand-bg-light: #f8f9ff;
 }
 
 @layer base {
@@ -14,5 +14,8 @@
     background-color: var(--color-brand-bg-light);
     color: var(--color-brand-muted);
     font-family: var(--font-sans);
+  }
+  button {
+    cursor: pointer;
   }
 }
