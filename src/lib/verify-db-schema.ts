@@ -27,7 +27,8 @@ const tablesToCheck = [
     "patient_menus",
     "conversations",
     "messages",
-    "appointments"
+    "appointments",
+    "specialist_schedules"
 ];
 
 async function verifySchema() {

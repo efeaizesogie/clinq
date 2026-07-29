@@ -316,3 +316,38 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_patient_signup();
+
+-- 16. Specialist Schedules (Selectable time slots for appointments)
+ALTER TABLE IF EXISTS public.specialists ADD COLUMN IF NOT EXISTS image_url TEXT;
+ALTER TABLE IF EXISTS public.specialists ADD COLUMN IF NOT EXISTS gender TEXT DEFAULT 'Male';
+ALTER TABLE IF EXISTS public.specialists ADD COLUMN IF NOT EXISTS languages TEXT[] DEFAULT ARRAY['English'];
+
+CREATE TABLE IF NOT EXISTS public.specialist_schedules (
+  id             UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  specialist_id  UUID NOT NULL REFERENCES public.specialists(id) ON DELETE CASCADE,
+  available_date DATE NOT NULL, -- e.g. '2024-10-21'
+  date_val       INTEGER NOT NULL, -- e.g. 21
+  time_slot      TEXT NOT NULL,
+  is_booked      BOOLEAN NOT NULL DEFAULT false,
+  created_at     TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(specialist_id, available_date, time_slot)
+);
+
+-- Enable Row Level Security on specialist_schedules
+ALTER TABLE public.specialist_schedules ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to see specialist schedules
+CREATE POLICY "Public read specialist_schedules" ON public.specialist_schedules
+  FOR SELECT USING (true);
+
+-- Allow authenticated users or admin to book/update slot availability
+CREATE POLICY "Authenticated users or admin can update specialist_schedules" ON public.specialist_schedules
+  FOR UPDATE USING (
+    (auth.role() = 'authenticated') OR 
+    (auth.jwt()->'user_metadata'->>'role') = 'admin'
+  );
+
+-- Allow inserting schedules for seeding (admin/service-role)
+CREATE POLICY "Admin or service role can insert specialist_schedules" ON public.specialist_schedules
+  FOR INSERT WITH CHECK (true);
+
