@@ -545,69 +545,6 @@ export default function BillingPage() {
         {/* Right Column */}
         <div className="flex flex-col gap-6 lg:gap-8 w-full lg:w-[304px] shrink-0 font-sans">
 
-          {/* Payment Methods */}
-          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-5 md:p-6 flex flex-col gap-5 md:gap-6 transition-colors">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[#00355F] dark:text-[#5F9EA0] font-semibold text-lg transition-colors font-sansData">Payment Methods</h2>
-              <button 
-                onClick={() => initiateStripeCheckoutSession('add-card')}
-                className="text-[#00355F] dark:text-[#5F9EA0] hover:scale-105 transition-transform cursor-pointer p-1 rounded hover:bg-gray-100 dark:hover:bg-white/5 flex items-center gap-1 text-xs font-bold"
-              >
-                <Plus size={16} strokeWidth={2.5} /> Add
-              </button>
-            </div>
-            
-            <div className="flex flex-col gap-4">
-              {cards.length === 0 ? (
-                <div className="text-center py-6 text-xs text-[#767F8D]">
-                  No cards registered. Link one securely via Stripe Checkout.
-                </div>
-              ) : (
-                cards.map(card => (
-                  <div 
-                    key={card.id}
-                    className={`border rounded-lg p-4 flex items-center justify-between transition-colors ${
-                      card.is_default 
-                        ? 'border-[#00355F] dark:border-[#1B6CA8] bg-[#EFF4FF]/20 dark:bg-[#1E2D4A]/20' 
-                        : 'border-[#C2C7D1] dark:border-[#22354A]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-7 rounded-sm flex items-center justify-center bg-gray-500/10 dark:bg-gray-400/10 shrink-0">
-                        <CreditCard size={16} className="text-[#42474F] dark:text-[#A5AAB5]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[#0D1C2E] dark:text-white font-bold text-xs md:text-sm leading-tight truncate">
-                          {card.card_brand} ending in {card.last_four}
-                        </p>
-                        <p className="text-[#767F8D] dark:text-[#A5AAB5] text-[10px] tracking-[0.6px] mt-0.5">
-                          Expires {card.expiration} {card.is_default && '(Default)'}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      {!card.is_default && (
-                        <button
-                          onClick={() => handleSetDefault(card.id)}
-                          className="text-[10px] uppercase font-bold text-[#00355F] hover:underline cursor-pointer"
-                        >
-                          Default
-                        </button>
-                      )}
-                      <button 
-                        onClick={() => handleDeleteCard(card.id)}
-                        className="text-[#BA1A1A] hover:bg-red-50 dark:hover:bg-red-950/20 p-1.5 rounded transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
           {/* Insurance */}
           <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg shadow-[0_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-5 md:p-6 flex flex-col gap-4 transition-colors font-sans">
             <h2 className="text-[#00355F] dark:text-[#5F9EA0] font-semibold text-lg transition-colors font-sans">Insurance</h2>

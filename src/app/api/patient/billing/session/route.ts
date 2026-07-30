@@ -36,8 +36,8 @@ export async function POST(request: Request) {
         if (!stripe) {
             console.warn("STRIPE_SECRET_KEY is not defined. Falling back to local Stripe Checkout Sandbox route.");
             const sandboxUrl = actionType === 'pay-balance'
-                ? `${origin}/patient/billing/stripe-checkout?actionType=pay-balance&amount=${body.amount || '0.00'}`
-                : `${origin}/patient/billing/stripe-checkout?actionType=add-card`;
+                ? `${origin}/patient/billing/stripe-checkout?actionType=pay-balance&amount=${body.amount || '0.00'}&email=${encodeURIComponent(customerEmail)}`
+                : `${origin}/patient/billing/stripe-checkout?actionType=add-card&email=${encodeURIComponent(customerEmail)}`;
 
             return NextResponse.json({ url: sandboxUrl, isSimulated: true });
         }

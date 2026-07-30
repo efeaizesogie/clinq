@@ -700,7 +700,7 @@ export default function SettingsPage() {
         <section id="preferences" className="flex flex-col gap-6 scroll-mt-24">
           <h3 className="text-[18px] font-[700] leading-8 text-[#00355F] dark:text-[#5F9EA0] transition-colors">Account Preferences</h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {/* Language Card */}
             <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-4 transition-colors">
               <div className="flex items-center gap-3">
@@ -728,42 +728,7 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            {/* Theme Card */}
-            <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none p-8 flex flex-col gap-4 transition-colors">
-              <div className="flex items-center gap-3">
-                <Sun className="w-[18px] h-[18px] text-[#00355F] dark:text-[#5F9EA0]" />
-                <span className="text-[18px] font-[700] leading-7 text-[#00355F] dark:text-[#5F9EA0]">Display Theme</span>
-              </div>
-              <div className="flex items-center gap-1 p-1 bg-[#EFF4FF] dark:bg-[#1E2D4A] rounded-[4px] transition-colors">
-                <button
-                  type="button"
-                  onClick={() => setPreferences({ ...preferences, theme: "light" })}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[2px] text-[12px] tracking-[0.6px] transition-all cursor-pointer ${
-                    preferences.theme === "light"
-                      ? "bg-white dark:bg-[#0D1C2E] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F] dark:text-white"
-                      : "font-[600] text-[#42474F] dark:text-[#A5AAB5]"
-                  }`}
-                >
-                  <Sun className="w-[22px] h-[22px]" />
-                  Light
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreferences({ ...preferences, theme: "dark" })}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[2px] text-[12px] tracking-[0.6px] transition-all cursor-pointer ${
-                    preferences.theme === "dark"
-                      ? "bg-white dark:bg-[#0D1C2E] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] font-[700] text-[#00355F] dark:text-white"
-                      : "font-[600] text-[#42474F] dark:text-[#A5AAB5]"
-                  }`}
-                >
-                  <Moon className="w-[18px] h-[18px]" />
-                  Dark
-                </button>
-              </div>
-              <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5]">
-                Switch between light and dark clinical interface styles.
-              </p>
-            </div>
+
           </div>
 
           {/* Privacy Card */}

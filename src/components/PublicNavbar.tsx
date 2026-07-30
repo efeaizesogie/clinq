@@ -56,12 +56,15 @@ export default function PublicNavbar() {
       window.dispatchEvent(new CustomEvent("clinq-theme-change", { detail: nextTheme }));
 
       const supabase = createClient();
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser) {
-        await supabase
-          .from("patient_settings")
-          .upsert({ patient_id: currentUser.id, theme: nextTheme }, { onConflict: "patient_id" });
-      }
+      supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
+        if (currentUser) {
+          supabase.auth.updateUser({
+            data: { theme: nextTheme }
+          }).catch(err => {
+            console.error("Error updating user metadata theme preference:", err);
+          });
+        }
+      });
     } catch (err) {
       console.error("Error toggling public theme:", err);
     }

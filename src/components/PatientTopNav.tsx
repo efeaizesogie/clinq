@@ -77,12 +77,15 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
       window.dispatchEvent(new CustomEvent("clinq-theme-change", { detail: nextTheme }));
 
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("patient_settings")
-          .upsert({ patient_id: user.id, theme: nextTheme }, { onConflict: "patient_id" });
-      }
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          supabase.auth.updateUser({
+            data: { theme: nextTheme }
+          }).catch(err => {
+            console.error("Error updating user metadata theme preference:", err);
+          });
+        }
+      });
     } catch (err) {
       console.error("Error toggling patient theme:", err);
     }

@@ -25,30 +25,23 @@ export default function PatientLayout({
       }
     }
 
-    // 2. Fetch theme from Supabase database
+    // 2. Fetch theme from Supabase auth session metadata
     async function loadThemeFromDB() {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data } = await supabase
-            .from("patient_settings")
-            .select("theme")
-            .eq("patient_id", user.id)
-            .single();
-          if (data?.theme) {
-            const dbTheme = data.theme as "light" | "dark";
-            setTheme(dbTheme);
-            localStorage.setItem("clinq-theme", dbTheme);
-            if (dbTheme === "dark") {
-              document.documentElement.classList.add("dark");
-            } else {
-              document.documentElement.classList.remove("dark");
-            }
+        if (user && user.user_metadata?.theme) {
+          const dbTheme = user.user_metadata.theme as "light" | "dark";
+          setTheme(dbTheme);
+          localStorage.setItem("clinq-theme", dbTheme);
+          if (dbTheme === "dark") {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
           }
         }
       } catch (err) {
-        console.error("Failed loading theme preference from database:", err);
+        console.error("Failed loading theme preference from user metadata:", err);
       }
     }
     loadThemeFromDB();

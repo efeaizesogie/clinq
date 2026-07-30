@@ -36,6 +36,7 @@ function StripeSandboxContent() {
   const actionType = searchParams.get('actionType') || 'add-card';
   const amountStr = searchParams.get('amount') || '0.00';
   const amount = parseFloat(amountStr);
+  const emailParam = searchParams.get('email') || 'patient@clinq.med';
 
   const [cardHolder, setCardHolder] = useState('');
   const [cardNumber, setCardNumber] = useState('');
@@ -218,7 +219,7 @@ function StripeSandboxContent() {
               <label className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.5px]">Email Address</label>
               <input
                 type="email"
-                defaultValue="patient@clinq.med"
+                value={emailParam}
                 disabled
                 className="w-full px-3 py-2.5 border border-[#CBD5E0] dark:border-[#2A3E56] rounded-md bg-gray-50 dark:bg-[#0D1826]/50 text-gray-500 text-sm opacity-80 outline-none"
               />
