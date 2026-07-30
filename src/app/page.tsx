@@ -44,6 +44,7 @@ export default function LandingPage() {
   const departments = data?.departments ?? [];
   const specialists = data?.specialists ?? [];
   const blogPosts = data?.blogPosts ?? [];
+  console.log({blogPosts});
   const stats = data?.stats;
 
   const faqs = [
