@@ -79,9 +79,7 @@ export default function ResourcesPage() {
         {/* =============== HERO SECTION =============== */}
         <section className="w-full bg-[#EFF4FF] dark:bg-[#122338] py-16 md:py-24 px-6 md:px-16 border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 flex justify-center transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col items-center justify-center gap-6 text-center">
-            <span className="px-3 py-1 text-xs font-[750] uppercase tracking-wider text-brand-blue dark:text-[#5F9EA0] bg-[#E6EEFF] dark:bg-[#1E2D4A] rounded-full">
-              Resource Center
-            </span>
+            
             <h1 className="text-3xl sm:text-4xl md:text-[54px] md:leading-[62px] font-[800] text-brand-blue dark:text-white tracking-[-1.2px]">
               Wellness & Health Knowledge
             </h1>
