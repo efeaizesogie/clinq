@@ -50,8 +50,13 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
 
     // Track theme state reactively
     setIsDark(document.documentElement.classList.contains("dark"));
-    const handleThemeChange = () => {
-      setIsDark(document.documentElement.classList.contains("dark"));
+    const handleThemeChange = (e: Event) => {
+      const customTheme = (e as CustomEvent).detail as "light" | "dark";
+      if (customTheme) {
+        setIsDark(customTheme === "dark");
+      } else {
+        setIsDark(document.documentElement.classList.contains("dark"));
+      }
     };
     window.addEventListener("clinq-theme-change", handleThemeChange);
     return () => {
@@ -69,7 +74,7 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
       }
       setIsDark(nextTheme === "dark");
 
-      window.dispatchEvent(new CustomEvent("clinq-theme-change"));
+      window.dispatchEvent(new CustomEvent("clinq-theme-change", { detail: nextTheme }));
 
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();

@@ -181,7 +181,7 @@ export default function LabResultsPage() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-12 px-6 py-6 bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
+    <div className="w-full max-w-full overflow-x-hidden flex flex-col gap-12 px-4 md:px-6 py-4 md:py-6 bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
 
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 w-full">

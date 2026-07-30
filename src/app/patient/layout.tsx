@@ -74,7 +74,7 @@ export default function PatientLayout({
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F8F9FF] dark:bg-[#0D1C2E] font-sans antialiased text-[#42474F] dark:text-[#E3E3E3] transition-colors duration-300">
+    <div className="flex min-h-screen w-full bg-[#F8F9FF] dark:bg-[#080F18] font-sans antialiased text-[#42474F] dark:text-[#E3E3E3] transition-colors duration-300">
       {/* Sidebar Navigation */}
       <PatientSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -84,7 +84,7 @@ export default function PatientLayout({
         <PatientTopNav onMenuToggle={() => setSidebarOpen(true)} />
 
         {/* Content Body Grid */}
-        <main className="flex-grow w-full relative">
+        <main className="flex-grow w-full min-w-0 overflow-x-hidden relative">
           {children}
         </main>
       </div>

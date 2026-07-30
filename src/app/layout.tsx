@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import './globals.css';
 
@@ -12,6 +12,12 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: 'Clinq Healthcare - Healthcare that fits your life',
   description: 'Book appointments, view medical health records, consult specialists, and track pharmacy inventory.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

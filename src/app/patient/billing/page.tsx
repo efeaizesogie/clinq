@@ -10,7 +10,7 @@ const payments = [
 
 export default function BillingPage() {
   return (
-    <div className="p-4 md:p-6 min-h-screen bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
+    <div className="w-full max-w-full overflow-x-hidden p-4 md:p-6 min-h-screen bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
 
         {/* Left Column */}

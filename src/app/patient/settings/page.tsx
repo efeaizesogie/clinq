@@ -244,6 +244,20 @@ export default function SettingsPage() {
     );
   }, [preferences.theme]);
 
+  // Listen for theme changing events from navigation controls
+  useEffect(() => {
+    const handleThemeEvent = (e: Event) => {
+      const customTheme = (e as CustomEvent).detail as "light" | "dark";
+      if (customTheme && customTheme !== preferences.theme) {
+        setPreferences((prev) => ({ ...prev, theme: customTheme }));
+      }
+    };
+    window.addEventListener("clinq-theme-change", handleThemeEvent);
+    return () => {
+      window.removeEventListener("clinq-theme-change", handleThemeEvent);
+    };
+  }, [preferences.theme]);
+
   // Setup intersection observer to highlight side nav automatically on scroll
   useEffect(() => {
     if (isLoading) return;
@@ -484,7 +498,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="w-full flex flex-col md:flex-row gap-4 md:gap-6 px-4 md:px-6 py-4 md:py-6 bg-[#F8F9FF] dark:bg-[#0D1C2E] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#E3E3E3] min-h-screen transition-colors duration-300">
+    <div className="w-full max-w-full overflow-x-hidden flex flex-col md:flex-row gap-4 md:gap-6 px-4 md:px-6 py-4 md:py-6 bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#E3E3E3] min-h-screen transition-colors duration-300">
 
       {/* ── Settings Nav — horizontal scroll on mobile, vertical sidebar on desktop ── */}
       <div className="flex md:flex-col gap-2 w-full md:w-[220px] shrink-0 md:sticky md:top-24 md:self-start overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
@@ -555,7 +569,7 @@ export default function SettingsPage() {
                   <input
                     value={profile.fullName}
                     onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
-                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
+                    className="w-full px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -564,7 +578,7 @@ export default function SettingsPage() {
                     value={profile.email}
                     readOnly
                     disabled
-                    className="px-3 py-3 bg-[#F1F3F9] dark:bg-[#111A24] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#767F8D] dark:text-[#6B7280] outline-none cursor-not-allowed select-none transition-colors"
+                    className="w-full px-3 py-3 bg-[#F1F3F9] dark:bg-[#111A24] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#767F8D] dark:text-[#6B7280] outline-none cursor-not-allowed select-none transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -572,7 +586,7 @@ export default function SettingsPage() {
                   <input
                     value={profile.phone}
                     onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
+                    className="w-full px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -581,7 +595,7 @@ export default function SettingsPage() {
                     type="date"
                     value={profile.dob}
                     onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
-                    className="px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
+                    className="w-full px-3 py-3 bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[16px] font-[400] text-[#0D1C2E] dark:text-white outline-none focus:border-[#00355F] dark:focus:border-[#1B6CA8] transition-colors"
                   />
                 </div>
                 <div className="flex flex-col gap-2">

@@ -14,7 +14,14 @@
     background-color: var(--color-brand-bg-light);
     color: var(--color-brand-muted);
     font-family: var(--font-sans);
+    transition: background-color 300ms ease, color 300ms ease;
   }
+  
+  .dark body {
+    background-color: #080f18;
+    color: #a5aab5;
+  }
+
   button {
     cursor: pointer;
   }
