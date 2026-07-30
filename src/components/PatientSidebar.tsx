@@ -89,9 +89,9 @@ export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps)
     <div className="flex flex-col h-full bg-[#EFF4FF] dark:bg-[#121E2C] transition-colors duration-300">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 h-[65px] border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0">
-        <span className="text-[24px] font-[700] leading-8 tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] font-sans">
+        <Link href="/" className="text-[24px] font-[700] leading-8 tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] font-sans">
           Clinq
-        </span>
+        </Link>
         {onClose && (
           <button
             onClick={onClose}

@@ -1,13 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function PublicNavbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const dashboardHref = user
+    ? (user.user_metadata?.role === 'admin' || user.user_metadata?.role === 'clinician' ? '/admin' : '/patient')
+    : '/login';
 
   const getLinkClass = (path: string, isMobile = false) => {
     const isActive = pathname === path;
@@ -50,12 +74,21 @@ export default function PublicNavbar() {
 
         {/* Right Book Appointment Buttons (Desktop) */}
         <div className="hidden md:flex items-center gap-4">
-          <Link 
-            href="/login" 
-            className="text-sm font-[700] text-brand-blue hover:text-brand-blue/80 transition"
-          >
-            Sign In
-          </Link>
+          {user ? (
+            <Link 
+              href={dashboardHref} 
+              className="text-sm font-[700] text-brand-blue hover:text-brand-blue/80 transition"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link 
+              href="/login" 
+              className="text-sm font-[700] text-brand-blue hover:text-brand-blue/80 transition"
+            >
+              Sign In
+            </Link>
+          )}
           <Link 
             href="/patient/appointments/book" 
             className="w-[193px] h-[36px] bg-[#0F4C81] hover:bg-[#0F4C81]/95 text-[#EFF4FF] font-[700] text-base rounded-[4px] shadow-sm flex items-center justify-center transition"
@@ -94,13 +127,23 @@ export default function PublicNavbar() {
           </nav>
 
           <div className="flex flex-col gap-4 mt-8 w-full pt-6">
-            <Link 
-              href="/login" 
-              onClick={() => setIsOpen(false)}
-              className="w-full h-12 border border-brand-blue text-brand-blue font-[700] text-base rounded-[4px] flex items-center justify-center transition"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <Link 
+                href={dashboardHref} 
+                onClick={() => setIsOpen(false)}
+                className="w-full h-12 border border-brand-blue text-brand-blue font-[700] text-base rounded-[4px] flex items-center justify-center transition"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                onClick={() => setIsOpen(false)}
+                className="w-full h-12 border border-brand-blue text-brand-blue font-[700] text-base rounded-[4px] flex items-center justify-center transition"
+              >
+                Sign In
+              </Link>
+            )}
             <Link 
               href="/patient/appointments/book" 
               onClick={() => setIsOpen(false)}

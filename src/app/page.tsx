@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PublicNavbar from "@/components/PublicNavbar";
 import PublicFooter from "@/components/PublicFooter";
 import { usePlatformData } from "@/lib/hooks/usePlatformData";
@@ -27,6 +27,19 @@ export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [selectedDeptId, setSelectedDeptId] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [mapLocation, setMapLocation] = useState<{ lat: number; lng: number; name: string } | null>(null);
+
+  useEffect(() => {
+    const locations = [
+      { name: "CLINQ MAIN HOSPITAL HQ", lat: 51.5212, lng: -0.1302 },
+      { name: "CLINQ LAGOS MEDICAL CENTER", lat: 6.5182, lng: 3.3842 },
+      { name: "CLINQ NEW YORK HOSPITAL", lat: 40.7306, lng: -73.9975 },
+      { name: "CLINQ TOKYO HEALTH CLINIC", lat: 35.6895, lng: 139.6917 },
+      { name: "CLINQ INTL. MEDICAL HQ", lat: -33.9249, lng: 18.4241 }
+    ];
+    const randomLoc = locations[Math.floor(Math.random() * locations.length)];
+    setMapLocation(randomLoc);
+  }, []);
 
   const departments = data?.departments ?? [];
   const specialists = data?.specialists ?? [];
@@ -745,13 +758,13 @@ export default function LandingPage() {
               <div className="flex items-start gap-2 h-7 bg-brand-blue/5 border border-brand-blue/10 px-3 py-1 rounded">
                 <MapPin className="w-4 h-4 text-brand-blue shrink-0 my-auto animate-bounce" />
                 <span className="text-[10px] uppercase font-bold text-brand-blue tracking-wider">
-                  Clinq Campus
+                  Clinq Hospital
                 </span>
               </div>
 
               <div>
                 <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue tracking-[-0.32px]">
-                  Visit Our Campus
+                  Visit Our Hospital
                 </h2>
                 <p className="text-sm sm:text-base text-[#42474F] mt-4 leading-6">
                   Centrally located in the medical district, with 24/7 emergency
@@ -766,7 +779,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <dt className="font-[700] text-brand-dark text-sm sm:text-base">
-                      Main Campus Address
+                      Main Hospital Address
                     </dt>
                     <dd className="text-xs sm:text-sm text-[#42474F] mt-0.5">
                       123 Healthcare Blvd, Medical District
@@ -805,23 +818,35 @@ export default function LandingPage() {
             </div>
 
             {/* Right Map Mockup Layout */}
-            <div className="w-full sm:w-[450px] h-[300px] sm:h-[380px] bg-[#EFF4FF] rounded-2xl relative overflow-hidden border border-[#C2C7D1]/10 shrink-0 shadow-inner flex items-center justify-center z-10 w-full">
-              {/* Grid map overlays */}
-              <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#00355F_1px,transparent_1px)] [background-size:16px_16px]" />
-
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-brand-blue/5 to-transparent pointer-events-none" />
-
-              {/* Pulsing home address marker */}
-              <div className="relative">
-                <span className="absolute -left-3 -top-3 w-10 h-10 bg-brand-blue/20 rounded-full animate-ping" />
-                <div className="w-4 h-4 bg-brand-blue border-2 border-white rounded-full shadow relative z-10" />
-              </div>
+            <div className="w-full sm:w-[450px] h-[300px] sm:h-[380px] bg-[#EFF4FF] rounded-2xl relative overflow-hidden border border-[#C2C7D1]/10 shrink-0 shadow-inner flex items-center justify-center z-10">
+              {mapLocation ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  src={`https://maps.google.com/maps?q=${mapLocation.lat},${mapLocation.lng}&z=14&ie=UTF8&iwloc=&output=embed`}
+                  allowFullScreen
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full"
+                />
+              ) : (
+                <>
+                  {/* Grid map overlays */}
+                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#00355F_1px,transparent_1px)] [background-size:16px_16px]" />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-brand-blue/5 to-transparent pointer-events-none" />
+                  {/* Pulsing home address marker */}
+                  <div className="relative">
+                    <span className="absolute -left-3 -top-3 w-10 h-10 bg-brand-blue/20 rounded-full animate-ping" />
+                    <div className="w-4 h-4 bg-brand-blue border-2 border-white rounded-full shadow relative z-10" />
+                  </div>
+                </>
+              )}
 
               {/* Small location popup label */}
-              <div className="absolute bottom-6 bg-white border border-[#C2C7D1]/20 px-3.5 py-2 rounded-lg shadow-sm text-center">
+              <div className="absolute bottom-6 bg-white border border-[#C2C7D1]/20 px-3.5 py-2 rounded-lg shadow-sm text-center z-20">
                 <div className="text-[10px] font-bold text-brand-blue">
-                  CLINQ MAIN MEDICAL HQ
+                  {mapLocation?.name || "CLINQ MAIN HOSPITAL HQ"}
                 </div>
                 <div className="text-[8px] text-[#727780] font-sans font-[500] uppercase mt-0.5 tracking-wider">
                   24/7 Access Gateway

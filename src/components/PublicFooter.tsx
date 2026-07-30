@@ -17,53 +17,53 @@ export default function PublicFooter() {
               Clinq
             </Link>
             <p className="text-sm font-[400] text-white/60 leading-5">
-              Internal Operating System for Clinq Medical Systems.
+              Empowering patients and clinicians with smart, secure, real-time healthcare booking and digital medical charts.
             </p>
           </div>
 
-          {/* Module Links */}
+          {/* Patient Services Links */}
           <div className="flex flex-col gap-6">
             <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
-              Internal Modules
+              Patient Services
             </h5>
             <ul className="flex flex-col gap-3 font-[400] text-sm">
               <li>
-                <Link href="/admin/staff" className="hover:text-white transition">
-                  Staff Management
+                <Link href="/patient/appointments/book" className="hover:text-white transition">
+                  Book Appointment
                 </Link>
               </li>
               <li>
-                <Link href="/admin/inventory" className="hover:text-white transition">
-                  Inventory ERP
+                <Link href="/specialists" className="hover:text-white transition">
+                  Find Specialists
                 </Link>
               </li>
               <li>
-                <Link href="/admin/patients" className="hover:text-white transition">
-                  Patient Flow
+                <Link href="/departments" className="hover:text-white transition">
+                  Medical Units
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* System Links */}
+          {/* Hospital Links */}
           <div className="flex flex-col gap-6">
             <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
-              System
+              Clinq Hospital
             </h5>
             <ul className="flex flex-col gap-3 font-[400] text-sm">
               <li>
-                <Link href="/compliance" className="hover:text-white transition">
-                  Compliance
+                <Link href="/about" className="hover:text-white transition">
+                  About Our Medical Center
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="hover:text-white transition">
-                  IT Support
+                <Link href="/login" className="hover:text-white transition">
+                  Patient Portal Login
                 </Link>
               </li>
               <li>
-                <Link href="/updates" className="hover:text-white transition">
-                  Updates
+                <Link href="/resources" className="hover:text-white transition">
+                  Wellness Resources & Blog
                 </Link>
               </li>
             </ul>
