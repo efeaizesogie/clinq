@@ -366,7 +366,7 @@ export default function BillingPage() {
     <div className="w-full max-w-full overflow-x-hidden p-4 md:p-6 min-h-screen bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
       
       {/* Developer Test Tools */}
-      <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 font-sans">
+      {/* <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 font-sans">
         <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300">
           <AlertCircle size={18} />
           <div>
@@ -392,7 +392,7 @@ export default function BillingPage() {
         >
           Reset Invoices to Pending
         </button>
-      </div>
+      </div> */}
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
 

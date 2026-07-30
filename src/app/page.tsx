@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import PublicNavbar from "@/components/PublicNavbar";
 import PublicFooter from "@/components/PublicFooter";
 import { usePlatformData } from "@/lib/hooks/usePlatformData";
+import { useGsapAnimations } from "@/lib/hooks/useGsapAnimations";
 import {
   Calendar,
   Check,
@@ -24,6 +25,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   const { data, isLoading } = usePlatformData();
+  const { fadeUp, staggerUp, slideIn, scaleIn, splitReveal } = useGsapAnimations();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [selectedDeptId, setSelectedDeptId] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -40,6 +42,44 @@ export default function LandingPage() {
     const randomLoc = locations[Math.floor(Math.random() * locations.length)];
     setMapLocation(randomLoc);
   }, []);
+
+  // GSAP scroll animations for all sections
+  useEffect(() => {
+    if (isLoading) return;
+    const timer = setTimeout(() => {
+      // Hero section
+      staggerUp(".gsap-hero", ".gsap-hero-child", { stagger: 0.18, y: 50 });
+      slideIn(".gsap-hero-img", "right", { duration: 1, x: 80 });
+      // Stats section
+      staggerUp(".gsap-stats", ".gsap-stat-item", { stagger: 0.12 });
+      // Insurance partners
+      staggerUp(".gsap-partners", ".gsap-partner-item", { stagger: 0.08, y: 20 });
+      // Features section
+      fadeUp(".gsap-features-heading");
+      staggerUp(".gsap-features-grid", ".gsap-feature-card", { stagger: 0.15 });
+      // Testimonials
+      scaleIn(".gsap-testimonial-card", { stagger: 0.18 });
+      // Services / Advanced tools split
+      splitReveal(".gsap-services", ".gsap-services-left", ".gsap-services-right", { x: 60 });
+      // FAQ
+      fadeUp(".gsap-faq-heading");
+      // Numeric banner
+      staggerUp(".gsap-numbers-grid", ".gsap-number-item", { stagger: 0.2 });
+      // Blog section
+      fadeUp(".gsap-blog-heading");
+      staggerUp(".gsap-blog-grid", ".gsap-blog-card", { stagger: 0.15 });
+      // Blockquote
+      scaleIn(".gsap-blockquote", { scale: 0.9, duration: 1 });
+      // Find your specialist
+      fadeUp(".gsap-specialist-heading");
+      staggerUp(".gsap-specialist-grid", ".gsap-specialist-card", { stagger: 0.08 });
+      // Mobile CTA
+      splitReveal(".gsap-mobile-cta", ".gsap-mobile-left", ".gsap-mobile-right", { x: 50 });
+      // Location
+      fadeUp(".gsap-location", { y: 60, duration: 1 });
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [isLoading, fadeUp, staggerUp, slideIn, scaleIn, splitReveal]);
 
   const departments = data?.departments ?? [];
   const specialists = data?.specialists ?? [];
@@ -84,14 +124,14 @@ export default function LandingPage() {
         <section className="w-full bg-white dark:bg-[#0D1C2E] py-8 md:py-[128px] px-6 md:px-16 flex items-center justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col md:flex-row items-center justify-between gap-10">
             {/* Left Content Container */}
-            <div className="w-full md:w-[516px] flex flex-col items-start gap-6 order-1">
-              <div className="pt-2">
+            <div className="gsap-hero w-full md:w-[516px] flex flex-col items-start gap-6 order-1">
+              <div className="gsap-hero-child pt-2">
                 <h1 className="text-3xl sm:text-4xl md:text-[48px] md:leading-[60px] font-[700] text-brand-blue dark:text-white tracking-[-0.96px] text-left">
                   Healthcare that fits your lifestyle.
                 </h1>
               </div>
 
-              <div className="w-full max-w-[512px]">
+              <div className="gsap-hero-child w-full max-w-[512px]">
                 <p className="text-base sm:text-[18px] sm:leading-[28px] font-[400] text-[#42474F] dark:text-[#A5AAB5] text-left">
                   Instantly book consultations with top medical specialists,
                   secure your lab reports, check pharmacy supplies, and message
@@ -99,7 +139,7 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start gap-4 pt-4 w-full sm:w-auto">
+              <div className="gsap-hero-child flex flex-col sm:flex-row items-start gap-4 pt-4 w-full sm:w-auto">
                 <Link
                   href="/patient/appointments/book"
                   className="w-full sm:w-[208px] h-[58px] bg-brand-blue dark:bg-[#5F9EA0] hover:bg-brand-blue/90 dark:hover:bg-[#5F9EA0]/95 text-white dark:text-[#0D1C2E] font-[700] text-base rounded-[4px] shadow flex items-center justify-center transition"
@@ -116,7 +156,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right Interactive Mockup Graphic */}
-            <div className="w-full md:w-[512px] flex justify-center order-2">
+            <div className="gsap-hero-img w-full md:w-[512px] flex justify-center order-2">
               <img
                 src="/hero-img.svg"
                 alt="clinq patient dashboard illustration"
@@ -128,8 +168,8 @@ export default function LandingPage() {
 
         {/* =============== STATS SECTION =============== */}
         <section className="w-full bg-white dark:bg-[#122338] py-12 md:py-20 border-b border-t border-[#C2C7D1]/10 dark:border-[#22354A]/30 flex justify-center transition-colors duration-300">
-          <div className="w-full max-w-[1280px] px-6 md:px-16 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div className="flex flex-col items-center gap-1 text-center">
+          <div className="gsap-stats w-full max-w-[1280px] px-6 md:px-16 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="gsap-stat-item flex flex-col items-center gap-1 text-center">
               <div className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-[#5F9EA0] tracking-[-0.32px]">
                 {stats?.totalSpecialists ?? 0}+
               </div>
@@ -178,23 +218,23 @@ export default function LandingPage() {
             </div>
 
             {/* Logo Strips */}
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 min-h-7 text-center">
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+            <div className="gsap-partners flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 min-h-7 text-center">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 Aetna
               </span>
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 BlueCross
               </span>
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 UnitedHealthcare
               </span>
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 Cigna
               </span>
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 Axa
               </span>
-              <span className="text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
+              <span className="gsap-partner-item text-base sm:text-xl font-[700] text-[#42474F] dark:text-[#A5AAB5]">
                 Medicare
               </span>
             </div>
@@ -204,7 +244,7 @@ export default function LandingPage() {
         {/* =============== FEATURES SECTION =============== */}
         <section className="w-full bg-[#EFF4FF] dark:bg-[#122338] py-16 md:py-[128px] px-6 md:px-16 flex justify-center transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col gap-12 md:gap-24">
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="gsap-features-heading flex flex-col items-center gap-4 text-center">
               <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px]">
                 Why Choose Clinq?
               </h2>
@@ -215,8 +255,8 @@ export default function LandingPage() {
             </div>
 
             {/* Feature lists */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="w-full min-h-[231px] bg-[#F8F9FF] dark:bg-[#1E2D4A] border border-[#C2C7D1]/20 dark:border-[#22354A]/30 rounded-lg p-6 sm:p-8 flex flex-col gap-3">
+            <div className="gsap-features-grid grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="gsap-feature-card w-full min-h-[231px] bg-[#F8F9FF] dark:bg-[#1E2D4A] border border-[#C2C7D1]/20 dark:border-[#22354A]/30 rounded-lg p-6 sm:p-8 flex flex-col gap-3">
                 <div className="w-8 h-8 rounded-lg bg-brand-blue dark:bg-[#5F9EA0] text-white dark:text-[#0D1C2E] flex items-center justify-center shrink-0">
                   <Calendar className="w-4 h-4" />
                 </div>
@@ -273,7 +313,7 @@ export default function LandingPage() {
             {/* Testimonial Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Card 1 */}
-              <div className="w-full min-h-[237px] bg-[#EFF4FF] dark:bg-[#122338] border border-[#C2C7D1]/10 dark:border-[#22354A]/50 rounded-[16px] p-6 sm:p-8 flex flex-col justify-between gap-4">
+              <div className="gsap-testimonial-card w-full min-h-[237px] bg-[#EFF4FF] dark:bg-[#122338] border border-[#C2C7D1]/10 dark:border-[#22354A]/50 rounded-[16px] p-6 sm:p-8 flex flex-col justify-between gap-4">
                 <div className="flex gap-1 text-brand-blue dark:text-[#5F9EA0]">
                   {[...Array(5)].map((_, i) => (
                     <Award
@@ -363,10 +403,10 @@ export default function LandingPage() {
         </section>
 
         {/* =============== SERVICES/ADVANCED TOOLS SECTION =============== */}
-        <section className="w-full bg-white dark:bg-[#0D1C2E] py-12 md:py-[68px] px-6 md:px-16 flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
+        <section className="gsap-services w-full bg-white dark:bg-[#0D1C2E] py-12 md:py-[68px] px-6 md:px-16 flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
             {/* Left list details */}
-            <div className="w-full md:w-[544px] flex flex-col items-start gap-6 md:gap-8">
+            <div className="gsap-services-left w-full md:w-[544px] flex flex-col items-start gap-6 md:gap-8">
               <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px] text-left">
                 Advanced tools for our internal medical standards.
               </h2>
@@ -401,7 +441,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right clinical dashboard mockup */}
-            <div className="w-full md:w-auto flex justify-center">
+            <div className="gsap-services-right w-full md:w-auto flex justify-center">
               <img
                 src="/advanced-tool.svg"
                 alt="clinq advanced diagnostic tools"
@@ -414,7 +454,7 @@ export default function LandingPage() {
         {/* =============== FAQ SECTION =============== */}
         <section className="w-full bg-white dark:bg-[#0D1C2E] py-16 md:py-[128px] px-6 sm:px-12 md:px-24 lg:px-[256px] flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
           <div className="w-full max-w-[768px] flex flex-col gap-12 md:gap-16">
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="gsap-faq-heading flex flex-col items-center gap-4 text-center">
               <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px]">
                 Frequently Asked Questions
               </h2>
@@ -461,8 +501,8 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-              <div className="flex flex-col items-center text-center gap-2">
+            <div className="gsap-numbers-grid grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+              <div className="gsap-number-item flex flex-col items-center text-center gap-2">
                 <div className="text-[36px] font-[800] leading-10 opacity-40">
                   01
                 </div>
@@ -506,7 +546,7 @@ export default function LandingPage() {
         {/* =============== HEALTH RESOURCES / BLOG SECTION =============== */}
         <section className="w-full bg-[#F8F9FF] dark:bg-[#0D1C2E] py-16 md:py-[128px] px-6 md:px-16 flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col gap-12 md:gap-16">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 w-full">
+            <div className="gsap-blog-heading flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 w-full">
               <div>
                 <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px]">
                   Health Resources
@@ -524,11 +564,11 @@ export default function LandingPage() {
             </div>
 
             {/* Blog Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+            <div className="gsap-blog-grid grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
               {blogPosts.map((blog) => (
                 <article
                   key={blog.id}
-                  className="w-full min-h-[390px] flex flex-col gap-3 pb-1"
+                  className="gsap-blog-card w-full min-h-[390px] flex flex-col gap-3 pb-1"
                 >
                   <div className="w-full h-[204px] bg-[#E6EEFF] dark:bg-[#122338] rounded-lg relative overflow-hidden flex flex-col justify-end p-4 shadow-sm border border-[#C2C7D1]/10 dark:border-[#22354A]/30">
                     {blog.image_url ? (
@@ -568,7 +608,7 @@ export default function LandingPage() {
 
         {/* =============== CARDIOLOGY TESTIMONIAL QUOTE SECTION =============== */}
         <section className="w-full bg-white dark:bg-[#0D1C2E] py-16 md:py-[128px] px-6 sm:px-12 md:px-24 lg:px-[256px] flex justify-center transition-colors duration-300">
-          <div className="w-full max-w-[768px] flex flex-col items-center gap-6 md:gap-8">
+          <div className="gsap-blockquote w-full max-w-[768px] flex flex-col items-center gap-6 md:gap-8">
             <div className="text-brand-blue dark:text-[#5F9EA0] opacity-30">
               <span className="text-4xl sm:text-6xl font-serif">“</span>
             </div>
@@ -595,7 +635,7 @@ export default function LandingPage() {
           className="w-full bg-[#EFF4FF] dark:bg-[#122338] py-16 md:py-[128px] px-6 md:px-16 flex justify-center transition-colors duration-300"
         >
           <div className="w-full max-w-[1152px] flex flex-col gap-12 md:gap-20">
-            <div className="flex flex-col items-center gap-4 text-center">
+            <div className="gsap-specialist-heading flex flex-col items-center gap-4 text-center">
               <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px]">
                 Find Your Specialist
               </h2>
@@ -659,11 +699,11 @@ export default function LandingPage() {
             {/* Specialists Grid Layout */}
             <div className="w-full">
               {filteredDoctors.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+                <div className="gsap-specialist-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
                   {filteredDoctors.map((doc) => (
                     <div
                       key={doc.id}
-                      className="bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1]/15 dark:border-[#22354A]/30 rounded-xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-brand-blue/30 dark:hover:border-[#5F9EA0]/30 relative"
+                      className="gsap-specialist-card bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1]/15 dark:border-[#22354A]/30 rounded-xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-brand-blue/30 dark:hover:border-[#5F9EA0]/30 relative"
                     >
                       {/* Avatar Wrapper */}
                       <div className="w-24 h-24 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-[24px] font-[700] shadow-sm relative overflow-hidden mb-4 shrink-0 border-2 border-[#EFF4FF] dark:border-[#1E2E40]">
@@ -721,10 +761,10 @@ export default function LandingPage() {
         </section>
 
         {/* =============== MOBILE SECTION =============== */}
-        <section className="w-full bg-white dark:bg-[#0D1C2E] py-16 md:py-[128px] px-6 md:px-16 flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
+        <section className="gsap-mobile-cta w-full bg-white dark:bg-[#0D1C2E] py-16 md:py-[128px] px-6 md:px-16 flex justify-center border-b border-[#C2C7D1]/10 dark:border-[#22354A]/30 transition-colors duration-300">
           <div className="w-full max-w-[1152px] flex flex-col md:flex-row items-center justify-between gap-12 md:gap-20">
             {/* Left Phone Mockup Graphic */}
-            <div className="w-full md:w-auto flex justify-center">
+            <div className="gsap-mobile-left w-full md:w-auto flex justify-center">
               <img
                 src="/appointment-booked.svg"
                 alt="clinq mobile appointment confirmation"
@@ -733,7 +773,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right details */}
-            <div className="w-full md:w-[534px] flex flex-col items-start gap-6 text-left">
+            <div className="gsap-mobile-right w-full md:w-[534px] flex flex-col items-start gap-6 text-left">
               <h2 className="text-2xl sm:text-[32px] font-[600] leading-10 text-brand-blue dark:text-white tracking-[-0.32px]">
                 Better care, Everytime.
               </h2>
@@ -762,7 +802,7 @@ export default function LandingPage() {
 
         {/* =============== LOCATION & CAMPUS SECTION =============== */}
         <section className="w-full bg-[#EFF4FF] dark:bg-[#122338] py-16 md:py-[128px] px-6 sm:px-12 md:px-16 flex justify-center transition-colors duration-300">
-          <div className="w-full max-w-[1152px] bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1]/10 dark:border-[#22354A]/30 rounded-[24px] shadow-sm p-6 sm:p-12 flex flex-col lg:flex-row items-center lg:justify-between gap-10 lg:gap-12 relative overflow-hidden">
+          <div className="gsap-location w-full max-w-[1152px] bg-white dark:bg-[#0D1C2E] border border-[#C2C7D1]/10 dark:border-[#22354A]/30 rounded-[24px] shadow-sm p-6 sm:p-12 flex flex-col lg:flex-row items-center lg:justify-between gap-10 lg:gap-12 relative overflow-hidden">
             {/* Left address details */}
             <div className="w-full lg:w-[551px] flex flex-col justify-center items-start gap-6 relative z-10 text-left">
               <div className="flex items-start gap-2 h-7 bg-brand-blue/5 dark:bg-[#5F9EA0]/10 border border-brand-blue/10 dark:border-[#5F9EA0]/20 px-3 py-1 rounded">
