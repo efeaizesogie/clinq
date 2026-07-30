@@ -85,45 +85,7 @@ export async function GET() {
 
         let resources: Resource[] = [];
         if (resourcesResult.error) {
-            console.warn('[platform-data] Resources query failed, returning fallback resources:', resourcesResult.error.message);
-            resources = [
-                {
-                    id: 'db-fallback-res-1',
-                    title: 'Diabetes Meal Planner Guide',
-                    description: 'A professional checklist mapping carbohydrate allowances, glycemic indices, and portion control plans.',
-                    slug: 'diabetes-meal-planner',
-                    category: 'Guides',
-                    content: '### Professional Diabetes Nutritional Guide\n\nManaging your blood glucose requires careful portion mapping and glycemic knowledge. This guide, formatted by our primary care nutritionists, details essential dietary structures:\n\n- **Carbohydrate Tracking**: Learn to balance net carbs per session to prevent critical insulin spikes.\n- **High-Fiber Integration**: Why whole grains and legumes support digestion and stabilize glucose absorption.\n- **Meal Timing Strategies**: Spacing intervals to maintain consistent glycogen supply.',
-                    icon_name: 'ClipboardCheck',
-                    image_url: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=600',
-                    is_active: true,
-                    created_at: new Date().toISOString()
-                },
-                {
-                    id: 'db-fallback-res-2',
-                    title: 'Pediatric Immunization Tracker',
-                    description: 'Official clinician schedule detailing recommended dates for child health immunizations (0 - 15 Years).',
-                    slug: 'pediatric-immunization-schedule',
-                    category: 'Guides',
-                    content: '### Child Immunization Schedules: A Comprehensive Calendar\n\nEnsure your child receives full immunological coverage. Download our clinical timeline for vaccine administrations:\n\n- **Infants (0-12 Months)**: Critical initial doses for Hepatitis B, DTaP, Rotavirus, and IPV.\n- **Toddlers (1-3 Years)**: MMR and Varicella booster windows.\n- **School Age**: Health school entry immunization records prep.',
-                    icon_name: 'Baby',
-                    image_url: 'https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=600',
-                    is_active: true,
-                    created_at: new Date().toISOString()
-                },
-                {
-                    id: 'db-fallback-res-3',
-                    title: 'HMO Insurance Coverage Matrix',
-                    description: 'Interactive checklist to verify co-pay amounts, specialist referrals, and hospital billing coverage.',
-                    slug: 'hmo-coverage-matrix',
-                    category: 'Tools',
-                    content: '### Understanding HMO Coverage and Co-Pay Dynamics\n\nAvoid surprise hospital billing codes with our policy matrix guide:\n\n- **Specialist Referrals**: How to obtain primary care physician sign-offs prior to scheduling specialist appointments.\n- **Co-Pay Calculations**: Verify standard fees for outpatient consults and specialized clinical diagnostics.\n- **Emergency Admissions**: Coverage regulations and hospital policies when admitted out-of-network.',
-                    icon_name: 'ShieldCheck',
-                    image_url: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&q=80&w=600',
-                    is_active: true,
-                    created_at: new Date().toISOString()
-                }
-            ];
+            console.warn('[platform-data] Resources query failed:', resourcesResult.error.message);
         } else {
             resources = resourcesResult.data || [];
         }
