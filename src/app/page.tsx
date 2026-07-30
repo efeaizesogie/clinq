@@ -582,131 +582,117 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Main Interactive Directory layout */}
-            <div className="flex flex-col lg:flex-row justify-center items-start gap-12 lg:gap-16 w-full">
-              {/* Left Column: Departments Filter */}
-              <div className="w-full lg:w-[544px] flex flex-col items-start gap-6 lg:gap-8">
-                {/* Section Header */}
-                <div className="flex items-center gap-4 h-8">
-                  <Stethoscope className="w-5 h-4.5 text-brand-blue shrink-0 animate-pulse" />
-                  <h3 className="text-xl sm:text-2xl font-[600] text-brand-blue leading-8">
-                    Departments
-                  </h3>
-                </div>
+            {/* Unified Search and Pills Filter Container */}
+            <div className="flex flex-col gap-8 w-full">
+              {/* Search Bar Row */}
+              <div className="w-full max-w-[640px] mx-auto relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#727780] w-[18px]. h-[18px]" />
+                <input
+                  type="text"
+                  placeholder="Search doctor names, specialties, or departments..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-white border border-[#C2C7D1]/30 rounded-xl px-4 py-[14px] pl-12 text-sm text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-blue/30 shadow-xs transition duration-200"
+                />
+              </div>
 
-                <div className="flex flex-col gap-4 w-full">
-                  {/* Option All */}
+              {/* Department Pills Row */}
+              <div className="flex flex-col items-center gap-3 w-full">
+                <div className="flex items-center gap-2 text-[#727780]">
+                  <Stethoscope className="w-4 h-4 text-brand-blue animate-pulse" />
+                  <span className="text-xs font-[600] uppercase tracking-wider">Filter by Department</span>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 w-full max-w-[900px] mx-auto">
+                  {/* "All" Pill */}
                   <button
                     onClick={() => setSelectedDeptId("all")}
-                    className={`w-full p-5 sm:p-6 border rounded-lg flex items-center justify-between text-left transition cursor-pointer select-none ${
+                    className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-[650] border transition duration-200 cursor-pointer select-none ${
                       selectedDeptId === "all"
-                        ? "bg-[#E6EEFF] border-brand-blue/30 shadow-xs scale-[1.01]"
-                        : "bg-white border-[#C2C7D1]/20 hover:border-brand-blue/20"
+                        ? "bg-brand-blue text-white border-brand-blue shadow-sm"
+                        : "bg-white text-brand-dark border-[#C2C7D1]/20 hover:bg-[#EFF4FF] hover:text-brand-blue hover:border-brand-blue/20"
                     }`}
                   >
-                    <div>
-                      <div className="text-base font-[700] text-brand-dark">
-                        All Specialities
-                      </div>
-                      <div className="text-sm text-[#42474F] mt-1">
-                        Show clinicians from all departments
-                      </div>
-                    </div>
-                    <span className="text-sm font-[700] text-brand-blue shrink-0">
-                      View All
-                    </span>
+                    All Specialties
                   </button>
 
+                  {/* Department specific Pills */}
                   {departments.map((dept) => (
                     <button
                       key={dept.id}
                       onClick={() => setSelectedDeptId(dept.name)}
-                      className={`w-full p-5 sm:p-6 border rounded-lg flex items-center justify-between text-left transition cursor-pointer select-none ${
+                      className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-[650] border transition duration-200 cursor-pointer select-none ${
                         selectedDeptId === dept.name
-                          ? "bg-[#E6EEFF] border-brand-blue/30 shadow-xs scale-[1.01]"
-                          : "bg-white border-[#C2C7D1]/20 hover:border-brand-blue/20"
+                          ? "bg-brand-blue text-white border-brand-blue shadow-sm"
+                          : "bg-white text-brand-dark border-[#C2C7D1]/20 hover:bg-[#EFF4FF] hover:text-brand-blue hover:border-brand-blue/20"
                       }`}
                     >
-                      <div>
-                        <div className="text-base font-[700] text-brand-dark">
-                          {dept.name}
-                        </div>
-                        <div className="text-sm text-[#42474F] mt-1">
-                          {dept.description}
-                        </div>
-                      </div>
-                      <span className="text-sm font-[700] text-brand-blue shrink-0">
-                        Select
-                      </span>
+                      {dept.name}
                     </button>
                   ))}
                 </div>
               </div>
+            </div>
 
-              {/* Right Column: Specialists List & Search */}
-              <div className="w-full lg:w-[544px] flex flex-col items-start gap-6 lg:gap-8">
-                {/* Search Bar */}
-                <div className="w-full flex items-center gap-4 h-8">
-                  <Search className="w-5 h-4.5 text-brand-blue shrink-0" />
-                  <h3 className="text-xl sm:text-2xl font-[600] text-brand-blue leading-8">
-                    Specialists
-                  </h3>
-                </div>
-
-                <div className="w-full relative">
-                  <input
-                    type="text"
-                    placeholder="Search doctor names or titles..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white border border-[#C2C7D1]/20 rounded-lg px-4 py-[14px] text-sm text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-blue"
-                  />
-                </div>
-
-                {/* Doctor listing */}
-                <div className="flex flex-col gap-4 w-full">
-                  {filteredDoctors.length > 0 ? (
-                    filteredDoctors.map((doc) => (
-                      <div
-                        key={doc.id}
-                        className="bg-white border border-[#C2C7D1]/20 rounded-lg p-5 sm:p-6 flex flex-row items-center gap-4 sm:gap-6 w-full"
-                      >
-                        <div className="w-12 h-12 sm:w-[64px] sm:h-[64px]  text-white rounded-lg flex items-center justify-center font-[700] text-base sm:text-xl shrink-0">
-                          {doc?.image_url ? (
-                            <img
-                              src={doc?.image_url}
-                              alt={doc?.full_name}
-                              className="w-14 h-14 rounded-[12px] object-cover shadow-sm"
-                            />
-                          ) : (
-                            <div className={`w-14 h-14 rounded-[12px] bg-gradient-to-br flex items-center justify-center text-white text-[20px] font-[700] shadow-sm`}>
-                              {doc?.initials || "MD"}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 flex flex-col items-start gap-0.5">
-                          <h4 className="text-sm sm:text-base font-[700] text-brand-dark">
-                            {doc.full_name}
-                          </h4>
-                          <span className="text-xs sm:text-sm text-[#42474F] font-[400]">
-                            {doc.specialty}
-                          </span>
-                        </div>
-                        <Link
-                          href="/patient/appointments/book"
-                          className="w-[72px] sm:w-[88px] h-8 bg-brand-blue hover:bg-brand-blue/90 text-white font-[700] text-[10px] sm:text-xs rounded-[4px] flex items-center justify-center transition shrink-0"
-                        >
-                          Book Now
-                        </Link>
+            {/* Specialists Grid Layout */}
+            <div className="w-full">
+              {filteredDoctors.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+                  {filteredDoctors.map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="bg-white border border-[#C2C7D1]/15 rounded-xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1 hover:border-brand-blue/30 relative"
+                    >
+                      {/* Avatar Wrapper */}
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-[24px] font-[700] shadow-sm relative overflow-hidden mb-4 shrink-0 border-2 border-[#EFF4FF]">
+                        {doc.image_url ? (
+                          <img
+                            src={doc.image_url}
+                            alt={doc.full_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-brand-blue/60 to-brand-blue flex items-center justify-center text-white font-[700] text-xl">
+                            {doc.initials || "MD"}
+                          </div>
+                        )}
                       </div>
-                    ))
-                  ) : (
-                    <div className="p-10 text-center bg-white border border-dashed border-[#C2C7D1]/40 rounded-lg w-full text-sm text-[#727780]">
-                      No matching specialist records found in this category.
+
+                      {/* Doctor Info */}
+                      <h4 className="text-base sm:text-[18px] leading-6 font-[750] text-[#0f3456] mb-1">
+                        {doc.full_name}
+                      </h4>
+                      <span className="text-xs sm:text-sm text-[#727780] font-[450] mb-3">
+                        {doc.specialty}
+                      </span>
+                      
+                      {/* Department Badge */}
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] sm:text-xs font-[600] bg-[#EFF4FF] text-brand-blue border border-brand-blue/5 mb-6 shrink-0 uppercase tracking-wider">
+                        {doc.department_name || "Specialist"}
+                      </span>
+
+                      {/* Book CTA */}
+                      <Link
+                        href="/patient/appointments/book"
+                        className="w-full py-2.5 mt-auto bg-brand-blue hover:bg-brand-blue/90 text-white font-[700] text-xs sm:text-sm rounded-[6px] flex items-center justify-center gap-1.5 transition shadow-sm shrink-0"
+                      >
+                        Book Now
+                      </Link>
                     </div>
-                  )}
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="p-16 text-center bg-white border border-dashed border-[#C2C7D1]/40 rounded-xl w-full text-sm text-[#727780] flex flex-col items-center justify-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[#EFF4FF] text-brand-blue flex items-center justify-center">
+                    <Search className="w-5 h-5 text-brand-blue" />
+                  </div>
+                  <div>
+                    <h5 className="font-[750] text-brand-dark mb-1">No Specialists Found</h5>
+                    <p className="max-w-md mx-auto text-xs sm:text-sm text-[#727780] leading-5">
+                      No matching specialist records found in this category. Try adjusting your search query or choosing another department.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
