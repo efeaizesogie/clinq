@@ -47,6 +47,15 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(url)
         }
 
+        if (!user.email_confirmed_at) {
+            // Redirect to verify if user is unverified
+            const url = request.nextUrl.clone()
+            url.pathname = '/verify'
+            url.searchParams.set('email', user.email || '')
+            url.searchParams.set('unverified', 'true')
+            return NextResponse.redirect(url)
+        }
+
         const role = user.user_metadata?.role || 'patient'
 
         if (isAdminPath && role !== 'admin' && role !== 'clinician') {

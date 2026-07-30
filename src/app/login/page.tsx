@@ -74,7 +74,13 @@ export default function LoginPage() {
         });
 
         if (error) {
-          setServerError(error.message);
+          if (error.message.toLowerCase().includes('confirm') || error.message.toLowerCase().includes('verify')) {
+            router.push(`/verify?email=${encodeURIComponent(formData.email)}&unverified=true`);
+          } else {
+            setServerError(error.message);
+          }
+        } else if (data.user && !data.user.email_confirmed_at) {
+          router.push(`/verify?email=${encodeURIComponent(formData.email)}&unverified=true`);
         } else {
           // Redirect immediately depending on the user's role on success
           const userRole = data.user?.user_metadata?.role || 'patient';

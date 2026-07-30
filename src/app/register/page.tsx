@@ -83,6 +83,7 @@ export default function RegisterPage() {
           email: formData.email,
           password: formData.password,
           options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: {
               fullName: formData.fullName,
               phone: formData.phone,
@@ -94,8 +95,8 @@ export default function RegisterPage() {
         if (error) {
           setServerError(error.message);
         } else {
-          // Redirect immediately to patient care dashboard
-          router.push('/patient');
+          // Redirect immediately to the verification page
+          router.push(`/verify?email=${encodeURIComponent(formData.email)}`);
         }
       } catch (err: any) {
         setServerError('An unexpected error occurred. Please try again.');
