@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import type { Department, Specialist, BlogPost, PlatformData, PlatformStats } from '@/lib/types';
+import type { Department, Specialist, BlogPost, PlatformData, PlatformStats, Resource } from '@/lib/types';
 
 // ─── Supabase availability check ──────────────────────────────────────
 function isSupabaseConfigured(): boolean {
@@ -19,7 +19,7 @@ export async function GET() {
         const supabase = await createClient();
 
         // Parallel queries for maximum performance
-        const [deptResult, specResult, blogResult] = await Promise.all([
+        const [deptResult, specResult, blogResult, resourcesResult] = await Promise.all([
             supabase
                 .from('departments')
                 .select('*')
@@ -36,11 +36,18 @@ export async function GET() {
                 .select('*')
                 .eq('is_published', true)
                 .order('published_at', { ascending: false }),
+
+            supabase
+                .from('resources')
+                .select('*')
+                .eq('is_active', true)
+                .order('created_at', { ascending: false }),
         ]);
 
         if (deptResult.error) throw deptResult.error;
         if (specResult.error) throw specResult.error;
         if (blogResult.error) throw blogResult.error;
+        if (resourcesResult.error) throw resourcesResult.error;
 
         // Map specialists to include department_name from the joined relation
         const specialists: Specialist[] = (specResult.data || []).map((s: any) => ({
@@ -50,6 +57,7 @@ export async function GET() {
 
         const departments: Department[] = deptResult.data || [];
         const blogPosts: BlogPost[] = blogResult.data || [];
+        const resources: Resource[] = resourcesResult.data || [];
 
         const stats: PlatformStats = {
             totalSpecialists: specialists.length,
@@ -57,7 +65,7 @@ export async function GET() {
             totalPatients: 10000, // Future: count from patients table
         };
 
-        const data: PlatformData = { departments, specialists, blogPosts, stats };
+        const data: PlatformData = { departments, specialists, blogPosts, resources, stats };
 
         return NextResponse.json(data, {
             headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },

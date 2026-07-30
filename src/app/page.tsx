@@ -530,12 +530,21 @@ export default function LandingPage() {
                   className="w-full min-h-[390px] flex flex-col gap-3 pb-1"
                 >
                   <div className="w-full h-[204px] bg-[#E6EEFF] dark:bg-[#122338] rounded-lg relative overflow-hidden flex flex-col justify-end p-4 shadow-sm border border-[#C2C7D1]/10 dark:border-[#22354A]/30">
-                    <div className="absolute top-4 left-4 bg-brand-blue/5 dark:bg-[#5F9EA0]/10 border border-brand-blue/10 dark:border-[#5F9EA0]/20 text-brand-blue dark:text-[#5F9EA0] font-[700] text-[10px] tracking-[1px] uppercase px-2 py-0.5 rounded-[2px]">
+                    {blog.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img 
+                        src={blog.image_url} 
+                        alt={blog.title} 
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                    ) : (
+                      // Mock illustration inside placeholder
+                      <div className="w-full h-24 flex items-center justify-center text-brand-blue dark:text-[#5F9EA0] opacity-40">
+                        <ClipboardCheck className="w-12 h-12" />
+                      </div>
+                    )}
+                    <div className="absolute top-4 left-4 bg-[#EFF4FF] dark:bg-[#122338] border border-brand-blue/15 dark:border-[#5F9EA0]/30 text-brand-blue dark:text-[#5F9EA0] font-[700] text-[10px] tracking-[1px] uppercase px-2 py-0.5 rounded-[2px] z-10">
                       {blog.category}
-                    </div>
-                    {/* Mock illustration inside placeholder */}
-                    <div className="w-full h-24 flex items-center justify-center text-brand-blue dark:text-[#5F9EA0] opacity-40">
-                      <ClipboardCheck className="w-12 h-12" />
                     </div>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-[600] text-brand-blue dark:text-white mt-2 leading-8">

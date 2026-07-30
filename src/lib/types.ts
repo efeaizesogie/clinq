@@ -8,6 +8,7 @@ export interface Department {
     name: string;
     slug: string;
     description: string;
+    detailed_content?: string; // rich description for dynamic department pages
     icon_name: string;
     doctors_count: number;
     category: string;       // 'Primary Care' | 'Specialty' | 'Clinical'
@@ -59,8 +60,25 @@ export interface BlogPost {
     title: string;
     description: string;
     slug: string;
+    image_url?: string;      // URL to post cover image
+    content?: string;        // rich markdown/text content of the article
     published_at: string;
     is_published: boolean;
+}
+
+// ---------- Health Resource ----------
+export interface Resource {
+    id: string;
+    title: string;
+    description: string;
+    slug: string;
+    category: string;       // 'Guides' | 'Articles' | 'Tools'
+    content: string;
+    icon_name: string;      // Lucide icon name string
+    image_url?: string;
+    download_url?: string;
+    is_active: boolean;
+    created_at: string;
 }
 
 // ---------- Platform Stats ----------
@@ -75,6 +93,7 @@ export interface PlatformData {
     departments: Department[];
     specialists: Specialist[];
     blogPosts: BlogPost[];
+    resources: Resource[];
     stats: PlatformStats;
 }
 
