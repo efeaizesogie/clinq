@@ -18,14 +18,6 @@ export interface PatientRecord {
     created_at: string;
 }
 
-const fallbackPatients: PatientRecord[] = [
-    { id: '1', full_name: 'Eleanor Watson',   email: 'eleanor@example.com',  age: 42, gender: 'F', medical_id: '#MC-99201', assigned_doctor: 'Dr. Julian Marcus', department: 'Cardiology',  last_visit: 'Oct 24, 2023', admission_status: 'Observation', status: 'Active',      insurance: 'BlueShield', initials: 'EW', created_at: '' },
-    { id: '2', full_name: 'Theodore Hughes',  email: 'theodore@example.com', age: 68, gender: 'M', medical_id: '#MC-88312', assigned_doctor: 'Dr. Sarah Chen',    department: 'Neurology',   last_visit: 'Oct 22, 2023', admission_status: 'Outpatient',  status: 'Archived',    insurance: 'Aetna',      initials: 'TH', created_at: '' },
-    { id: '3', full_name: 'Miriam Santiago',  email: 'miriam@example.com',   age: 31, gender: 'F', medical_id: '#MC-12005', assigned_doctor: 'Dr. Julian Marcus', department: 'Pediatrics',  last_visit: 'Oct 25, 2023', admission_status: 'Observation', status: 'Observation', insurance: 'Medicare',   initials: 'MS', created_at: '' },
-    { id: '4', full_name: 'Bradley Knight',   email: 'bradley@example.com',  age: 55, gender: 'M', medical_id: '#MC-44567', assigned_doctor: 'Dr. Anita Varma',   department: 'Orthopedics', last_visit: 'Oct 21, 2023', admission_status: 'Inpatient',   status: 'Active',      insurance: 'United',     initials: 'BK', created_at: '' },
-    { id: '5', full_name: 'Leah Franklin',    email: 'leah@example.com',     age: 19, gender: 'F', medical_id: '#MC-77811', assigned_doctor: 'Dr. Sarah Chen',    department: 'Emergency',   last_visit: 'Oct 18, 2023', admission_status: 'Emergency',   status: 'ER/Critical', insurance: 'BlueShield', initials: 'LF', created_at: '' },
-];
-
 function isSupabaseConfigured(): boolean {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -44,11 +36,7 @@ export async function GET(req: NextRequest) {
     const to = from + limit - 1;
 
     if (!isSupabaseConfigured()) {
-        let filtered = fallbackPatients;
-        if (search) filtered = filtered.filter(p => p.full_name.toLowerCase().includes(search.toLowerCase()));
-        if (admissionStatus) filtered = filtered.filter(p => p.admission_status === admissionStatus);
-        if (department) filtered = filtered.filter(p => p.department === department);
-        return NextResponse.json({ patients: filtered.slice(from, to + 1), total: filtered.length });
+        return NextResponse.json({ error: "Supabase not configured." }, { status: 503 });
     }
 
     try {
@@ -62,9 +50,10 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ patients: data ?? [], total: count ?? 0 });
     } catch (err: any) {
         console.error('[admin/patients GET]', err.message);
-        return NextResponse.json({ patients: fallbackPatients, total: fallbackPatients.length });
+        return NextResponse.json({ error: err.message || "Failed to fetch patient records." }, { status: 500 });
     }
 }
+
 
 // POST — add new patient (creates temp account, sends invite email via Supabase Auth)
 export async function POST(req: NextRequest) {
