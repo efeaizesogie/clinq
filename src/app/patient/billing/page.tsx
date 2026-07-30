@@ -49,6 +49,39 @@ export default function BillingPage() {
   const [isActionPending, setIsActionPending] = useState(false);
   const [redirectingToStripe, setRedirectingToStripe] = useState(false);
 
+  // Custom Alert / Confirm Modal State
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'confirm' | 'info';
+    title: string;
+    message: string;
+    onConfirm?: () => void;
+  }>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: ''
+  });
+
+  const showModal = (
+    type: 'success' | 'error' | 'confirm' | 'info',
+    title: string,
+    message: string,
+    onConfirm?: () => void
+  ) => {
+    setModalConfig({
+      isOpen: true,
+      type,
+      title,
+      message,
+      onConfirm
+    });
+  };
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
+
   // Fetch billing data from API
   const fetchData = async () => {
     setIsLoading(true);
@@ -101,7 +134,9 @@ export default function BillingPage() {
               throw new Error(err.error || 'Failed to verify transaction checkout status.');
             }
 
-            alert(
+            showModal(
+              'success',
+              'Checkout Success',
               action === 'pay-balance'
                 ? 'Payment completed successfully via Stripe!'
                 : 'New credit card linked securely via Stripe Checkout!'
@@ -111,7 +146,7 @@ export default function BillingPage() {
             await fetchData();
           } catch (e: any) {
             console.error("Success callback error:", e);
-            alert(e.message || "Failed to process Stripe Checkout verification.");
+            showModal('error', 'Verification Failed', e.message || "Failed to process Stripe Checkout verification.");
           } finally {
             window.history.replaceState({}, '', window.location.pathname);
             setIsLoading(false);
@@ -120,7 +155,7 @@ export default function BillingPage() {
         handleSuccessCallback();
       } else if (stripeStatus === 'cancel') {
         window.history.replaceState({}, '', window.location.pathname);
-        alert("Stripe Checkout was cancelled.");
+        showModal('info', 'Checkout Cancelled', "Stripe Checkout was cancelled.");
       }
     });
   }, []);
@@ -153,7 +188,7 @@ export default function BillingPage() {
       }
     } catch (e: any) {
       console.error(e);
-      alert(e.message || "Error establishing billing context with Stripe.");
+      showModal('error', 'Stripe Redirect Error', e.message || "Error establishing billing context with Stripe.");
       setRedirectingToStripe(false);
     }
   };
@@ -175,20 +210,26 @@ export default function BillingPage() {
   };
 
   // Delete Payment Card
-  const handleDeleteCard = async (cardId: string) => {
-    if (!confirm('Are you sure you want to delete this payment method?')) return;
-    try {
-      const res = await fetch('/api/patient/billing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete-card', cardId })
-      });
-      if (res.ok) {
-        await fetchData();
+  const handleDeleteCard = (cardId: string) => {
+    showModal(
+      'confirm',
+      'Confirm Deletion',
+      'Are you sure you want to delete this payment method?',
+      async () => {
+        try {
+          const res = await fetch('/api/patient/billing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete-card', cardId })
+          });
+          if (res.ok) {
+            await fetchData();
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    );
   };
 
   // Update insurance details
@@ -340,9 +381,9 @@ export default function BillingPage() {
               const res = await fetch('/api/admin/reset-billing', { method: 'POST' });
               if (!res.ok) throw new Error('Failed to reset billing statuses.');
               await fetchData();
-              alert('All invoices reset to Pending successfully!');
+              showModal('success', 'Reset Completed', 'All invoices reset to Pending successfully!');
             } catch (e: any) {
-              alert(e.message || 'Error running server DB reset.');
+              showModal('error', 'Reset Failed', e.message || 'Error running server DB reset.');
             } finally {
               setIsLoading(false);
             }
@@ -713,6 +754,72 @@ export default function BillingPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* ── Custom Alert / Confirm Modal ── */}
+      {modalConfig.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs px-4">
+          <div className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-xl shadow-2xl w-full max-w-[400px] p-6 flex flex-col items-center text-center gap-4 animate-scale-in font-sans">
+            {modalConfig.type === 'success' && (
+              <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-650 dark:text-emerald-400">
+                <ShieldCheck size={28} />
+              </div>
+            )}
+            {modalConfig.type === 'error' && (
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/30 flex items-center justify-center text-red-650 dark:text-red-400">
+                <AlertCircle size={28} />
+              </div>
+            )}
+            {(modalConfig.type === 'info' || modalConfig.type === 'confirm') && (
+              <div className="w-12 h-12 rounded-full bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 flex items-center justify-center text-[#00355F] dark:text-[#1B6CA8]">
+                <AlertCircle size={28} />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1 w-full">
+              <h3 className="font-bold text-[#0D1C2E] dark:text-white text-base">
+                {modalConfig.title}
+              </h3>
+              <p className="text-xs text-[#42474F] dark:text-[#A5AAB5] leading-relaxed px-2">
+                {modalConfig.message}
+              </p>
+            </div>
+
+            <div className="flex gap-3 justify-center w-full pt-3 border-t dark:border-[#22354A] mt-2">
+              {modalConfig.type === 'confirm' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="px-4 py-2 border rounded text-xs font-semibold hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer w-24"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (modalConfig.onConfirm) {
+                        modalConfig.onConfirm();
+                      }
+                      closeModal();
+                    }}
+                    className="px-4 py-2 bg-[#BA1A1A] hover:bg-red-700 text-white text-xs font-semibold rounded transition-all cursor-pointer w-24 border-none"
+                  >
+                    Delete
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-6 py-2 bg-[#00355F] dark:bg-[#1B6CA8] hover:opacity-95 text-white text-xs font-semibold rounded transition-all cursor-pointer min-w-28 border-none"
+                >
+                  Dismiss
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
