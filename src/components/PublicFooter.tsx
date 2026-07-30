@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function PublicFooter() {
   return (
-    <footer className="w-full bg-brand-blue py-16 text-white/60 font-sans border-t border-white/10 shrink-0">
+    <footer className="w-full bg-brand-blue dark:bg-[#0D1C2E] py-16 text-white/60 dark:text-[#A5AAB5] font-sans border-t border-white/10 dark:border-[#22354A] shrink-0 transition-colors duration-300">
       <div className="w-full max-w-[1280px] mx-auto px-6 md:px-16 flex flex-col gap-12 md:gap-16">
         
         {/* Footer Top Grid */}
@@ -13,32 +13,32 @@ export default function PublicFooter() {
           
           {/* Brand Info */}
           <div className="flex flex-col gap-6">
-            <Link href="/" className="text-2xl font-[800] text-white tracking-[-0.6px]">
+            <Link href="/" className="text-2xl font-[800] text-white dark:text-[#5F9EA0] tracking-[-0.6px]">
               Clinq
             </Link>
-            <p className="text-sm font-[400] text-white/60 leading-5">
+            <p className="text-sm font-[400] text-white/60 dark:text-[#A5AAB5] leading-5">
               Empowering patients and clinicians with smart, secure, real-time healthcare booking and digital medical charts.
             </p>
           </div>
 
           {/* Patient Services Links */}
           <div className="flex flex-col gap-6">
-            <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
+            <h5 className="text-sm font-[700] text-white dark:text-white/80 tracking-[1.4px] uppercase">
               Patient Services
             </h5>
             <ul className="flex flex-col gap-3 font-[400] text-sm">
               <li>
-                <Link href="/patient/appointments/book" className="hover:text-white transition">
+                <Link href="/patient/appointments/book" className="hover:text-white dark:hover:text-white transition">
                   Book Appointment
                 </Link>
               </li>
               <li>
-                <Link href="/specialists" className="hover:text-white transition">
+                <Link href="/specialists" className="hover:text-white dark:hover:text-white transition">
                   Find Specialists
                 </Link>
               </li>
               <li>
-                <Link href="/departments" className="hover:text-white transition">
+                <Link href="/departments" className="hover:text-white dark:hover:text-white transition">
                   Medical Units
                 </Link>
               </li>
@@ -47,22 +47,22 @@ export default function PublicFooter() {
 
           {/* Hospital Links */}
           <div className="flex flex-col gap-6">
-            <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
+            <h5 className="text-sm font-[700] text-white dark:text-white/80 tracking-[1.4px] uppercase">
               Clinq Hospital
             </h5>
             <ul className="flex flex-col gap-3 font-[400] text-sm">
               <li>
-                <Link href="/about" className="hover:text-white transition">
+                <Link href="/about" className="hover:text-white dark:hover:text-white transition">
                   About Our Medical Center
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-white transition">
+                <Link href="/login" className="hover:text-white dark:hover:text-white transition">
                   Patient Portal Login
                 </Link>
               </li>
               <li>
-                <Link href="/resources" className="hover:text-white transition">
+                <Link href="/resources" className="hover:text-white dark:hover:text-white transition">
                   Wellness Resources & Blog
                 </Link>
               </li>
@@ -71,13 +71,13 @@ export default function PublicFooter() {
 
           {/* Connect Links */}
           <div className="flex flex-col gap-6">
-            <h5 className="text-sm font-[700] text-white tracking-[1.4px] uppercase">
+            <h5 className="text-sm font-[700] text-white dark:text-white/80 tracking-[1.4px] uppercase">
               Connect
             </h5>
             <div className="flex items-center gap-4">
               <a 
                 href="#"
-                className="w-8 h-8 rounded-[12px] bg-white/10 flex items-center justify-center hover:bg-white/20 transition hover:text-white"
+                className="w-8 h-8 rounded-[12px] bg-white/10 dark:bg-white/5 flex items-center justify-center hover:bg-white/20 dark:hover:bg-white/10 transition hover:text-white dark:hover:text-white"
                 aria-label="Connect Link 1"
               >
                 <svg className="w-2.5 h-3 fill-current" viewBox="0 0 320 512">
@@ -86,7 +86,7 @@ export default function PublicFooter() {
               </a>
               <a 
                 href="#"
-                className="w-8 h-8 rounded-[12px] bg-white/10 flex items-center justify-center hover:bg-white/20 transition hover:text-white"
+                className="w-8 h-8 rounded-[12px] bg-white/10 dark:bg-white/5 flex items-center justify-center hover:bg-white/20 dark:hover:bg-white/10 transition hover:text-white dark:hover:text-white"
                 aria-label="Connect Link 2"
               >
                 <svg className="w-3.5 h-3 fill-current" viewBox="0 0 448 512">
@@ -99,7 +99,7 @@ export default function PublicFooter() {
         </div>
 
         {/* Footer Bottom Border */}
-        <div className="border-t border-white/10 pt-4 flex items-center justify-start text-[10px] uppercase font-[400] text-white/40 tracking-[1px] min-h-[48px]">
+        <div className="border-t border-white/10 dark:border-white/5 pt-4 flex items-center justify-start text-[10px] uppercase font-[400] text-white/40 dark:text-white/30 tracking-[1px] min-h-[48px]">
           © {new Date().getFullYear()} CLINQ MEDICAL SYSTEMS. ALL RIGHTS RESERVED.
         </div>
 
