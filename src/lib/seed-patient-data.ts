@@ -65,10 +65,18 @@ async function seed() {
             heart_rate_bpm: 72,
             blood_pressure_mmhg: "120/80",
             blood_group: "O+",
-            allergies_count: 2
+            allergies_count: 2,
+            minutes_balance: 30
         };
 
-        const { error: profileError } = await supabase.from("patient_profiles").upsert([profile]);
+        const { error: profileError } = await (async () => {
+            let res = await supabase.from("patient_profiles").upsert([profile]);
+            if (res.error && (res.error.code === '42703' || res.error.message?.includes('minutes_balance'))) {
+                const { minutes_balance, ...rest } = profile;
+                res = await supabase.from("patient_profiles").upsert([rest]);
+            }
+            return res;
+        })();
         if (profileError) console.error("Profile error:", profileError.message);
 
         // 2.2 Settings
@@ -257,9 +265,20 @@ async function seed() {
         };
         await supabase.from("patient_insurance").insert(insurance);
 
+        // Resilient Insert Conversation Helper
+        async function insertConv(payload: any) {
+            // Remove selection check standard return
+            let res = await supabase.from("conversations").insert(payload).select().single();
+            if (res.error && (res.error.code === '42703' || res.error.message?.includes('is_ai'))) {
+                const { is_ai, ...rest } = payload;
+                res = await supabase.from("conversations").insert(rest).select().single();
+            }
+            return res;
+        }
+
         // 2.11 conversations & messages
         console.log("Seeding chats...");
-        const { data: conv1, error: c1Err } = await supabase.from("conversations").insert({
+        const { data: conv1, error: c1Err } = await insertConv({
             participant_a: user.id,
             participant_b_name: "Dr. Aris Thorne",
             participant_b_initials: "AT",
@@ -267,8 +286,9 @@ async function seed() {
             online: true,
             dimmed: false,
             is_billing: false,
+            is_ai: true,
             last_message_at: new Date().toISOString()
-        }).select().single();
+        });
 
         if (c1Err) {
             console.error("Conv 1 error:", c1Err.message);
@@ -294,7 +314,57 @@ async function seed() {
             await supabase.from("messages").insert(messages1);
         }
 
-        const { data: conv2, error: c2Err } = await supabase.from("conversations").insert({
+        // Extra AI Doctor: Dr. Elena Rodriguez
+        const { data: convER, error: cErErr } = await insertConv({
+            participant_a: user.id,
+            participant_b_name: "Dr. Elena Rodriguez",
+            participant_b_initials: "ER",
+            participant_b_avatar_bg: "bg-[#F3E8FF]",
+            online: false,
+            dimmed: false,
+            is_billing: false,
+            is_ai: true,
+            last_message_at: new Date().toISOString()
+        });
+
+        if (cErErr) {
+            console.error("Conv ER error:", cErErr.message);
+        } else if (convER) {
+            await supabase.from("messages").insert([
+                {
+                    conversation_id: convER.id,
+                    sender_name: "Dr. Elena Rodriguez",
+                    text: "Hi Alexander, this is Dr. Rodriguez from Neurology. How are you feeling after standard medications for your headaches?"
+                }
+            ]);
+        }
+
+        // Extra AI Nurse: Nurse Sarah Chen
+        const { data: convSC, error: cScErr } = await insertConv({
+            participant_a: user.id,
+            participant_b_name: "Nurse Sarah Chen",
+            participant_b_initials: "SC",
+            participant_b_avatar_bg: "bg-[#CCFBF1]",
+            online: true,
+            dimmed: false,
+            is_billing: false,
+            is_ai: true,
+            last_message_at: new Date().toISOString()
+        });
+
+        if (cScErr) {
+            console.error("Conv SC error:", cScErr.message);
+        } else if (convSC) {
+            await supabase.from("messages").insert([
+                {
+                    conversation_id: convSC.id,
+                    sender_name: "Nurse Sarah Chen",
+                    text: "Hello, just checking in to see if you have registered your current dosage in the appointments tab."
+                }
+            ]);
+        }
+
+        const { data: conv2, error: c2Err } = await insertConv({
             participant_a: user.id,
             participant_b_name: "Billing & Financing",
             participant_b_initials: "BF",
@@ -302,8 +372,9 @@ async function seed() {
             online: false,
             dimmed: false,
             is_billing: true,
+            is_ai: false,
             last_message_at: new Date().toISOString()
-        }).select().single();
+        });
 
         if (c2Err) {
             console.error("Conv 2 error:", c2Err.message);

@@ -1,0 +1,22 @@
+﻿Γùç injected env (3) from .env.local // tip: Γùê secrets for agents [www.dotenvx.com]
+=== Clinq Supabase Schema Verification ===
+Supabase URL: https://xyunbvwbrocqylunnjiq.supabase.co
+Using Key: eyJhbGciOiJIUzI...
+------------------------------------------
+Γ£à Table 'patient_profiles': exists and is accessible. Columns: ["id","full_name","phone_number","date_birth","avatar_url","gender","height_inches","weight_lbs","heart_rate_bpm","blood_pressure_mmhg","blood_group","allergies_count","created_at"]
+Γ£à Table 'patient_allergies': exists and is accessible. Columns: ["id","patient_id","allergy_name","reaction","severity","created_at"]
+Γ£à Table 'patient_immunizations': exists and is accessible. Columns: ["id","patient_id","name","date_administered","notes","created_at"]
+Γ£à Table 'patient_prescriptions': exists and is accessible. Columns: ["id","patient_id","medication_name","dosage","frequency","expires","refills_remaining","action_label","status","prescriber","prescribed_date","form","created_at"]
+Γ£à Table 'patient_lab_results': exists and is accessible. Columns: ["id","patient_id","name","date","provider","status","status_bg","status_text","file_url","image_url","created_at"]
+Γ£à Table 'patient_timeline_events': exists and is accessible. Columns: ["id","patient_id","title","event_date","category","description","file_name","file_url","status","created_at"]
+Γ£à Table 'patient_billing': exists and is accessible. Columns: ["id","patient_id","date","service","amount","status","status_color","invoice_url","created_at"]
+Γ£à Table 'patient_payment_methods': exists and is accessible. Columns: ["id","patient_id","type","card_brand","last_four","expiration","bank_name","is_default","created_at"]
+Γ£à Table 'patient_insurance': exists and is accessible. Columns: ["id","patient_id","carrier","member_id","group_number","updated_at","created_at"]
+Γ£à Table 'patient_settings': exists and is accessible. Columns: ["patient_id","two_factor_auth","theme","language","notif_appointments_email","notif_appointments_sms","notif_appointments_push","notif_labs_email","notif_labs_sms","notif_labs_push","notif_billing_email","notif_billing_sms","notif_billing_push","created_at"]
+Γ£à Table 'patient_menus': exists and is accessible. Columns: ["id","label","href","icon","svg_icon","sort_order","is_bottom","created_at"]
+Γ£à Table 'conversations': exists and is accessible. Columns: "Empty table"
+Γ£à Table 'messages': exists and is accessible. Columns: "Empty table"
+Γ£à Table 'appointments': exists and is accessible. Columns: ["id","patient_name","specialist_id","department","scheduled_at","status","created_at","date","time_start","time_end","day_of_week","is_urgent","patient_id"]
+Γ£à Table 'specialist_schedules': exists and is accessible. Columns: ["id","specialist_id","available_date","date_val","time_slot","is_booked","created_at"]
+------------------------------------------
+≡ƒÄë All tables verified successfully!

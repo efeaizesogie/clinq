@@ -1,0 +1,40 @@
+﻿Γùç injected env (3) from .env.local // tip: Γùê encrypted .env [www.dotenvx.com]
+=== Auth Users ===
+Email: obiokorojulius@gmail.com, Info: {
+  email: 'obiokorojulius@gmail.com',
+  email_verified: true,
+  fullName: 'Dr Obiokoro Otega',
+  phone: '08085959437',
+  phone_verified: false,
+  role: 'patient',
+  sub: '3e746a61-2e83-4bf4-90fa-5291ae8247e1',
+  theme: 'light'
+}
+Email: devmode47@gmail.com, Info: {
+  email: 'devmode47@gmail.com',
+  email_verified: true,
+  fullName: 'Dev Mode',
+  phone: '+2349036940150',
+  phone_verified: false,
+  role: 'patient',
+  sub: '0e68e63f-3ffd-4e9d-b936-d418ecae81a3'
+}
+Email: aizesogieefe@gmail.com, Info: {
+  email: 'aizesogieefe@gmail.com',
+  email_verified: true,
+  fullName: 'Aizesogie Efeosa Osaibhie',
+  phone: '08063192260',
+  phone_verified: false,
+  role: 'patient',
+  sub: '0821ae5d-bf7e-4a42-bb9c-0061e05ce9fb',
+  theme: 'light'
+}
+Email: efeaizesogie@gmail.com, Info: { email_verified: true, role: 'admin' }
+Email: admin@clinq.com, Info: {
+  email: 'admin@clinq.com',
+  email_verified: false,
+  fullName: 'Clinq Administrator',
+  phone_verified: false,
+  role: 'admin',
+  sub: '853ae1a8-3d17-45a2-b4f1-05d9c2dee713'
+}
