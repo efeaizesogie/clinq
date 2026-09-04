@@ -27,8 +27,12 @@ import {
   ChevronDown,
   Calendar,
   Printer,
-  Share2
+  Share2,
+  Download,
+  FileText
 } from "lucide-react";
+import { jsPDF } from "jspdf";
+import { drawPDFHeader, drawPDFFooter, PDF_COLORS } from "@/components/DownloadPDFButton";
 
 // Specialties mapping details
 interface Specialty {
@@ -124,6 +128,7 @@ export default function BookAppointmentPage() {
   const [insuranceId, setInsuranceId] = useState("Member ID: BCBS-992011033");
   const [reason, setReason] = useState("");
   const [bookingId, setBookingId] = useState("CNQ-98234-L");
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
   // Step 4 edit toggle states
   const [isEditingPatient, setIsEditingPatient] = useState(false);
@@ -304,8 +309,26 @@ export default function BookAppointmentPage() {
           }));
           setDbDoctors(mapped);
           
+          // Check URL query parameters to pre-select doctor or specialty if navigated from specialists page
+          let matchedUrlDoc: any = null;
+          if (typeof window !== "undefined") {
+            const urlParams = new URLSearchParams(window.location.search);
+            const docIdParam = urlParams.get("doctor_id");
+            const specParam = urlParams.get("specialty");
+            if (docIdParam) {
+              matchedUrlDoc = mapped.find((doc: any) => doc.id === docIdParam);
+              if (matchedUrlDoc) {
+                setSelectedDoctor(matchedUrlDoc);
+                if (matchedUrlDoc.specialty) setSelectedSpecialty(matchedUrlDoc.specialty);
+                setStep(3); // Jump directly to slot selection for convenience
+              }
+            } else if (specParam) {
+              setSelectedSpecialty(specParam);
+            }
+          }
+
           // Auto select first matching doctor or default
-          if (!selectedDoctor) {
+          if (!selectedDoctor && !matchedUrlDoc) {
             const defaultDoc = mapped.find((doc: any) => doc.specialty.toLowerCase().includes("cardiology"));
             if (defaultDoc) setSelectedDoctor(defaultDoc);
           }
@@ -477,10 +500,129 @@ export default function BookAppointmentPage() {
     return h >= 12;
   });
 
-  // Confirm booking action (with conflict check)
+  // Hospital appointment receipt PDF generator
+  const downloadAppointmentReceipt = () => {
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const W = 210;
+    const margin = 18;
+    const contentW = W - margin * 2;
+    let y = drawPDFHeader(doc, "Official Appointment Confirmation & Hospital Receipt");
+
+    // Top Summary Box
+    doc.setFillColor(...PDF_COLORS.light);
+    doc.roundedRect(margin, y, contentW, 26, 2, 2, "F");
+    doc.setFillColor(...PDF_COLORS.navy);
+    doc.roundedRect(margin, y, 4, 26, 1, 1, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(...PDF_COLORS.navy);
+    doc.text("Appointment Booking Confirmed", margin + 10, y + 9);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...PDF_COLORS.text);
+    doc.text(
+      `Booking Reference: ${bookingId}   |   Issued: ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`,
+      margin + 10,
+      y + 16
+    );
+    doc.text("Status: CONFIRMED / SCHEDULED (Pending Clinical Triage)", margin + 10, y + 22);
+
+    y += 34;
+
+    // Helper to draw section box
+    const drawSection = (title: string) => {
+      doc.setFillColor(...PDF_COLORS.light);
+      doc.roundedRect(margin, y, contentW, 8, 1.5, 1.5, "F");
+      doc.setFillColor(...PDF_COLORS.navy);
+      doc.roundedRect(margin, y, 3, 8, 1, 1, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...PDF_COLORS.navy);
+      doc.text(title, margin + 8, y + 5.5);
+      y += 12;
+    };
+
+    const drawRow = (label: string, value: string, indent = 0) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.setTextColor(...PDF_COLORS.dark);
+      doc.text(label, margin + indent, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...PDF_COLORS.text);
+      const lines = doc.splitTextToSize(value || "—", contentW - 55 - indent);
+      doc.text(lines, margin + 55 + indent, y);
+      y += Math.max(lines.length * 4.5, 6);
+    };
+
+    // 1. Appointment & Specialist Schedule
+    drawSection("1. Appointment & Clinical Specialist Schedule");
+    drawRow("Specialist Physician:", selectedDoctor?.name || "Dr. Aris Thorne");
+    drawRow("Medical Department:", selectedSpecialty || "General Practice");
+    drawRow("Appointment Date:", formatFullDate(selectedDateStr));
+    drawRow("Consultation Time:", `${selectedTime} EST (Duration: ~45 mins)`);
+    drawRow("Consultation Format:", visitType === "In-Person" ? "In-Person Clinical Visit" : "Telehealth Video Consultation");
+    drawRow(
+      "Location / Facility:",
+      visitType === "In-Person"
+        ? "MedCore Main Plaza, Tower A, Suite 402, Metro Clinical Center"
+        : "Encrypted Telehealth Virtual Room (Access link dispatched to email)"
+    );
+
+    y += 4;
+
+    // 2. Patient & Insurance Details
+    drawSection("2. Patient Registration & Insurance Information");
+    drawRow("Patient Full Name:", patientName || "Alexander Sterling");
+    drawRow("Contact Email:", patientEmail || "patient@example.com");
+    drawRow("Contact Phone:", patientPhone || "Not specified");
+    drawRow("Insurance Provider:", insuranceProvider || "Primary Coverage");
+    drawRow("Policy / Member ID:", insuranceId || "Self-Pay / Co-Pay Standard");
+    if (reason) {
+      drawRow("Clinical Reason for Visit:", reason);
+    }
+
+    y += 4;
+
+    // 3. Billing & Verification Information
+    drawSection("3. Hospital Billing & Administrative Verification");
+    drawRow("Consultation Fee:", "$0.00 (Covered under Active HMO Matrix / Primary Co-Pay)");
+    drawRow("Payment Status:", "VERIFIED / AUTHORIZED");
+    drawRow("Hospital Unit:", "Outpatient Consultation & Ambulatory Care Division");
+    drawRow("Reception Desk:", "Tower A Desk 4 — Check-in 15 minutes prior to appointment");
+
+    y += 8;
+
+    // Notice Box
+    doc.setFillColor(248, 249, 255);
+    doc.roundedRect(margin, y, contentW, 22, 2, 2, "F");
+    doc.setDrawColor(...PDF_COLORS.border);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(margin, y, contentW, 22, 2, 2, "S");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_COLORS.navy);
+    doc.text("IMPORTANT PATIENT INSTRUCTIONS:", margin + 6, y + 6);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...PDF_COLORS.text);
+    doc.text(
+      "Please bring a valid photo ID and this printed confirmation receipt. If you need to reschedule or cancel,\nplease do so at least 24 hours in advance via the Clinq portal or by contacting patient services at 1-800-CLINQ-MED.",
+      margin + 6,
+      y + 11
+    );
+
+    drawPDFFooter(doc);
+    doc.save(`Clinq_Appointment_Receipt_${bookingId}.pdf`);
+  };
+
+  // Confirm booking action (with conflict check & guaranteed database write)
   const handleConfirmBooking = async () => {
     try {
       setLoading(true);
+      setBookingError(null);
       const generatedId = `CNQ-${Math.floor(10000 + Math.random() * 90000)}-L`;
       setBookingId(generatedId);
 
@@ -512,20 +654,56 @@ export default function BookAppointmentPage() {
           return;
         }
 
-        // Insert appointment
-        await supabase.from("appointments").insert([
-          {
-            patient_name: patientName,
-            patient_id: user?.id || null,
-            specialist_id: selectedDoctor.id,
-            department: selectedSpecialty,
-            scheduled_at: `${formattedDate}T${formatTimeTo24h(selectedTime)}`,
-            date: formattedDate,
-            time_start: selectedTime,
-            location: visitType === "Telehealth" ? "Telehealth" : "MedCore Main Plaza, Tower A, Suite 402",
-            status: "Pending"
-          }
-        ]);
+        // Calculate end time
+        let calculatedEndTime = "12:00 PM";
+        const timeMatch = selectedTime.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+        if (timeMatch) {
+          let hrs = Number(timeMatch[1]);
+          const mins = timeMatch[2];
+          let period = timeMatch[3].toUpperCase();
+          hrs = hrs + 1;
+          if (hrs === 12 && period === "AM") period = "PM";
+          else if (hrs > 12) hrs = hrs - 12;
+          calculatedEndTime = `${hrs.toString().padStart(2, "0")}:${mins} ${period}`;
+        }
+
+        // Compute day of week
+        let dayOfWeekStr = "Monday";
+        try {
+          const [y, m, d] = formattedDate.split("-").map(Number);
+          const dt = new Date(y, m - 1, d);
+          dayOfWeekStr = dt.toLocaleDateString("en-US", { weekday: "long" });
+        } catch {}
+
+        // Insert appointment into database matching the exact schema
+        const insertPayload: any = {
+          patient_name: patientName || (user?.email ? user.email.split("@")[0] : "Patient"),
+          patient_id: user?.id || null,
+          specialist_id: selectedDoctor.id,
+          department: selectedSpecialty,
+          scheduled_at: `${formattedDate}T${formatTimeTo24h(selectedTime)}`,
+          date: formattedDate,
+          time_start: selectedTime,
+          time_end: calculatedEndTime,
+          day_of_week: dayOfWeekStr,
+          status: "Pending",
+          is_urgent: false
+        };
+
+        const { data: insertedData, error: insertError } = await supabase
+          .from("appointments")
+          .insert([insertPayload])
+          .select();
+
+        if (insertError) {
+          console.error("Supabase appointments insert error:", insertError);
+          setBookingError(insertError.message || "Failed to record appointment in database.");
+          alert(`Booking error: ${insertError.message}`);
+          setLoading(false);
+          return;
+        }
+
+        console.log("Appointment successfully saved to database:", insertedData);
 
         // Update local booked state so the slot immediately shows as taken
         setBookedAppointments(prev => [...prev, {
@@ -535,8 +713,10 @@ export default function BookAppointmentPage() {
         }]);
       }
       setBookingSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Booking error:", err);
+      setBookingError(err?.message || "An unexpected error occurred while processing your booking.");
+      alert(`Booking error: ${err?.message || "An error occurred"}`);
     } finally {
       setLoading(false);
     }
@@ -714,19 +894,21 @@ END:VCALENDAR`;
         </section>
 
         {/* Actions Row */}
-        <section className="flex gap-4 w-full justify-center max-w-[800px] mx-auto mt-2">
+        <section className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-[900px] mx-auto mt-2">
           <button
             onClick={() => router.push("/patient")}
-            className="flex-1 max-w-[391px] h-[58px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white text-[16px] font-[700] rounded-[4px] uppercase tracking-[0.6px] transition-colors cursor-pointer select-none"
+            className="flex-1 max-w-[280px] h-[58px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white text-[15px] font-[700] rounded-[6px] uppercase tracking-[0.6px] transition-colors cursor-pointer select-none flex items-center justify-center shadow-sm"
           >
             Go To Dashboard
           </button>
           <button
-            onClick={() => window.print()}
-            className="flex-1 max-w-[393px] h-[58px] border border-[#00355F] dark:border-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0] text-[16px] font-[700] rounded-[4px] uppercase tracking-[0.6px] transition-colors cursor-pointer select-none flex items-center justify-center gap-2"
+            onClick={() => {
+              downloadAppointmentReceipt();
+            }}
+            className="flex-1 max-w-[280px] h-[58px] border border-[#00355F] dark:border-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0] text-[15px] font-[700] rounded-[6px] uppercase tracking-[0.6px] transition-colors cursor-pointer select-none flex items-center justify-center gap-2"
           >
-            <Printer className="w-4 h-4" />
-            <span>Print Confirmation</span>
+            <Printer className="w-4 h-4 shrink-0" />
+            <span>Print Receipt</span>
           </button>
         </section>
 
@@ -1639,16 +1821,25 @@ END:VCALENDAR`;
                   </span>
                 </label>
 
+                {bookingError && (
+                  <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded text-xs text-red-600 dark:text-red-400 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{bookingError}</span>
+                  </div>
+                )}
+
                 <div className="flex gap-4 items-center w-full h-[58px] mt-2">
                   <button
                     onClick={handleConfirmBooking}
-                    className="flex-1 h-[56px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white text-[16px] font-[700] rounded-[4px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] uppercase transition-colors cursor-pointer select-none"
+                    disabled={loading}
+                    className="flex-1 h-[56px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] disabled:opacity-60 text-white text-[16px] font-[700] rounded-[4px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] uppercase transition-colors cursor-pointer select-none flex items-center justify-center gap-2"
                   >
-                    Confirm Booking
+                    {loading ? "Confirming & Saving..." : "Confirm Booking"}
                   </button>
                   <button
                     onClick={() => setStep(3)}
-                    className="w-[207.67px] h-[58px] border border-[#00355F] dark:border-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0] text-[16px] font-[700] rounded-[4px] uppercase transition-colors cursor-pointer select-none"
+                    disabled={loading}
+                    className="w-[207.67px] h-[58px] border border-[#00355F] dark:border-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] disabled:opacity-60 text-[#00355F] dark:text-[#5F9EA0] text-[16px] font-[700] rounded-[4px] uppercase transition-colors cursor-pointer select-none"
                   >
                     Go Back
                   </button>

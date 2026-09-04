@@ -10,6 +10,7 @@ import {
   Grid, List, Check, HeartPulse
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const DAY_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -40,10 +41,6 @@ export default function SpecialistsPage() {
 
   const [isDeptDropdownOpen, setIsDeptDropdownOpen] = useState(false);
   const [isAvailDropdownOpen, setIsAvailDropdownOpen] = useState(false);
-  
-  // Book Appointment dialog state
-  const [bookingDoctor, setBookingDoctor] = useState<Specialist | null>(null);
-  const [bookingStep, setBookingStep] = useState(1);
 
   const specialists = data?.specialists ?? [];
   const departments = data?.departments ?? [];
@@ -67,13 +64,11 @@ export default function SpecialistsPage() {
     return matchesSearch && matchesDept && matchesAvailability;
   });
 
-  const handleBookClick = (doc: Specialist) => {
-    setBookingDoctor(doc);
-    setBookingStep(1);
-  };
+  const router = useRouter();
 
-  const confirmBooking = () => {
-    setBookingStep(2);
+  const handleBookClick = (doc: Specialist) => {
+    // Navigate directly to the booking wizard with this specialist pre-selected
+    router.push(`/patient/appointments/book?doctor_id=${doc.id}&specialty=${encodeURIComponent(doc.specialty)}`);
   };
 
   return (
@@ -446,86 +441,6 @@ export default function SpecialistsPage() {
 
       {/* Global Footer */}
       <PublicFooter />
-
-      {/* =============== MODAL BOOKING DIALOG (UX Interaction) =============== */}
-      {bookingDoctor && (
-        <div className="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/70 backdrop-blur-xs flex items-center justify-center z-[100]">
-          <div className="bg-white dark:bg-[#122338] border dark:border-[#22354A]/30 rounded-xl shadow-xl w-full max-w-[450px] mx-4 p-6 sm:p-8 flex flex-col gap-4 relative animate-scale-up">
-            
-            {/* Close */}
-            <button 
-              onClick={() => setBookingDoctor(null)}
-              className="absolute top-4 right-4 text-brand-muted hover:text-brand-dark dark:text-[#A7ABB5] dark:hover:text-white text-xl font-bold cursor-pointer"
-            >
-              &times;
-            </button>
-
-            {bookingStep === 1 ? (
-              <>
-                <h3 className="text-lg sm:text-xl font-[600] text-brand-blue dark:text-white border-b border-[#C2C7D1]/30 dark:border-[#22354A]/30 pb-3 text-left">
-                  Book with {bookingDoctor.full_name}
-                </h3>
-                
-                <div className="flex items-center gap-3 bg-[#EFF4FF] dark:bg-[#0D1C2E] p-3 rounded-lg border border-brand-blue/10 dark:border-[#22354A]/30">
-                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${bookingDoctor.color_grad} flex items-center justify-center text-white text-xs font-bold`}>
-                    {bookingDoctor.initials}
-                  </div>
-                  <div className="text-left">
-                    <div className="text-xs font-bold text-brand-dark dark:text-white">{bookingDoctor.full_name}</div>
-                    <div className="text-[10px] text-[#516161] dark:text-[#A7ABB5]">{bookingDoctor.specialty}</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 pt-2 text-sm text-left">
-                  <div>
-                    <label className="block text-xs font-bold text-[#727780] dark:text-[#A7ABB5] uppercase mb-1">Select Consultation Day</label>
-                    <select className="w-full h-[46px] border border-[#C2C7D1] dark:border-[#22354A]/30 rounded p-2 bg-white dark:bg-[#0D1C2E] text-brand-dark dark:text-white focus:outline-none">
-                      <option>Today, Afternoon Session</option>
-                      <option>Tomorrow, Morning Session</option>
-                      <option>Next available weekday</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-[#727780] dark:text-[#A7ABB5] uppercase mb-1">HMO Provider</label>
-                    <select className="w-full h-[46px] border border-[#C2C7D1] dark:border-[#22354A]/30 rounded p-2 bg-white dark:bg-[#0D1C2E] text-brand-dark dark:text-white focus:outline-none">
-                      <option>Gold Cross HMO</option>
-                      <option>Aetna Health</option>
-                      <option>Universal Assurance</option>
-                      <option>Direct Co-Pay (No HMO)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={confirmBooking}
-                  className="w-full h-12 bg-brand-blue hover:bg-brand-blue/95 dark:bg-[#5F9EA0] dark:hover:bg-[#5F9EA0]/95 text-white dark:text-[#0D1C2E] font-[700] rounded mt-4 cursor-pointer select-none"
-                >
-                  Confirm Appointment
-                </button>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-6 text-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold select-none">
-                  <Check className="w-6 h-6 stroke-[3px]" />
-                </div>
-                <h3 className="text-xl font-[600] text-brand-blue dark:text-white">
-                  Appointment Confirmed!
-                </h3>
-                <p className="text-xs text-[#42474F] dark:text-[#A7ABB5] max-w-[280px]">
-                  Your request has been logged successfully. An officer will notify you of details shortly.
-                </p>
-                <button 
-                  onClick={() => setBookingDoctor(null)}
-                  className="w-full h-12 border border-brand-blue/30 dark:border-[#22354A]/30 text-brand-blue dark:text-[#5F9EA0] hover:bg-brand-bg-light dark:hover:bg-[#0D1C2E] font-[600] rounded mt-4 cursor-pointer select-none"
-                >
-                  Done
-                </button>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
 
     </div>
   );
