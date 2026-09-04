@@ -14,6 +14,8 @@ import {
   Activity,
   User,
   Plus,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { jsPDF } from "jspdf";
@@ -145,6 +147,13 @@ export default function HealthRecordsPage() {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [patientName, setPatientName] = useState<string>("Patient Health Summary");
   const [activeFilter, setActiveFilter] = useState<"All" | "Upcoming" | "Past">("All");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 4;
+
+  const handleFilterChange = (f: "All" | "Upcoming" | "Past") => {
+    setActiveFilter(f);
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     async function load() {
@@ -241,6 +250,11 @@ export default function HealthRecordsPage() {
     if (activeFilter === "Past") return past;
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+  const validCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (validCurrentPage - 1) * itemsPerPage;
+  const paginatedAppointments = filtered.slice(startIndex, startIndex + itemsPerPage);
 
   function buildHealthSummaryPDF(doc: jsPDF) {
     const W = 210;
@@ -517,7 +531,7 @@ export default function HealthRecordsPage() {
               {(["All", "Upcoming", "Past"] as const).map((f) => (
                 <button
                   key={f}
-                  onClick={() => setActiveFilter(f)}
+                  onClick={() => handleFilterChange(f)}
                   className={`px-3 py-1 border border-[#C2C7D1] dark:border-[#22354A] rounded-[10px] text-[12px] font-[700] tracking-[0.4px] transition-colors cursor-pointer ${
                     activeFilter === f
                       ? "bg-[#00355F] dark:bg-[#1B6CA8] text-white border-[#00355F] dark:border-[#1B6CA8]"
@@ -545,7 +559,7 @@ export default function HealthRecordsPage() {
                 </Link>
               </div>
             ) : (
-              filtered.map((appt) => {
+              paginatedAppointments.map((appt) => {
                 const past = isAppointmentPast(appt);
                 const st = getStatusStyle(appt.status, past);
                 const doctor = appt.specialists?.full_name ?? appt.assigned_doctor ?? "Care Team Physician";
@@ -634,6 +648,61 @@ export default function HealthRecordsPage() {
               })
             )}
           </div>
+
+          {/* ── Pagination Controls Bar ── */}
+          {filtered.length > itemsPerPage && (
+            <div className="pt-4 border-t border-[#C2C7D1]/50 dark:border-[#22354A] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-[13px] text-[#42474F] dark:text-[#A5AAB5]">
+                Showing <strong className="text-[#0D1C2E] dark:text-white">{startIndex + 1}</strong> to <strong className="text-[#0D1C2E] dark:text-white">{Math.min(startIndex + itemsPerPage, filtered.length)}</strong> of <strong className="text-[#0D1C2E] dark:text-white">{filtered.length}</strong> visits
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={validCurrentPage <= 1}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-[8px] border text-[13px] font-[700] transition-all cursor-pointer ${
+                    validCurrentPage <= 1
+                      ? "opacity-40 cursor-not-allowed border-[#C2C7D1] dark:border-[#22354A] text-[#727780] dark:text-[#A5AAB5]/60"
+                      : "border-[#C2C7D1] dark:border-[#22354A] text-[#00355F] dark:text-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A]"
+                  }`}
+                  aria-label="Previous Page"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Prev</span>
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-8 h-8 rounded-[8px] text-[13px] font-[700] transition-all cursor-pointer ${
+                        validCurrentPage === pageNum
+                          ? "bg-[#00355F] dark:bg-[#1B6CA8] text-white"
+                          : "text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A]"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={validCurrentPage >= totalPages}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-[8px] border text-[13px] font-[700] transition-all cursor-pointer ${
+                    validCurrentPage >= totalPages
+                      ? "opacity-40 cursor-not-allowed border-[#C2C7D1] dark:border-[#22354A] text-[#727780] dark:text-[#A5AAB5]/60"
+                      : "border-[#C2C7D1] dark:border-[#22354A] text-[#00355F] dark:text-[#5F9EA0] hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A]"
+                  }`}
+                  aria-label="Next Page"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
