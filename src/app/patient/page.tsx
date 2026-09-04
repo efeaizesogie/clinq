@@ -48,13 +48,13 @@ export default function PatientDashboardPage() {
           setProfile(profData);
         }
 
-        // Fetch Appointments
+        // Fetch Appointments directly from DB
         const { data: apptData } = await supabase
           .from("appointments")
           .select("*, specialists(full_name, image_url)")
           .eq("patient_id", user.id)
-          .order("scheduled_at", { ascending: true })
-          .limit(3);
+          .order("date", { ascending: true })
+          .order("time_start", { ascending: true });
         if (apptData) {
           setAppointments(apptData);
         }
@@ -110,6 +110,54 @@ export default function PatientDashboardPage() {
       return { dayName, dayNum };
     } catch {
       return { dayName: "TUE", dayNum: "15" };
+    }
+  };
+
+  const parseToMins = (t: string) => {
+    const m = t?.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+    if (!m) return 0;
+    let h = Number(m[1]);
+    const mins = Number(m[2]);
+    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + mins;
+  };
+
+  const isAppointmentPast = (appt: any) => {
+    const rawDate = appt.date || appt.scheduled_at?.split("T")[0];
+    if (!rawDate) return false;
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const todayStr = `${y}-${m}-${d}`;
+
+    if (rawDate < todayStr) return true;
+    if (rawDate > todayStr) return false;
+
+    // It is today: check if time_start has passed
+    const timeStr = appt.time_start;
+    if (!timeStr) return false;
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    return parseToMins(timeStr) <= nowMins;
+  };
+
+  const getDisplayStatus = (appt: any): { label: string; bg: string; text: string } => {
+    const past = isAppointmentPast(appt);
+    if (!past) {
+      if (appt.status === "Confirmed") return { label: "CONFIRMED", bg: "bg-[#D4E6E5] dark:bg-[#1E2E2D]", text: "text-[#576867] dark:text-[#A3B3B2]" };
+      return { label: "PENDING", bg: "bg-[#E6EEFF] dark:bg-[#1B2F45]", text: "text-[#00355F] dark:text-[#8EBDF9]" };
+    }
+    // Past appointments
+    switch (appt.status) {
+      case "Confirmed":
+      case "Completed":
+        return { label: "ATTENDED", bg: "bg-[#DCFCE7] dark:bg-[#183525]", text: "text-[#15803D] dark:text-[#4ADE80]" };
+      case "Cancelled":
+        return { label: "CANCELLED", bg: "bg-[#FFDAD6] dark:bg-[#451B1B]", text: "text-[#93000A] dark:text-[#FF8989]" };
+      case "Pending":
+      default:
+        return { label: "MISSED", bg: "bg-[#FEF3C7] dark:bg-[#3C2E1B]", text: "text-[#B45309] dark:text-[#FBBF24]" };
     }
   };
 
@@ -320,12 +368,29 @@ export default function PatientDashboardPage() {
           </div>
 
           <div className="flex flex-col gap-6">
-            {appointments.length > 0 ? (
-              appointments.map((appt) => {
+            {(() => {
+              const upcoming = appointments.filter(appt => !isAppointmentPast(appt));
+              if (upcoming.length === 0) {
+                return (
+                  <div className="p-10 bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg text-center text-[#42474F] dark:text-[#A5AAB5] transition-colors flex flex-col items-center gap-3">
+                    <p>No upcoming visits scheduled.</p>
+                    <Link
+                      href="/patient/appointments/book"
+                      className="px-5 py-2.5 bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white rounded-[4px] text-[13px] font-[600] uppercase tracking-[0.6px] transition-colors"
+                    >
+                      Book an Appointment
+                    </Link>
+                  </div>
+                );
+              }
+
+              return upcoming.slice(0, 3).map((appt) => {
                 const rawDate = appt.date || appt.scheduled_at?.split("T")[0];
                 const { dayName, dayNum } = formatDateSidebar(rawDate);
                 const isTelehealth = appt.location?.toLowerCase().includes("telehealth") || !appt.location;
                 const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
+                const displayStatus = getDisplayStatus(appt);
+                const rescheduleUrl = `/patient/appointments/book?reschedule_id=${appt.id}${appt.specialist_id ? `&doctor_id=${appt.specialist_id}` : ''}${appt.department ? `&specialty=${encodeURIComponent(appt.department)}` : ''}`;
                 
                 return (
                   <div key={appt.id} className="flex flex-col sm:flex-row bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-lg overflow-hidden shrink-0 transition-colors">
@@ -339,9 +404,14 @@ export default function PatientDashboardPage() {
                     {/* Info & Action area */}
                     <div className="flex flex-col sm:flex-row flex-grow justify-between gap-6 p-6">
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-[12px] font-[600] tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] uppercase transition-colors">
-                          {appt.is_urgent ? "URGENT VISIT" : "CLINICAL VISIT"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[12px] font-[600] tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] uppercase transition-colors">
+                            {appt.is_urgent ? "URGENT VISIT" : "CLINICAL VISIT"}
+                          </span>
+                          <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded text-[10px] font-[700] tracking-wide uppercase`}>
+                            {displayStatus.label}
+                          </span>
+                        </div>
                         <h4 className="text-[16px] font-[600] leading-8 text-[#0D1C2E] dark:text-white transition-colors">
                           {appt.specialists?.full_name || appt.assigned_doctor || "Dr. Sarah Miller, MD"}
                         </h4>
@@ -362,7 +432,7 @@ export default function PatientDashboardPage() {
                       
                       {/* Actions */}
                       <div className="flex items-center gap-4 self-end sm:self-center">
-                        <Link href="/patient/appointments" className="h-[42px] px-6 border border-[#00355F] dark:border-[#1B6CA8] rounded-xl text-[16px] font-[700] text-[#00355F] dark:text-[#1B6CA8] hover:bg-[#00355F]/5 dark:hover:bg-[#1B6CA8]/5 transition-all flex items-center justify-center cursor-pointer">
+                        <Link href={rescheduleUrl} className="h-[42px] px-6 border border-[#00355F] dark:border-[#1B6CA8] rounded-xl text-[16px] font-[700] text-[#00355F] dark:text-[#1B6CA8] hover:bg-[#00355F]/5 dark:hover:bg-[#1B6CA8]/5 transition-all flex items-center justify-center cursor-pointer">
                           Reschedule
                         </Link>
                         <Link href="/patient/messages" className="flex items-center justify-center w-[52px] h-[38px] bg-[#0F4C81] dark:bg-[#1B6CA8] hover:bg-[#0c3e6a] dark:hover:bg-[#2582C7] text-[#8EBDF9] dark:text-white rounded-xl transition-all cursor-pointer">
@@ -372,12 +442,8 @@ export default function PatientDashboardPage() {
                     </div>
                   </div>
                 );
-              })
-            ) : (
-              <div className="p-10 bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-lg text-center text-[#42474F] dark:text-[#A5AAB5] transition-colors">
-                No upcoming visits scheduled.
-              </div>
-            )}
+              });
+            })()}
           </div>
         </div>
 

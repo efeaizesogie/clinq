@@ -98,9 +98,33 @@ export default function AppointmentsPage() {
     return isNaN(d.getTime()) ? null : d;
   };
 
+  const parseToMins = (t: string) => {
+    const m = t?.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+    if (!m) return 0;
+    let h = Number(m[1]);
+    const mins = Number(m[2]);
+    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + mins;
+  };
+
   const isPast = (appt: any) => {
-    const d = getApptDate(appt);
-    return d ? d < today : false;
+    const raw = appt.date || appt.scheduled_at?.split("T")[0];
+    if (!raw) return false;
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const todayStr = `${y}-${m}-${d}`;
+
+    if (raw < todayStr) return true;
+    if (raw > todayStr) return false;
+
+    // It's today: check if time_start has passed
+    const timeStr = appt.time_start;
+    if (!timeStr) return false;
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    return parseToMins(timeStr) <= nowMins;
   };
 
   // Display status: what the user sees in the UI
@@ -248,7 +272,10 @@ export default function AppointmentsPage() {
                         
                         {/* Actions */}
                         <div className="flex items-center gap-3 self-end sm:self-center">
-                          <Link href="/patient/appointments" className="h-[34px] px-4 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A] transition-all uppercase cursor-pointer flex items-center justify-center">
+                          <Link 
+                            href={`/patient/appointments/book?reschedule_id=${appt.id}${appt.specialist_id ? `&doctor_id=${appt.specialist_id}` : ''}${appt.department ? `&specialty=${encodeURIComponent(appt.department)}` : ''}`}
+                            className="h-[34px] px-4 border border-[#C2C7D1] dark:border-[#22354A] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A] transition-all uppercase cursor-pointer flex items-center justify-center"
+                          >
                             Reschedule
                           </Link>
                           <Link href="/patient/messages" className="h-[34px] px-6 bg-[#00355F] dark:bg-[#1B6CA8] rounded-[4px] text-[12px] font-[600] tracking-[0.6px] text-white hover:bg-[#002645] dark:hover:bg-[#2582C7] transition-all uppercase cursor-pointer flex items-center justify-center">
@@ -313,7 +340,10 @@ export default function AppointmentsPage() {
                             </td>
                             <td className="px-6 py-2 text-right">
                               {displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? (
-                                <Link href="/patient/appointments/book" className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] hover:underline uppercase cursor-pointer transition-colors">
+                                <Link 
+                                  href={`/patient/appointments/book?doctor_id=${appt.specialist_id || ''}&specialty=${encodeURIComponent(appt.department || '')}`}
+                                  className="text-[12px] font-[600] tracking-[0.6px] text-[#00355F] dark:text-[#5F9EA0] hover:underline uppercase cursor-pointer transition-colors"
+                                >
                                   Rebook
                                 </Link>
                               ) : (

@@ -160,7 +160,9 @@ export default function BookAppointmentPage() {
   const [selectedDateStr, setSelectedDateStr] = useState<string>(
     fmtLocalDate(new Date())
   );
-  const [selectedTime, setSelectedTime] = useState<string>("11:15 AM"); // Default selected
+  const [selectedTime, setSelectedTime] = useState<string>(""); // Selected slot
+  const [rescheduleApptId, setRescheduleApptId] = useState<string | null>(null);
+  const [rescheduleOriginalAppt, setRescheduleOriginalAppt] = useState<any>(null);
   const [visitType, setVisitType] = useState<"In-Person" | "Telehealth">("In-Person");
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -309,13 +311,44 @@ export default function BookAppointmentPage() {
           }));
           setDbDoctors(mapped);
           
-          // Check URL query parameters to pre-select doctor or specialty if navigated from specialists page
+          // Check URL query parameters to pre-select doctor, specialty, or reschedule existing appointment
           let matchedUrlDoc: any = null;
           if (typeof window !== "undefined") {
             const urlParams = new URLSearchParams(window.location.search);
             const docIdParam = urlParams.get("doctor_id");
             const specParam = urlParams.get("specialty");
-            if (docIdParam) {
+            const rescheduleIdParam = urlParams.get("reschedule_id");
+
+            if (rescheduleIdParam) {
+              setRescheduleApptId(rescheduleIdParam);
+              // Fetch existing appointment details
+              (async () => {
+                try {
+                  const { data: existingAppt } = await supabase
+                    .from("appointments")
+                    .select("*, specialists(*)")
+                    .eq("id", rescheduleIdParam)
+                    .single();
+
+                  if (existingAppt) {
+                    setRescheduleOriginalAppt(existingAppt);
+                    if (existingAppt.patient_name) setPatientName(existingAppt.patient_name);
+                    if (existingAppt.department) setSelectedSpecialty(existingAppt.department);
+                    if (existingAppt.location?.toLowerCase().includes("telehealth")) {
+                      setVisitType("Telehealth");
+                    }
+                    const foundDoc = mapped.find((doc: any) => doc.id === existingAppt.specialist_id);
+                    if (foundDoc) {
+                      setSelectedDoctor(foundDoc);
+                      if (foundDoc.specialty) setSelectedSpecialty(foundDoc.specialty);
+                    }
+                    setStep(3); // Go straight to slot selection
+                  }
+                } catch (rErr) {
+                  console.error("Error fetching appointment for reschedule:", rErr);
+                }
+              })();
+            } else if (docIdParam) {
               matchedUrlDoc = mapped.find((doc: any) => doc.id === docIdParam);
               if (matchedUrlDoc) {
                 setSelectedDoctor(matchedUrlDoc);
@@ -631,6 +664,14 @@ export default function BookAppointmentPage() {
       if (selectedDoctor) {
         const formattedDate = selectedDateStr;
 
+        // ── Validation: ensure selected time is not in the past if today ──
+        if (isSlotTimePast(selectedTime)) {
+          alert("The selected time slot has already passed. Please pick a future time slot.");
+          setSelectedTime("");
+          setLoading(false);
+          return;
+        }
+
         // ── Conflict check: ensure no one else just booked this slot ──
         const { data: conflicts } = await supabase
           .from("appointments")
@@ -640,7 +681,12 @@ export default function BookAppointmentPage() {
           .eq("time_start", selectedTime)
           .in("status", ["Pending", "Confirmed"]);
 
-        if (conflicts && conflicts.length > 0) {
+        // If rescheduling, ignore the current appointment's own slot
+        const realConflicts = rescheduleApptId 
+          ? conflicts?.filter(c => c.id !== rescheduleApptId) 
+          : conflicts;
+
+        if (realConflicts && realConflicts.length > 0) {
           alert("Sorry, this time slot was just booked by another patient. Please choose a different time.");
           // Refresh booked slots
           const { data: apptData } = await supabase
@@ -675,8 +721,8 @@ export default function BookAppointmentPage() {
           dayOfWeekStr = dt.toLocaleDateString("en-US", { weekday: "long" });
         } catch {}
 
-        // Insert appointment into database matching the exact schema
-        const insertPayload: any = {
+        // Payload matching the database schema
+        const appointmentPayload: any = {
           patient_name: patientName || (user?.email ? user.email.split("@")[0] : "Patient"),
           patient_id: user?.id || null,
           specialist_id: selectedDoctor.id,
@@ -690,20 +736,38 @@ export default function BookAppointmentPage() {
           is_urgent: false
         };
 
-        const { data: insertedData, error: insertError } = await supabase
-          .from("appointments")
-          .insert([insertPayload])
-          .select();
+        if (rescheduleApptId) {
+          // UPDATE existing appointment record
+          const { data: updatedData, error: updateError } = await supabase
+            .from("appointments")
+            .update(appointmentPayload)
+            .eq("id", rescheduleApptId)
+            .select();
 
-        if (insertError) {
-          console.error("Supabase appointments insert error:", insertError);
-          setBookingError(insertError.message || "Failed to record appointment in database.");
-          alert(`Booking error: ${insertError.message}`);
-          setLoading(false);
-          return;
+          if (updateError) {
+            console.error("Supabase appointments update error:", updateError);
+            setBookingError(updateError.message || "Failed to update appointment in database.");
+            alert(`Reschedule error: ${updateError.message}`);
+            setLoading(false);
+            return;
+          }
+          console.log("Appointment successfully rescheduled in database:", updatedData);
+        } else {
+          // INSERT new appointment
+          const { data: insertedData, error: insertError } = await supabase
+            .from("appointments")
+            .insert([appointmentPayload])
+            .select();
+
+          if (insertError) {
+            console.error("Supabase appointments insert error:", insertError);
+            setBookingError(insertError.message || "Failed to record appointment in database.");
+            alert(`Booking error: ${insertError.message}`);
+            setLoading(false);
+            return;
+          }
+          console.log("Appointment successfully saved to database:", insertedData);
         }
-
-        console.log("Appointment successfully saved to database:", insertedData);
 
         // Update local booked state so the slot immediately shows as taken
         setBookedAppointments(prev => [...prev, {
@@ -795,10 +859,10 @@ END:VCALENDAR`;
 
           <div className="flex flex-col gap-2 max-w-[600px]">
             <h2 className="text-[32px] font-[700] text-[#00355F] dark:text-white leading-[56px] tracking-[-0.96px] font-sans">
-              Appointment Confirmed!
+              {rescheduleApptId ? "Appointment Rescheduled!" : "Appointment Confirmed!"}
             </h2>
             <p className="text-[18px] leading-7 text-[#42474F] dark:text-[#A5AAB5]">
-              Your appointment with <strong className="text-[#0D1C2E] dark:text-white font-[600]">{selectedDoctor?.name || 'Dr. Aris Thorne'}</strong> has been successfully scheduled. A confirmation email has been sent to your inbox.
+              Your appointment with <strong className="text-[#0D1C2E] dark:text-white font-[600]">{selectedDoctor?.name || 'Dr. Aris Thorne'}</strong> has been successfully {rescheduleApptId ? "rescheduled" : "scheduled"}. A confirmation email with your updated itinerary has been dispatched.
             </p>
           </div>
         </section>
@@ -975,12 +1039,23 @@ END:VCALENDAR`;
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div className="flex flex-col">
-              <span className="text-[12px] font-[600] tracking-[1.2px] text-[#42474F] dark:text-[#A5AAB5] uppercase">
-                STEP {step} OF 4
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] font-[600] tracking-[1.2px] text-[#42474F] dark:text-[#A5AAB5] uppercase">
+                  STEP {step} OF 4
+                </span>
+                {rescheduleApptId && (
+                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded text-[11px] font-[700] uppercase tracking-wide">
+                    Rescheduling
+                  </span>
+                )}
+              </div>
               
               {/* Conditional Title Headers */}
-              {step === 2 ? (
+              {rescheduleApptId ? (
+                <h2 className="text-[24px] font-[600] leading-10 tracking-[-0.32px] text-[#00355F] dark:text-white font-sans">
+                  Reschedule Appointment
+                </h2>
+              ) : step === 2 ? (
                 <h2 className="text-[24px] font-[600] leading-10 tracking-[-0.32px] text-[#00355F] dark:text-white font-sans">
                   Select a Specialist
                 </h2>
@@ -1456,13 +1531,15 @@ END:VCALENDAR`;
                           <div className="grid grid-cols-4 gap-3">
                             {dayMorningSlots.map((slot, idx) => {
                               const isSelected = selectedTime === slot.time_slot;
-                              const isDisabled = slot.is_booked;
+                              const isPast = isSlotTimePast(slot.time_slot);
+                              const isDisabled = slot.is_booked || isPast;
                               return (
                                 <button
                                   key={idx}
                                   type="button"
                                   disabled={isDisabled}
                                   onClick={() => !isDisabled && setSelectedTime(slot.time_slot)}
+                                  title={isPast ? "This time slot has already passed" : slot.is_booked ? "Already booked" : "Available"}
                                   className={`h-[50px] rounded-[4px] border text-[16px] transition-all flex items-center justify-center uppercase tracking-[0.6px] ${
                                     isDisabled
                                       ? "bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 opacity-40 border-[#C2C7D1] dark:border-[#22354A] text-[#727780] dark:text-[#A5AAB5]/50 cursor-not-allowed font-[400]"
@@ -1494,13 +1571,15 @@ END:VCALENDAR`;
                           <div className="grid grid-cols-4 gap-3">
                             {dayAfternoonSlots.map((slot, idx) => {
                               const isSelected = selectedTime === slot.time_slot;
-                              const isDisabled = slot.is_booked;
+                              const isPast = isSlotTimePast(slot.time_slot);
+                              const isDisabled = slot.is_booked || isPast;
                               return (
                                 <button
                                   key={idx}
                                   type="button"
                                   disabled={isDisabled}
                                   onClick={() => !isDisabled && setSelectedTime(slot.time_slot)}
+                                  title={isPast ? "This time slot has already passed" : slot.is_booked ? "Already booked" : "Available"}
                                   className={`h-[50px] rounded-[4px] border text-[16px] transition-all flex items-center justify-center uppercase tracking-[0.6px] ${
                                     isDisabled
                                       ? "bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 opacity-40 border-[#C2C7D1] dark:border-[#22354A] text-[#727780] dark:text-[#A5AAB5]/50 cursor-not-allowed font-[400]"
@@ -1834,7 +1913,9 @@ END:VCALENDAR`;
                     disabled={loading}
                     className="flex-1 h-[56px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] disabled:opacity-60 text-white text-[16px] font-[700] rounded-[4px] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] uppercase transition-colors cursor-pointer select-none flex items-center justify-center gap-2"
                   >
-                    {loading ? "Confirming & Saving..." : "Confirm Booking"}
+                    {loading 
+                      ? (rescheduleApptId ? "Updating Schedule..." : "Confirming & Saving...") 
+                      : (rescheduleApptId ? "Confirm Reschedule" : "Confirm Booking")}
                   </button>
                   <button
                     onClick={() => setStep(3)}
