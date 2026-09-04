@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PublicNavbar from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { usePlatformData } from '@/lib/hooks/usePlatformData';
@@ -10,6 +10,24 @@ import {
   Grid, List, Check, HeartPulse
 } from 'lucide-react';
 import Link from 'next/link';
+
+const DAY_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+/** Compute rolling availability text and whether the doctor works today */
+function getDynamicAvailability(doc: Specialist): { text: string; isToday: boolean } {
+  const days = doc.availability_days;
+  if (!days || days.length === 0) return { text: doc.availability_text, isToday: doc.is_available };
+  const todayDow = new Date().getDay();
+  if (days.includes(todayDow)) return { text: 'AVAILABLE TODAY', isToday: true };
+  for (let offset = 1; offset <= 7; offset++) {
+    const nextDow = (todayDow + offset) % 7;
+    if (days.includes(nextDow)) {
+      if (offset === 1) return { text: 'NEXT SLOT: TOMORROW', isToday: false };
+      return { text: `NEXT SLOT: ${DAY_LABELS[nextDow]}`, isToday: false };
+    }
+  }
+  return { text: doc.availability_text, isToday: doc.is_available };
+}
 
 export default function SpecialistsPage() {
   const { data, isLoading } = usePlatformData();
@@ -43,7 +61,7 @@ export default function SpecialistsPage() {
 
     let matchesAvailability = true;
     if (selectedAvailability === 'Available Today') {
-      matchesAvailability = doc.is_available === true;
+      matchesAvailability = getDynamicAvailability(doc).isToday;
     }
 
     return matchesSearch && matchesDept && matchesAvailability;
@@ -233,14 +251,19 @@ export default function SpecialistsPage() {
                       
                       
                       {/* Availability status badge */}
-                      <div className={`absolute top-4 right-4 px-3 py-1 flex items-center gap-1 rounded-full text-xs font-[600] tracking-[0.6px] uppercase ${
-                        doc.is_available 
-                          ? 'bg-[#D4E6E5] dark:bg-[#0F3836] text-[#576867] dark:text-[#5F9EA0]' 
-                          : 'bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-500'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${doc.is_available ? 'bg-[#576867] dark:bg-[#5F9EA0]' : 'bg-amber-500'}`} />
-                        <span>{doc.availability_text}</span>
-                      </div>
+                      {(() => {
+                        const avail = getDynamicAvailability(doc);
+                        return (
+                          <div className={`absolute top-4 right-4 px-3 py-1 flex items-center gap-1 rounded-full text-xs font-[600] tracking-[0.6px] uppercase ${
+                            avail.isToday 
+                              ? 'bg-[#D4E6E5] dark:bg-[#0F3836] text-[#576867] dark:text-[#5F9EA0]' 
+                              : 'bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-500'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${avail.isToday ? 'bg-[#576867] dark:bg-[#5F9EA0]' : 'bg-amber-500'}`} />
+                            <span>{avail.text}</span>
+                          </div>
+                        );
+                      })()}
 
                     </div>
 

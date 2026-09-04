@@ -19,7 +19,7 @@ export async function GET() {
         const supabase = await createClient();
 
         // Parallel queries for maximum performance
-        const [deptResult, specResult, blogResult, resourcesResult] = await Promise.all([
+        const [deptResult, specResult, blogResult, resourcesResult, availResult] = await Promise.all([
             supabase
                 .from('departments')
                 .select('*')
@@ -42,15 +42,30 @@ export async function GET() {
                 .select('*')
                 .eq('is_active', true)
                 .order('created_at', { ascending: false }),
+
+            supabase
+                .from('specialist_availability')
+                .select('specialist_id, day_of_week'),
         ]);
 
         if (deptResult.error) throw deptResult.error;
         if (specResult.error) throw specResult.error;
 
-        // Map specialists to include department_name from the joined relation
+        // Build availability_days lookup from specialist_availability table
+        const availMap = new Map<string, number[]>();
+        if (availResult.data) {
+            for (const row of availResult.data) {
+                const existing = availMap.get(row.specialist_id) || [];
+                existing.push(row.day_of_week);
+                availMap.set(row.specialist_id, existing);
+            }
+        }
+
+        // Map specialists to include department_name and availability_days
         const specialists: Specialist[] = (specResult.data || []).map((s: any) => ({
             ...s,
             department_name: s.departments?.name || '',
+            availability_days: availMap.get(s.id) || [],
         }));
 
         const departments: Department[] = (deptResult.data || []).map((d: any) => {

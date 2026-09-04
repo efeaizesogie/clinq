@@ -206,6 +206,9 @@ export default function BookAppointmentPage() {
   };
 
   const handlePrevWeek = () => {
+    const thisMonday = getMonday(new Date());
+    // Block navigating before the current week
+    if (currentWeekStart.getTime() <= thisMonday.getTime()) return;
     const prev = new Date(currentWeekStart);
     prev.setDate(prev.getDate() - 7);
     setCurrentWeekStart(prev);
@@ -263,12 +266,26 @@ export default function BookAppointmentPage() {
     init();
   }, []);
 
-  // Fetch specialists
+  // Fetch specialists + their weekly availability templates
   useEffect(() => {
     async function loadSpecs() {
       try {
-        const { data: specData } = await supabase.from("specialists").select("*");
+        const [{ data: specData }, { data: availData }] = await Promise.all([
+          supabase.from("specialists").select("*"),
+          supabase.from("specialist_availability").select("specialist_id, day_of_week")
+        ]);
+
         if (specData) {
+          // Build a lookup: specialist_id → [day_of_week, ...]
+          const availMap = new Map<string, number[]>();
+          if (availData) {
+            for (const row of availData) {
+              const existing = availMap.get(row.specialist_id) || [];
+              existing.push(row.day_of_week);
+              availMap.set(row.specialist_id, existing);
+            }
+          }
+
           const mapped = specData.map((d: any) => ({
             id: d.id,
             name: d.full_name,
@@ -280,6 +297,7 @@ export default function BookAppointmentPage() {
             colorGrad: d.color_grad || "from-blue-600 to-indigo-800",
             isAvailable: d.is_available ?? true,
             availabilityText: d.availability_text || "AVAILABLE TODAY",
+            availability_days: availMap.get(d.id) || [],
             image_url: d.image_url,
             gender: d.gender || (d.initials === "SJ" || d.initials === "EV" || d.initials === "CS" ? "Female" : "Male"),
             languages: d.languages || (d.initials === "JM" ? ["English", "French"] : d.initials === "EV" || d.initials === "AT" ? ["English", "Spanish"] : ["English"])
@@ -299,29 +317,35 @@ export default function BookAppointmentPage() {
     loadSpecs();
   }, [selectedSpecialty]);
 
-  // Fetch slots + availability template for selected specialist
+  // Availability template and booked appointments state
+  const [availTemplate, setAvailTemplate] = useState<any[]>([]); // [{day_of_week, time_slots}]
+  const [bookedAppointments, setBookedAppointments] = useState<any[]>([]); // [{date, time_start, specialist_id}]
+
+  // Fetch availability template + existing appointments for selected specialist
   useEffect(() => {
     if (!selectedDoctor) return;
     async function loadSchedules() {
       try {
-        // Fetch the dated slots for the current 4-week window
-        const { data: schedData } = await supabase
-          .from("specialist_schedules")
-          .select("*")
-          .eq("specialist_id", selectedDoctor.id);
-        if (schedData) setDbSchedules(schedData);
-
-        // Fetch the weekly availability template to know active days
+        // Fetch the weekly availability template (day_of_week + time_slots)
         const { data: availData } = await supabase
           .from("specialist_availability")
-          .select("day_of_week")
+          .select("day_of_week, time_slots")
           .eq("specialist_id", selectedDoctor.id);
         if (availData) {
+          setAvailTemplate(availData);
           setSelectedDoctor((prev: any) => ({
             ...prev,
             availability_days: availData.map((r: any) => r.day_of_week)
           }));
         }
+
+        // Fetch existing appointments for this doctor (to detect booked slots)
+        const { data: apptData } = await supabase
+          .from("appointments")
+          .select("date, time_start, specialist_id")
+          .eq("specialist_id", selectedDoctor.id)
+          .in("status", ["Pending", "Confirmed"]);
+        if (apptData) setBookedAppointments(apptData);
       } catch (err) {
         console.error("Load schedules error:", err);
       }
@@ -330,6 +354,7 @@ export default function BookAppointmentPage() {
   }, [selectedDoctor?.id]);
 
   const DAY_LABELS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const todayStr = fmtLocalDate(new Date());
   const weekdaysData = Array.from({ length: 7 }).map((_, idx) => {
     const d = new Date(currentWeekStart);
     d.setDate(currentWeekStart.getDate() + idx);
@@ -339,11 +364,14 @@ export default function BookAppointmentPage() {
     const hasSlots = selectedDoctor?.availability_days
       ? selectedDoctor.availability_days.includes(dow)
       : dbSchedules.some(s => s.available_date === dateStr);
+    // Past dates (before today) cannot be booked
+    const isPast = dateStr < todayStr;
     return {
       dayName: DAY_LABELS[dow],
       dateVal: d.getDate(),
       dateStr,
-      active: hasSlots
+      active: hasSlots && !isPast,
+      isPast
     };
   });
 
@@ -390,8 +418,26 @@ export default function BookAppointmentPage() {
 
   const displayDoctors = filteredDoctors;
 
-  // Group slots for the selected date
-  const daySlots = dbSchedules.filter(s => s.available_date === selectedDateStr);
+  // ── Generate time slots dynamically from the weekly availability template ──
+  // For the selected date, find its day_of_week, look up template time_slots
+  const selectedDow = (() => {
+    try {
+      const [y, m, d] = selectedDateStr.split("-").map(Number);
+      return new Date(y, m - 1, d).getDay();
+    } catch { return -1; }
+  })();
+  const templateForDay = availTemplate.find(t => t.day_of_week === selectedDow);
+  const templateSlots: string[] = templateForDay?.time_slots || [];
+
+  // Build virtual slot objects from the template (matching the shape used by rendering)
+  const daySlots = templateSlots.map(slot => ({
+    time_slot: slot,
+    available_date: selectedDateStr,
+    is_booked: bookedAppointments.some(
+      a => a.date === selectedDateStr && a.time_start === slot
+    )
+  }));
+
   const parseToMins = (t: string) => {
     const m = t.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
     if (!m) return 0;
@@ -401,6 +447,18 @@ export default function BookAppointmentPage() {
     if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
     return h * 60 + mins;
   };
+
+  // Current time in minutes for disabling past slots on today
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const isSelectedDateToday = selectedDateStr === todayStr;
+
+  // Check if a slot's time has already passed (only relevant for today)
+  const isSlotTimePast = (time: string) => {
+    if (!isSelectedDateToday) return false;
+    return parseToMins(time) <= nowMins;
+  };
+
   const sortedDaySlots = [...daySlots].sort((a, b) => parseToMins(a.time_slot) - parseToMins(b.time_slot));
   const dayMorningSlots = sortedDaySlots.filter(s => {
     const m = s.time_slot.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
@@ -419,7 +477,7 @@ export default function BookAppointmentPage() {
     return h >= 12;
   });
 
-  // Confirm booking action
+  // Confirm booking action (with conflict check)
   const handleConfirmBooking = async () => {
     try {
       setLoading(true);
@@ -430,18 +488,28 @@ export default function BookAppointmentPage() {
       
       if (selectedDoctor) {
         const formattedDate = selectedDateStr;
-        const { data: matchingSlots } = await supabase
-          .from("specialist_schedules")
+
+        // ── Conflict check: ensure no one else just booked this slot ──
+        const { data: conflicts } = await supabase
+          .from("appointments")
           .select("id")
           .eq("specialist_id", selectedDoctor.id)
-          .eq("available_date", formattedDate)
-          .eq("time_slot", selectedTime);
+          .eq("date", formattedDate)
+          .eq("time_start", selectedTime)
+          .in("status", ["Pending", "Confirmed"]);
 
-        if (matchingSlots && matchingSlots.length > 0) {
-          await supabase
-            .from("specialist_schedules")
-            .update({ is_booked: true })
-            .eq("id", matchingSlots[0].id);
+        if (conflicts && conflicts.length > 0) {
+          alert("Sorry, this time slot was just booked by another patient. Please choose a different time.");
+          // Refresh booked slots
+          const { data: apptData } = await supabase
+            .from("appointments")
+            .select("date, time_start, specialist_id")
+            .eq("specialist_id", selectedDoctor.id)
+            .in("status", ["Pending", "Confirmed"]);
+          if (apptData) setBookedAppointments(apptData);
+          setSelectedTime("");
+          setLoading(false);
+          return;
         }
 
         // Insert appointment
@@ -458,6 +526,13 @@ export default function BookAppointmentPage() {
             status: "Pending"
           }
         ]);
+
+        // Update local booked state so the slot immediately shows as taken
+        setBookedAppointments(prev => [...prev, {
+          date: formattedDate,
+          time_start: selectedTime,
+          specialist_id: selectedDoctor.id
+        }]);
       }
       setBookingSuccess(true);
     } catch (err) {
@@ -467,13 +542,34 @@ export default function BookAppointmentPage() {
     }
   };
 
-  // Helper to check if slot is booked in DB
+  // Helper to check if slot is booked in DB or time has passed
   const isSlotDisabled = (time: string) => {
+    // Past time slots on today are disabled
+    if (isSlotTimePast(time)) return true;
     if (dbSchedules.length > 0) {
       const match = dbSchedules.find(s => s.available_date === selectedDateStr && s.time_slot === time);
       return match ? match.is_booked : false;
     }
     return false;
+  };
+
+  // Compute dynamic availability text based on availability_days template
+  const getDynamicAvailabilityText = (doc: any) => {
+    const days = doc.availability_days;
+    if (!days || days.length === 0) return doc.availabilityText || "UNAVAILABLE";
+    const today = new Date();
+    const todayDow = today.getDay(); // 0=Sun
+    // Check if today is a working day
+    if (days.includes(todayDow)) return "AVAILABLE TODAY";
+    // Find next available day
+    for (let offset = 1; offset <= 7; offset++) {
+      const nextDow = (todayDow + offset) % 7;
+      if (days.includes(nextDow)) {
+        if (offset === 1) return "NEXT SLOT: TOMORROW";
+        return `NEXT SLOT: ${DAY_LABELS[nextDow]}`;
+      }
+    }
+    return doc.availabilityText || "UNAVAILABLE";
   };
 
   // Helper to download calendar invitation file
@@ -1045,7 +1141,7 @@ END:VCALENDAR`;
                               {doc.experience} EXP
                             </span>
                             <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-full text-[10px] uppercase font-[500] transition-colors">
-                              {doc.availabilityText}
+                              {getDynamicAvailabilityText(doc)}
                             </span>
                           </div>
                         </div>
@@ -1115,7 +1211,7 @@ END:VCALENDAR`;
                 
                 {/* Header Row */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#C2C7D1] dark:border-[#22354A] h-[67px] transition-colors">
-                  <button type="button" onClick={handlePrevWeek} className="flex items-center justify-center p-1 rounded hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] cursor-pointer text-[#0D1C2E] dark:text-white">
+                  <button type="button" onClick={handlePrevWeek} disabled={currentWeekStart.getTime() <= getMonday(new Date()).getTime()} className={`flex items-center justify-center p-1 rounded transition-colors ${currentWeekStart.getTime() <= getMonday(new Date()).getTime() ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#EFF4FF] dark:hover:bg-[#1E2D4A] cursor-pointer'} text-[#0D1C2E] dark:text-white`}>
                     <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
                   </button>
                   <h4 className="text-[24px] font-[600] text-[#00355F] dark:text-white font-sans leading-8 select-none transition-colors">
