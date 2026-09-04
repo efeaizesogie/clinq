@@ -42,7 +42,15 @@ export default function AppointmentsPage() {
           .order("scheduled_at", { ascending: true });
 
         if (apptData) {
-          setAppointments(apptData);
+          const seen = new Set<string>();
+          const deduped: any[] = [];
+          for (const item of apptData) {
+            if (item.id && !seen.has(item.id)) {
+              seen.add(item.id);
+              deduped.push(item);
+            }
+          }
+          setAppointments(deduped);
         }
       } catch (err) {
         console.error("Error loading appointments:", err);

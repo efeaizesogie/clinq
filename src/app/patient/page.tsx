@@ -56,7 +56,15 @@ export default function PatientDashboardPage() {
           .order("date", { ascending: true })
           .order("time_start", { ascending: true });
         if (apptData) {
-          setAppointments(apptData);
+          const seen = new Set<string>();
+          const deduped: any[] = [];
+          for (const item of apptData) {
+            if (item.id && !seen.has(item.id)) {
+              seen.add(item.id);
+              deduped.push(item);
+            }
+          }
+          setAppointments(deduped);
         }
 
         // Fetch Timeline Events
@@ -67,7 +75,15 @@ export default function PatientDashboardPage() {
           .order("event_date", { ascending: false })
           .limit(3);
         if (timelineData) {
-          setTimeline(timelineData);
+          const seenEvents = new Set<string>();
+          const dedupedEvents: any[] = [];
+          for (const ev of timelineData) {
+            if (ev.id && !seenEvents.has(ev.id)) {
+              seenEvents.add(ev.id);
+              dedupedEvents.push(ev);
+            }
+          }
+          setTimeline(dedupedEvents);
         }
 
         // Fetch Prescriptions
