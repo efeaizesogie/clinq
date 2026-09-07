@@ -401,15 +401,10 @@ export default function HealthRecordsPage() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 w-full">
         <div className="flex flex-col gap-2 max-w-[672px]">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-[700] uppercase tracking-wider bg-[#D2E4FF] dark:bg-[#1E2D4A] text-[#00355F] dark:text-[#5F9EA0]">
-              Synchronized Medical Records
-            </span>
-          </div>
-          <h2 className="text-[26px] md:text-[30px] font-[700] leading-tight tracking-[-0.5px] text-[#00355F] dark:text-[#5F9EA0]">
+          <h2 className="text-[24px] font-[600] leading-10 tracking-[-0.8px] text-[#00355F] dark:text-[#5F9EA0] font-sans transition-colors">
             My Health & Clinical Records
           </h2>
-          <p className="text-[15px] md:text-[16px] font-[400] leading-[24px] text-[#42474F] dark:text-[#A5AAB5]">
+          <p className="text-[16px] font-[400] leading-6 text-[#42474F] dark:text-[#A5AAB5] transition-colors">
             A centralized, real-time view of your clinical timeline, active allergies, immunizations, and doctor consultations stored in the database.
           </p>
         </div>
