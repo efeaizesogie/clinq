@@ -2,21 +2,68 @@
 
 @theme {
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
   --color-brand-blue: #00355f;
   --color-brand-dark: #0d1c2e;
   --color-brand-muted: #42474f;
   --color-brand-accent: #0f4c81;
   --color-brand-bg-light: #f8f9ff;
+
+  /* Landing tokens (see DESIGN.md) — redefined for dark mode below */
+  --color-canvas: #f8f9ff;
+  --color-surface: #ffffff;
+  --color-navy: #00355f;
+  --color-navy-2: #0f4c81;
+  --color-ink: #0d1c2e;
+  --color-steel: #5e6673;
+  --color-fog: #687080;
+  --color-line: #e3e6ee;
+  --color-teal: #5f9ea0;
+  --color-teal-ink: #33797b;
+  --color-action: #00355f;
+  --color-action-hover: #0f4c81;
+  --color-action-fg: #ffffff;
+
+  /* Column-style elevation: progressive stack for product cards, off-axis for the one floating widget */
+  --shadow-product: 0 40px 32px rgba(0, 31, 61, 0.02), 0 22px 18px rgba(0, 31, 61, 0.03), 0 12px 10px rgba(0, 31, 61, 0.03), 0 7px 5px rgba(0, 31, 61, 0.04), 0 3px 2px rgba(0, 31, 61, 0.07);
+  --shadow-float: 24px 48px 64px rgba(0, 31, 61, 0.14), 0 0 0 1px rgba(0, 31, 61, 0.04);
+  --shadow-hair: 0 1px 4px rgba(13, 28, 46, 0.024), 0 1px 0 rgba(13, 28, 46, 0.05), 0 0 0 1px rgba(13, 28, 46, 0.05);
+  --shadow-btn: 0 1px 3px rgba(0, 53, 95, 0.12), 0 1px 0 rgba(0, 53, 95, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark {
+  --color-canvas: #080f18;
+  --color-surface: #0d1c2e;
+  --color-navy: #eff4ff;
+  --color-navy-2: #cfdcf0;
+  --color-ink: #e3e8f0;
+  --color-steel: #a5aab5;
+  --color-fog: #8f98a8;
+  --color-line: #1c2b3d;
+  --color-teal: #5f9ea0;
+  --color-teal-ink: #84c3c5;
+  --color-action: #5f9ea0;
+  --color-action-hover: #73b2b4;
+  --color-action-fg: #0d1c2e;
+  --shadow-product: 0 24px 48px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-float: 24px 48px 64px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-hair: 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--color-brand-bg-light);
     color: var(--color-brand-muted);
     font-family: var(--font-sans);
     transition: background-color 300ms ease, color 300ms ease;
   }
-  
+
   .dark body {
     background-color: #080f18;
     color: #a5aab5;
@@ -24,6 +71,47 @@
 
   button {
     cursor: pointer;
+  }
+
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
+}
+
+/* Browser surfaces carry the palette too */
+::selection {
+  background-color: rgb(95 158 160 / 0.28);
+  color: inherit;
+}
+
+html {
+  caret-color: var(--color-navy-2);
+  scrollbar-color: var(--color-line) transparent;
+  accent-color: var(--color-navy-2);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+a {
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+table,
+time,
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
