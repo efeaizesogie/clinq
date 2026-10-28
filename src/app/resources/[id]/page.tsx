@@ -18,17 +18,17 @@ function renderSimpleMarkdown(content: string) {
     // Header 3
     if (block.startsWith('### ')) {
       return (
-        <h3 key={idx} className="text-xl sm:text-2xl font-[755] text-brand-blue dark:text-white mt-8 mb-4 tracking-[-0.32px] text-left">
+        <h2 key={idx} className="text-xl sm:text-2xl font-[755] text-brand-blue dark:text-white mt-8 mb-4 tracking-[-0.32px] text-left">
           {block.replace('### ', '')}
-        </h3>
+        </h2>
       );
     }
     // Header 4
     if (block.startsWith('#### ')) {
       return (
-        <h4 key={idx} className="text-lg sm:text-xl font-[700] text-[#0F4C81] dark:text-[#5F9EA0] mt-6 mb-3 text-left">
+        <h3 key={idx} className="text-lg sm:text-xl font-[700] text-[#0F4C81] dark:text-[#5F9EA0] mt-6 mb-3 text-left">
           {block.replace('#### ', '')}
-        </h4>
+        </h3>
       );
     }
     // List items
@@ -175,11 +175,9 @@ export default function ArticleReaderPage({ params }: PageProps) {
               
               {/* Specialist Appointment Booking Box */}
               <div className="bg-[#EFF4FF] dark:bg-[#122338] border border-[#C2C7D1]/40 dark:border-[#22354A]/30 rounded-xl p-6 sm:p-8 flex flex-col gap-6 text-left shadow-xs">
-                <div className="w-12 h-12 rounded-lg bg-[#E6EEFF] dark:bg-[#0D1C2E]/40 flex items-center justify-center text-brand-blue dark:text-[#5F9EA0]">
-                  <HeartPulse className="w-6 h-6 animate-pulse" />
-                </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-[755] text-brand-blue dark:text-white leading-6 tracking-tight">
+                  <h3 className="flex items-center gap-2 text-lg sm:text-xl font-[755] text-brand-blue dark:text-white leading-6 tracking-tight">
+                    <HeartPulse className="w-5 h-5 shrink-0 text-[#0F4C81] dark:text-[#5F9EA0]" />
                     Need Direct Consultation?
                   </h3>
                   <p className="text-xs sm:text-sm text-[#42474F] dark:text-[#A7ABB5] leading-5 mt-2">
@@ -209,7 +207,7 @@ export default function ArticleReaderPage({ params }: PageProps) {
                         >
                           {item.title}
                         </Link>
-                        <span className="text-[10px] uppercase font-[700] tracking-wider text-brand-muted/70 block mt-1 dark:text-[#A7ABB5]/60">
+                        <span className="text-[11px] uppercase font-[700] tracking-wider text-[#5e6673] block mt-1 dark:text-[#A7ABB5]">
                           {item.type === 'resource' ? 'Tool' : 'Article'}
                         </span>
                       </li>

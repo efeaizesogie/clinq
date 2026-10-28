@@ -78,6 +78,12 @@
   blockquote {
     text-wrap: pretty;
   }
+
+  /* Placeholder text still has to be readable (Tailwind's default is 50% of the text colour) */
+  ::placeholder {
+    color: var(--color-fog);
+    opacity: 1;
+  }
 }
 
 /* Browser surfaces carry the palette too */

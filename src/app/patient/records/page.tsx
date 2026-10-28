@@ -576,13 +576,13 @@ export default function HealthRecordsPage() {
                     <div className={`flex items-center justify-center w-10 h-10 ${dotColor} rounded-[10px] shadow-sm shrink-0`}>
                       <Calendar className="w-[15px] h-[15px] text-white" />
                     </div>
-                    <div className="flex-1 bg-[#EFF4FF] dark:bg-[#1E2D4A] border border-[#C2C7D1] dark:border-[#22354A] rounded-[10px] p-4 flex flex-col gap-2.5 transition-colors">
+                    <div className="flex-1 bg-[#EFF4FF] dark:bg-[#1E2D4A] rounded-[10px] p-4 flex flex-col gap-2.5 transition-colors">
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <span className="text-[16px] font-[700] text-[#00355F] dark:text-white transition-colors">{doctor}</span>
                             {appt.is_urgent && (
-                              <span className="px-2 py-0.2 bg-[#FFDAD6] text-[#93000A] dark:bg-[#451B1B] dark:text-[#FF8989] rounded-[4px] text-[10px] font-[700] tracking-wide uppercase">
+                              <span className="px-2 py-0.2 bg-[#FFDAD6] text-[#93000A] dark:bg-[#451B1B] dark:text-[#FF8989] rounded-[4px] text-[11px] font-[700] tracking-wide uppercase">
                                 Urgent
                               </span>
                             )}
@@ -590,7 +590,7 @@ export default function HealthRecordsPage() {
                           <span className="text-[13px] font-[600] text-[#42474F] dark:text-[#A5AAB5] transition-colors">{dept}</span>
                         </div>
                         <div className="flex flex-col items-end gap-1 shrink-0">
-                          <span className={`px-2.5 py-0.5 ${st.bg} ${st.text} rounded-[4px] text-[10px] font-[700] tracking-[0.6px] uppercase transition-colors`}>
+                          <span className={`px-2.5 py-0.5 ${st.bg} ${st.text} rounded-[4px] text-[11px] font-[700] tracking-[0.6px] uppercase transition-colors`}>
                             {st.label}
                           </span>
                           <span className="text-[12px] font-[600] text-[#42474F] dark:text-[#A5AAB5] transition-colors">{fmtDate(dateStr)}</span>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Download, Plus, CreditCard, Building2, Trash2, ShieldCheck, X, AlertCircle, FileText, Lock, Loader2 } from 'lucide-react';
+import { Download, Plus, CreditCard, Building2, Trash2, ShieldCheck, X, AlertCircle, FileText, Lock, Loader2, Cross } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { drawPDFHeader, PDF_COLORS } from '@/components/DownloadPDFButton';
 
@@ -371,7 +371,7 @@ export default function BillingPage() {
           <AlertCircle size={18} />
           <div>
             <p className="text-xs font-bold leading-tight">Developer Testing Tool</p>
-            <p className="text-[10px] opacity-80 mt-0.5">Reset patient invoices back to pending to test checkout redirections manually.</p>
+            <p className="text-[12px] opacity-80 mt-0.5">Reset patient invoices back to pending to test checkout redirections manually.</p>
           </div>
         </div>
         <button
@@ -561,19 +561,19 @@ export default function BillingPage() {
 
                 <div className="relative z-10 flex justify-between items-start">
                   <div>
-                    <p className="text-white text-[10px] font-semibold tracking-[1.2px] uppercase opacity-75">Primary Carrier</p>
+                    <p className="text-white text-[11px] font-semibold tracking-[1.2px] uppercase opacity-75">Primary Carrier</p>
                     <p className="text-white font-bold text-base leading-tight mt-1 font-sans">{insurance.carrier}</p>
                   </div>
-                  <div className="text-white opacity-40 text-2xl font-bold">✚</div>
+                  <Cross className="w-6 h-6 text-white opacity-40" aria-hidden="true" />
                 </div>
 
                 <div className="relative z-10 flex gap-4 flex-wrap mt-auto">
                   <div>
-                    <p className="text-white text-[10px] font-semibold tracking-[0.6px] opacity-60">Member ID</p>
+                    <p className="text-white text-[11px] font-semibold tracking-[0.6px] opacity-60">Member ID</p>
                     <p className="text-white font-bold text-xs mt-0.5 font-sans">{insurance.member_id}</p>
                   </div>
                   <div>
-                    <p className="text-white text-[10px] font-semibold tracking-[0.6px] opacity-60">Group Number</p>
+                    <p className="text-white text-[11px] font-semibold tracking-[0.6px] opacity-60">Group Number</p>
                     <p className="text-white font-bold text-xs mt-0.5 font-sans">{insurance.group_number}</p>
                   </div>
                 </div>
@@ -601,7 +601,7 @@ export default function BillingPage() {
             </div>
             <div className="min-w-0">
               <p className="text-[#00355F] dark:text-[#5F9EA0] font-bold text-xs md:text-sm transition-colors">Need Billing Help?</p>
-              <p className="text-[#42474F] dark:text-[#A5AAB5] text-[10px] tracking-[0.6px] leading-4 mt-0.5 transition-colors">
+              <p className="text-[#42474F] dark:text-[#A5AAB5] text-[12px] leading-4 mt-0.5 transition-colors">
                 Support is available Mon-Fri, 8am-6pm.
               </p>
               <p className="text-[#00355F] dark:text-[#1B6CA8] font-bold text-xs md:text-sm mt-0.5 transition-colors">1-800-CLINQ-MED</p>
@@ -639,7 +639,7 @@ export default function BillingPage() {
             )}
 
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Primary Carrier</label>
+              <label className="text-[11px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Primary Carrier</label>
               <input
                 type="text"
                 placeholder="e.g. Blue Cross Blue Shield"
@@ -651,7 +651,7 @@ export default function BillingPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Member ID</label>
+              <label className="text-[11px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Member ID</label>
               <input
                 type="text"
                 placeholder="e.g. ABC123456789"
@@ -663,7 +663,7 @@ export default function BillingPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Group Number</label>
+              <label className="text-[11px] font-bold uppercase tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5]">Group Number</label>
               <input
                 type="text"
                 placeholder="e.g. GRP90021"

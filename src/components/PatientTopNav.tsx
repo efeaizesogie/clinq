@@ -257,7 +257,7 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
         >
           <Bell className="w-[18px] h-[18px]" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-4 px-1 bg-[#BA1A1A] text-white text-[9px] font-[700] rounded-full leading-none ring-2 ring-surface">
+            <span className="absolute top-1 right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-[#BA1A1A] text-white text-[11px] font-[700] rounded-full leading-none ring-2 ring-surface">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
@@ -342,7 +342,7 @@ export default function PatientTopNav({ onMenuToggle }: PatientTopNavProps) {
                           <h5 className={`text-[13px] truncate text-ink ${!isRead ? "font-[700]" : "font-[500]"}`}>
                             {notif.title}
                           </h5>
-                          <span className="font-mono text-[10px] text-fog shrink-0">{notif.timestamp}</span>
+                          <span className="font-mono text-[11px] text-fog shrink-0">{notif.timestamp}</span>
                         </div>
                         <p className="text-[12px] leading-[1.45] text-steel line-clamp-2">{notif.description}</p>
                         {notif.actionLabel && (

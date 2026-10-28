@@ -205,7 +205,7 @@ export default function AppointmentsPage() {
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-end">
               <span className="text-[12px] font-[700] leading-4 text-[#0D1C2E]">Dr. Sarah Chen</span>
-              <span className="text-[10px] font-[400] text-[#0D1C2E]">Hospital Admin</span>
+              <span className="text-[11px] font-[400] text-[#0D1C2E]">Hospital Admin</span>
             </div>
             <div className="rounded-[12px] bg-[#E6EEFF] border border-[#C2C7D1] flex items-center justify-center text-[#00355F] font-[700] text-sm shrink-0 w-10 h-10">SC</div>
           </div>
@@ -238,7 +238,7 @@ export default function AppointmentsPage() {
                     <div className="flex flex-row justify-between items-start gap-2 w-full">
                       <span className="font-[600] text-[14px] text-[#93000A]">{a.patient_name}</span>
                       <div className="flex flex-col items-start px-1.5 py-0.5 bg-[#BA1A1A] rounded-[2px] mt-1 shrink-0">
-                        <span className="font-[700] text-[9px] text-white uppercase">URGENT</span>
+                        <span className="font-[700] text-[11px] text-white uppercase">URGENT</span>
                       </div>
                     </div>
                     <span className="font-[400] text-[14px] text-[#42474F] pt-2">{a.date} - {a.time_start}</span>
@@ -369,9 +369,9 @@ export default function AppointmentsPage() {
                           width: `calc(100% / 8 - 8px)`
                       }}
                     >
-                        <span className={`font-[700] text-[10px] leading-[14px] uppercase truncate ${styleRef.textMain}`}>{app.department}</span>
+                        <span className={`font-[700] text-[11px] leading-[14px] uppercase truncate ${styleRef.textMain}`}>{app.department}</span>
                         <span className={`font-[700] text-[11px] leading-[15px] truncate ${styleRef.textSub}`}>{app.patient_name}</span>
-                        <span className={`font-[400] text-[9px] leading-[13px] opacity-80 ${styleRef.textSub}`}>
+                        <span className={`font-[400] text-[11px] leading-[13px] opacity-80 ${styleRef.textSub}`}>
                             {app.time_start} - {app.time_end}
                         </span>
                     </div>

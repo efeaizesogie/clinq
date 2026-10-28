@@ -40,7 +40,7 @@ export default function AdminLayout({
               <span className="text-[24px] font-[700] leading-8 tracking-[-0.6px] text-[#00355F]">
                 Clinq
               </span>
-              <span className="text-[10px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#42474F]">
+              <span className="text-[11px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#42474F]">
                 Admin Terminal
               </span>
             </div>

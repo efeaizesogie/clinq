@@ -104,7 +104,7 @@ export default function ResourcesPage() {
                   placeholder="Search articles, guides, HMO matrix..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-full pl-12 pr-4 bg-white dark:bg-[#122338] border border-[#C2C7D1]/60 dark:border-[#22354A]/30 rounded-xl text-[16px] text-brand-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 dark:focus:ring-[#5F9EA0]/20 shadow-xs placeholder-[#9CA3AF] transition"
+                  className="w-full h-full pl-12 pr-4 bg-white dark:bg-[#122338] border border-[#C2C7D1]/60 dark:border-[#22354A]/30 rounded-xl text-[16px] text-brand-dark dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 dark:focus:ring-[#5F9EA0]/20 shadow-xs placeholder-[#687080] transition"
                 />
               </div>
 
@@ -170,7 +170,7 @@ export default function ResourcesPage() {
                             <IconComponent className="w-8 h-8" />
                           </div>
                         )}
-                        <span className="absolute top-4 left-4 bg-brand-blue dark:bg-[#5F9EA0] text-white dark:text-[#0D1C2E] text-[10px] font-[800] tracking-[1.2px] uppercase px-3 py-1.5 rounded-full shadow-xs">
+                        <span className="absolute top-4 left-4 bg-brand-blue dark:bg-[#5F9EA0] text-white dark:text-[#0D1C2E] text-[11px] font-[800] tracking-[1.2px] uppercase px-3 py-1.5 rounded-full shadow-xs">
                           {item.category}
                         </span>
                       </div>
@@ -185,9 +185,9 @@ export default function ResourcesPage() {
                           })}
                         </span>
                         
-                        <h3 className="text-xl sm:text-[22px] font-[750] leading-7 text-brand-blue dark:text-white tracking-[-0.32px] group-hover:text-brand-blue/90 transition">
+                        <h2 className="text-xl sm:text-[22px] font-[750] leading-7 text-brand-blue dark:text-white tracking-[-0.32px] group-hover:text-brand-blue/90 transition">
                           {item.title}
-                        </h3>
+                        </h2>
                         
                         <p className="text-sm sm:text-base leading-6 text-[#516161] dark:text-[#A7ABB5]">
                           {item.description}
@@ -201,7 +201,7 @@ export default function ResourcesPage() {
                             Read Full Details
                           </Link>
                           {item.type === 'resource' && (
-                            <span className="text-[10px] font-[700] uppercase tracking-wider text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/20 px-2.5 py-1 rounded">
+                            <span className="text-[11px] font-[700] uppercase tracking-wider text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/20 px-2.5 py-1 rounded">
                               Health Tool
                             </span>
                           )}
@@ -214,7 +214,7 @@ export default function ResourcesPage() {
             ) : (
               <div className="py-24 text-center bg-white dark:bg-[#122338] border border-dashed border-[#C2C7D1]/30 dark:border-[#22354A]/30 rounded-xl flex flex-col items-center justify-center gap-3">
                 <LayoutGrid className="w-12 h-12 text-[#9CA3AF]" />
-                <h3 className="text-lg font-[750] text-[#00355F] dark:text-white">No items found</h3>
+                <h2 className="text-lg font-[750] text-[#00355F] dark:text-white">No items found</h2>
                 <p className="text-xs sm:text-sm text-[#727780] dark:text-[#A7ABB5] max-w-sm px-4">
                   We couldn't find any resources or articles matching "{searchQuery}" under this category.
                 </p>
