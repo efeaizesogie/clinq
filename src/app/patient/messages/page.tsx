@@ -68,7 +68,7 @@ export default function MessagesPage() {
   
   const [activeTab, setActiveTab] = useState("Recent");
   const [mobileView, setMobileView] = useState<"inbox" | "chat">("inbox");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatBodyRef = useRef<HTMLDivElement>(null);
 
   // Fetch initial conversations list & patient minutes balance
   const fetchConversations = async (autoSelectId?: string) => {
@@ -146,9 +146,10 @@ export default function MessagesPage() {
     }
   }, [selectedConv?.id]);
 
-  // Scroll to bottom of message list on updates
+  // Scroll to bottom of message list on updates (vertical only, so ancestors never scroll sideways)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = chatBodyRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages, isTyping]);
 
   // Start new conversation check/create
@@ -319,14 +320,14 @@ export default function MessagesPage() {
   });
 
   return (
-    <div className="flex w-full h-[calc(100vh-64px)] bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] overflow-hidden text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
+    <div className="flex w-full min-w-0 h-[calc(100vh-64px)] bg-[#F8F9FF] dark:bg-[#080F18] font-[Manrope,sans-serif] overflow-hidden text-[#42474F] dark:text-[#A5AAB5] transition-colors duration-300">
       
-      {/* ── Inbox List ── */}
-      <div className={`flex flex-col w-full md:w-[384px] shrink-0 bg-[#F8F9FF] dark:bg-[#080F18] border-r border-[#C2C7D1] dark:border-[#22354A] h-full transition-colors ${mobileView === "chat" ? "hidden md:flex" : "flex"}`}>
+      {/* ── Inbox List (collapses to an avatar rail at md, full list from lg) ── */}
+      <div className={`flex flex-col w-full md:w-[88px] lg:w-[320px] xl:w-[384px] shrink-0 bg-[#F8F9FF] dark:bg-[#080F18] border-r border-[#C2C7D1] dark:border-[#22354A] h-full transition-colors ${mobileView === "chat" ? "hidden md:flex" : "flex"}`}>
         
         {/* Inbox Header */}
-        <div className="flex items-center justify-between px-4 md:px-6 pt-6 pb-4">
-          <span className="text-[24px] font-[600] leading-8 text-[#00355F] dark:text-white transition-colors">Inboxes</span>
+        <div className="flex items-center justify-between md:justify-center lg:justify-between px-4 md:px-0 lg:px-6 pt-6 pb-4">
+          <span className="md:hidden lg:inline text-[24px] font-[600] leading-8 text-[#00355F] dark:text-white transition-colors">Inboxes</span>
           <div className="flex items-center gap-2">
             {/* Start Chat Button */}
             <button 
@@ -336,14 +337,14 @@ export default function MessagesPage() {
             >
               <Plus className="w-4 h-4" />
             </button>
-            <span className="px-2 py-0.5 bg-[#0F4C81] dark:bg-[#1B6CA8] rounded-[2px] text-[10px] font-[700] text-[#D9E6F8] dark:text-white transition-colors">
+            <span className="md:hidden lg:inline px-2 py-0.5 bg-[#0F4C81] dark:bg-[#1B6CA8] rounded-[2px] text-[10px] font-[700] text-[#D9E6F8] dark:text-white transition-colors">
               {filteredConversations.length} CHATS
             </span>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="px-4 md:px-6 pb-4">
+        <div className="px-4 md:hidden lg:block lg:px-6 pb-4">
           <div className="flex items-center gap-2 p-1 bg-[#EFF4FF] dark:bg-[#1E2D4A]/50 rounded-[8px] transition-colors">
             {["Recent", "Unread", "Care Team"].map((tab) => (
               <button
@@ -370,7 +371,7 @@ export default function MessagesPage() {
           ) : filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-8 text-center text-xs">
               <MessageSquare className="w-8 h-8 opacity-40 mb-2" />
-              <span>No conversations found. Click '+' above to start a chat with an available doctor.</span>
+              <span className="md:hidden lg:inline">No conversations found. Click '+' above to start a chat with an available doctor.</span>
             </div>
           ) : (
             filteredConversations.map((conv) => {
@@ -378,11 +379,12 @@ export default function MessagesPage() {
               return (
                 <div
                   key={conv.id}
+                  title={conv.participant_b_name}
                   onClick={() => {
                     setSelectedConv(conv);
                     setMobileView("chat");
                   }}
-                  className={`flex flex-col px-4 md:px-6 py-5 cursor-pointer transition-colors ${
+                  className={`flex flex-col px-4 md:px-[18px] lg:px-6 py-5 cursor-pointer transition-colors ${
                     active
                       ? "bg-[#DCE9FF] dark:bg-[#1E2D4A] border-l-4 border-[#00355F] dark:border-[#5F9EA0]"
                       : "border-b border-[rgba(194,199,209,0.3)] dark:border-[#22354A]/30 hover:bg-[#EFF4FF] dark:hover:bg-[#121E2C]/50"
@@ -402,7 +404,7 @@ export default function MessagesPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                    <div className="flex md:hidden lg:flex flex-col gap-0.5 flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <span className={`text-[15px] leading-5 text-[#0D1C2E] dark:text-white truncate ${active ? "font-[700]" : "font-[600]"}`}>
                           {conv.participant_b_name}
@@ -428,12 +430,12 @@ export default function MessagesPage() {
       </div>
 
       {/* ── Chat Window ── */}
-      <div className={`flex flex-col flex-1 bg-white dark:bg-[#121E2C] h-full transition-colors ${mobileView === "inbox" ? "hidden md:flex" : "flex"}`}>
+      <div className={`flex flex-col flex-1 min-w-0 bg-white dark:bg-[#121E2C] h-full transition-colors ${mobileView === "inbox" ? "hidden md:flex" : "flex"}`}>
         
         {selectedConv ? (
           <>
             {/* Chat Header */}
-            <div className="flex items-center justify-between px-4 md:px-8 h-20 border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
+            <div className="flex items-center justify-between gap-3 px-4 lg:px-8 h-20 border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0 transition-colors">
               <div className="flex items-center gap-3 md:gap-4 min-w-0">
                 {/* Back button — mobile only */}
                 <button
@@ -496,7 +498,7 @@ export default function MessagesPage() {
 
                 {/* Patient Portal Paid Minutes indicators */}
                 {!selectedConv.is_billing && (
-                  <div className="hidden lg:flex flex-col text-right font-sans">
+                  <div className="hidden xl:flex flex-col text-right font-sans">
                     <span className="text-[11px] text-[#727780] dark:text-[#A5AAB5] uppercase font-bold tracking-wider">Minutes Balance</span>
                     <button 
                       onClick={() => setIsBuyModalOpen(true)}
@@ -531,7 +533,7 @@ export default function MessagesPage() {
             )}
 
             {/* Chat Body */}
-            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-8 flex flex-col gap-6 bg-[rgba(248,249,255,0.5)] dark:bg-[#080F18]/50 transition-colors">
+            <div ref={chatBodyRef} className="flex-1 overflow-y-auto overflow-x-hidden px-4 md:px-8 py-6 md:py-8 flex flex-col gap-6 bg-[rgba(248,249,255,0.5)] dark:bg-[#080F18]/50 transition-colors">
               {loadingMsgs ? (
                 <div className="flex justify-center items-center py-20">
                   <Loader2 className="w-10 h-10 text-[#00355F] dark:text-[#1B6CA8] animate-spin" />
@@ -596,8 +598,6 @@ export default function MessagesPage() {
                   </div>
                 </div>
               )}
-              
-              <div ref={messagesEndRef} />
             </div>
 
             {/* Chat Footer / Input */}
