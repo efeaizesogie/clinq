@@ -1394,10 +1394,10 @@ END:VCALENDAR`;
                           <span className="text-[14px] text-[#516161] dark:text-[#A5AAB5] truncate font-sans transition-colors">{doc.specialty}</span>
                           
                           <div className="flex flex-wrap gap-2 mt-2 select-none">
-                            <span className="px-2 py-0.5 bg-[#EFF4FF] dark:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] rounded-full text-[10px] uppercase font-[500] transition-colors">
+                            <span className="px-2 py-0.5 bg-[#EFF4FF] dark:bg-[#1E2D4A] text-[#42474F] dark:text-[#A5AAB5] rounded-full text-[11px] uppercase font-[500] transition-colors">
                               {doc.experience} EXP
                             </span>
-                            <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-full text-[10px] uppercase font-[500] transition-colors">
+                            <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-full text-[11px] uppercase font-[500] transition-colors">
                               {getDynamicAvailabilityText(doc)}
                             </span>
                           </div>
@@ -1495,7 +1495,7 @@ END:VCALENDAR`;
                             : "bg-[#EFF4FF] dark:bg-[#1C2C3E]/50 opacity-40 cursor-not-allowed"
                         }`}
                       >
-                        <span className={`text-[10px] font-[400] text-center select-none ${isSelected ? "text-[#8EBDF9] dark:text-white/80" : "text-[#42474F] dark:text-[#A5AAB5]"}`}>
+                        <span className={`text-[11px] font-[400] text-center select-none ${isSelected ? "text-[#8EBDF9] dark:text-white/80" : "text-[#42474F] dark:text-[#A5AAB5]"}`}>
                           {d.dayName}
                         </span>
                         <span className={`text-[24px] font-[600] mt-0.5 leading-8 select-none ${isSelected ? "text-[#8EBDF9] dark:text-white" : "text-[#0D1C2E] dark:text-white"}`}>
@@ -1875,7 +1875,7 @@ END:VCALENDAR`;
                     <div className="flex flex-col min-w-0 flex-grow">
                       <div className="flex gap-2 items-center">
                         <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans truncate transition-colors">{insuranceProvider}</strong>
-                        <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-[2px] text-[10px] uppercase font-[700] transition-colors">
+                        <span className="px-2 py-0.5 bg-[#D4E6E5] dark:bg-[#1C2C3E] text-[#576867] dark:text-[#5F9EA0] rounded-[2px] text-[11px] uppercase font-[700] transition-colors">
                           ACTIVE
                         </span>
                       </div>
@@ -2006,7 +2006,7 @@ END:VCALENDAR`;
                       <span className="text-[14px] text-[#42474F] dark:text-[#A5AAB5]">Est. Co-pay</span>
                       <strong className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white font-sans transition-colors">$20.00</strong>
                     </div>
-                    <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5]/70 leading-none">
+                    <span className="text-[11px] text-[#42474F] dark:text-[#A5AAB5]/70 leading-none">
                       Final amount determined by provider at check-in.
                     </span>
                   </div>

@@ -239,9 +239,9 @@ export default function NotificationsCenterPage() {
             <div className="w-14 h-14 rounded-full bg-[#EFF4FF] dark:bg-[#1E2D4A] flex items-center justify-center text-[#00355F] dark:text-[#5F9EA0]">
               <CheckCircle2 className="w-7 h-7 stroke-[2]" />
             </div>
-            <h4 className="text-[18px] font-[700] text-[#0D1C2E] dark:text-white font-sans">
+            <h3 className="text-[18px] font-[700] text-[#0D1C2E] dark:text-white font-sans">
               All Caught Up!
-            </h4>
+            </h3>
             <p className="text-[14px] text-[#42474F] dark:text-[#A5AAB5] max-w-sm">
               You have no active alerts matching this filter. New notifications will appear here automatically.
             </p>
@@ -267,10 +267,10 @@ export default function NotificationsCenterPage() {
                     </div>
                     <div className="flex flex-col gap-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h4 className={`text-[16px] font-sans text-[#0D1C2E] dark:text-white ${!isRead ? 'font-[700]' : 'font-[500]'}`}>
+                        <h3 className={`text-[16px] font-sans text-[#0D1C2E] dark:text-white ${!isRead ? 'font-[700]' : 'font-[500]'}`}>
                           {item.title}
-                        </h4>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-[700] uppercase tracking-wide ${getSeverityBadge(item.severity)}`}>
+                        </h3>
+                        <span className={`px-2 py-0.5 rounded text-[11px] font-[700] uppercase tracking-wide ${getSeverityBadge(item.severity)}`}>
                           {item.category}
                         </span>
                         {!isRead && (

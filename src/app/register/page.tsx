@@ -151,7 +151,7 @@ export default function RegisterPage() {
                 />
               </div>
               {errors.fullName && (
-                <span className="text-[11px] text-rose-500 flex items-center gap-1">
+                <span className="text-[12px] text-rose-500 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.fullName}
                 </span>
               )}
@@ -181,7 +181,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 {errors.email && (
-                  <span className="text-[11px] text-rose-500 flex items-center gap-1">
+                  <span className="text-[12px] text-rose-500 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" /> {errors.email}
                   </span>
                 )}
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 {errors.phone && (
-                  <span className="text-[11px] text-rose-500 flex items-center gap-1">
+                  <span className="text-[12px] text-rose-500 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" /> {errors.phone}
                   </span>
                 )}
@@ -243,11 +243,11 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="w-[18.33px] h-[12.5px]" /> : <Eye className="w-[18.33px] h-[12.5px]" />}
                 </button>
               </div>
-              <span className="text-[11px] text-[#727780] leading-tight select-none">
+              <span className="text-[12px] text-[#727780] leading-tight select-none">
                 Minimum 8 characters with at least one number.
               </span>
               {errors.password && (
-                <span className="text-[11px] text-rose-500 flex items-center gap-1">
+                <span className="text-[12px] text-rose-500 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.password}
                 </span>
               )}
@@ -274,7 +274,7 @@ export default function RegisterPage() {
                 />
               </div>
               {errors.confirmPassword && (
-                <span className="text-[11px] text-rose-500 flex items-center gap-1">
+                <span className="text-[12px] text-rose-500 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.confirmPassword}
                 </span>
               )}
@@ -295,7 +295,7 @@ export default function RegisterPage() {
                 </span>
               </label>
               {errors.agreeToTerms && (
-                <span className="text-[11px] text-rose-500 flex items-center gap-1 mt-1">
+                <span className="text-[12px] text-rose-500 flex items-center gap-1 mt-1">
                   <AlertCircle className="w-3 h-3" /> {errors.agreeToTerms}
                 </span>
               )}

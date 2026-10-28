@@ -280,7 +280,7 @@ export default function PatientManagementPage() {
               <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#0D1C2E]">
                 Dr. Sarah Chen
               </span>
-              <span className="text-[10px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
+              <span className="text-[11px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
                 Hospital Admin
               </span>
             </div>
@@ -574,7 +574,7 @@ export default function PatientManagementPage() {
                                   ref={actionMenuRef}
                                   className="absolute right-6 top-[70px] w-[180px] bg-white border border-[#C2C7D1] rounded-[8px] shadow-lg py-2 z-40 text-left"
                                 >
-                                  <div className="px-3 py-1.5 text-[10px] uppercase font-bold tracking-[0.5px] text-[#727780] border-b border-[#EFF4FF]">
+                                  <div className="px-3 py-1.5 text-[11px] uppercase font-bold tracking-[0.5px] text-[#727780] border-b border-[#EFF4FF]">
                                     Change Status
                                   </div>
                                   {["Active", "Observation", "ER/Critical", "Archived"].map((st) => (
@@ -676,7 +676,7 @@ export default function PatientManagementPage() {
               <div className="flex flex-col justify-between p-6 bg-white border border-[#C2C7D1] rounded-[8px] w-[430px] h-[166px]">
                 <div className="flex flex-row justify-between items-center w-full pb-2">
                   <span className="text-[14px] font-[400] text-[#0D1C2E]">Occupancy Trends</span>
-                  <span className="text-[10px] font-[700] text-[#42474F] tracking-[1.1px] uppercase">LAST 7 DAYS</span>
+                  <span className="text-[11px] font-[700] text-[#42474F] tracking-[1.1px] uppercase">LAST 7 DAYS</span>
                 </div>
 
                 {/* Mock Sparkline bars */}

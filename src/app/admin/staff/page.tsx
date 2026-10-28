@@ -200,7 +200,7 @@ export default function StaffDirectoryPage() {
               <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#0D1C2E]">
                 Dr. Sarah Chen
               </span>
-              <span className="text-[10px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
+              <span className="text-[11px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
                 Hospital Admin
               </span>
             </div>
@@ -269,7 +269,7 @@ export default function StaffDirectoryPage() {
               </span>
               <div className="flex items-center gap-1 text-[11px] font-[700] text-[#056041]">
                 <span>+34</span>
-                <span className="text-[#6B7280] font-[400] text-[10px]">Today</span>
+                <span className="text-[#6B7280] font-[400] text-[11px]">Today</span>
               </div>
             </div>
           </div>
@@ -445,7 +445,7 @@ export default function StaffDirectoryPage() {
                   )}
                   
                   {/* Category Status tag */}
-                  <span className="px-2.5 py-1 bg-[#D4E6E5] text-[#576867] text-[10px] font-[800] rounded-[12px] tracking-[0.5px] uppercase">
+                  <span className="px-2.5 py-1 bg-[#D4E6E5] text-[#576867] text-[11px] font-[800] rounded-[12px] tracking-[0.5px] uppercase">
                     {spec.tag || "CONSULTANT"}
                   </span>
                 </div>
@@ -488,12 +488,12 @@ export default function StaffDirectoryPage() {
                 {/* Footer ratings boxes */}
                 <div className="grid grid-cols-2 gap-3 border-t border-[#EFF4FF] pt-4 mt-2">
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-[700] tracking-[0.5px] text-[#727780]">Retention</span>
+                    <span className="text-[11px] uppercase font-[700] tracking-[0.5px] text-[#727780]">Retention</span>
                     <span className="text-[15px] font-[700] text-[#0D1C2E]">{spec.retention_rate || 95}%</span>
                   </div>
                   
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-[700] tracking-[0.5px] text-[#727780]">Rating</span>
+                    <span className="text-[11px] uppercase font-[700] tracking-[0.5px] text-[#727780]">Rating</span>
                     <span className="text-[15px] font-[700] text-[#0D1C2E]">{spec.rating?.toFixed(1) || "5.0"}/5.0</span>
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function StaffDirectoryPage() {
 
                       {/* Status */}
                       <td className="px-6 py-4 text-right">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-[12px] text-[10px] tracking-[0.5px] uppercase ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.font}`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-[12px] text-[11px] tracking-[0.5px] uppercase ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.font}`}>
                           {dept.status}
                         </span>
                       </td>

@@ -89,7 +89,7 @@ export default function SpecialistProfilePage() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end">
             <span className="text-[12px] font-[700] text-[#0D1C2E]">Dr. Sarah Chen</span>
-            <span className="text-[10px] text-[#727780] uppercase">Hospital Admin</span>
+            <span className="text-[11px] text-[#727780] uppercase">Hospital Admin</span>
           </div>
           <div className="w-9 h-9 rounded-[12px] bg-[#E6EEFF] border border-[#C2C7D1] flex items-center justify-center font-[700] text-sm text-[#00355F]">
             SC
@@ -189,15 +189,15 @@ export default function SpecialistProfilePage() {
               {/* Internal Tenure Numbers */}
               <div className="grid grid-cols-3 gap-4 border-t border-[#C2C7D1] pt-6 mt-4">
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Tenure</span>
+                  <span className="text-[11px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Tenure</span>
                   <span className="text-[18px] font-[600] text-[#00355F]">{isJulianVance ? "12 Years" : specialist.experience}</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Total Procedures</span>
+                  <span className="text-[11px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Total Procedures</span>
                   <span className="text-[18px] font-[600] text-[#00355F]">{isJulianVance ? "4,200+" : "1,500+"}</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Clinical Trials</span>
+                  <span className="text-[11px] font-[700] text-[#727780] tracking-[0.5px] uppercase">Clinical Trials</span>
                   <span className="text-[18px] font-[600] text-[#00355F]">{isJulianVance ? "08 Active" : "03 Active"}</span>
                 </div>
               </div>
@@ -393,8 +393,8 @@ export default function SpecialistProfilePage() {
                     <span className="text-[#6B7280]">{pub.journal}</span>
                     <span className="font-[700] text-[#0D1C2E] hover:text-[#00355F] cursor-pointer select-text">{pub.title}</span>
                     <div className="flex gap-2 mt-1">
-                      <span className="px-1.5 py-0.5 bg-[#EFF4FF] text-[#00355F] text-[10px] rounded font-[600]">Citations: {pub.cit}</span>
-                      <span className="px-1.5 py-0.5 bg-[#EFF4FF] text-[#00355F] text-[10px] rounded font-[600]">Impact: {pub.imp}</span>
+                      <span className="px-1.5 py-0.5 bg-[#EFF4FF] text-[#00355F] text-[11px] rounded font-[600]">Citations: {pub.cit}</span>
+                      <span className="px-1.5 py-0.5 bg-[#EFF4FF] text-[#00355F] text-[11px] rounded font-[600]">Impact: {pub.imp}</span>
                     </div>
                   </div>
                 ))}

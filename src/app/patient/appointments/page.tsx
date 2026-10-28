@@ -244,7 +244,7 @@ export default function AppointmentsPage() {
                     <div key={appt.id} className="flex flex-col sm:flex-row bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] shadow-[0px_4px_20px_rgba(15,76,129,0.04)] dark:shadow-none rounded-lg overflow-hidden shrink-0 transition-colors">
                       {/* Date Sidebar */}
                       <div className="flex flex-row sm:flex-col justify-center items-center gap-2 sm:gap-0.5 px-6 py-4 sm:py-6 sm:w-[120px] bg-[#0F4C81] dark:bg-[#1E2D4A] border-b sm:border-b-0 sm:border-r border-[#C2C7D1] dark:border-[#22354A] justify-around sm:justify-center transition-colors">
-                        <span className="text-[10px] font-[700] uppercase tracking-[0.6px] text-[#D9E6F8] dark:text-[#A5AAB5] transition-colors">{monthStr}</span>
+                        <span className="text-[11px] font-[700] uppercase tracking-[0.6px] text-[#D9E6F8] dark:text-[#A5AAB5] transition-colors">{monthStr}</span>
                         <span className="text-[36px] sm:text-[48px] font-[800] tracking-[-0.96px] text-white leading-none my-1 transition-colors">{dayNum}</span>
                         <span className="text-[12px] font-[600] tracking-[0.6px] text-[#D9E6F8] dark:text-[#A5AAB5] transition-colors">{timeDisplay}</span>
                       </div>
@@ -256,7 +256,7 @@ export default function AppointmentsPage() {
                             <span className={`px-2 py-0.5 ${isUrgent ? "bg-[#FFDAD6] text-[#93000A]" : "bg-[#D4E6E5] text-[#576867]"} rounded-[2px] text-[12px] font-[700] tracking-[0.6px] uppercase select-none`}>
                               {isUrgent ? "URGENT VISIT" : "CLINICAL VISIT"}
                             </span>
-                            <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.6px] uppercase select-none`}>
+                            <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[11px] font-[700] tracking-[0.6px] uppercase select-none`}>
                               {displayStatus.label}
                             </span>
                           </div>
@@ -328,7 +328,7 @@ export default function AppointmentsPage() {
                         const dateStr = appt.date || appt.scheduled_at?.split("T")[0];
                         const timeDisplay = appt.time_start || (appt.scheduled_at ? new Date(appt.scheduled_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "");
                         return (
-                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A]/50 transition-colors ${displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? "opacity-70" : ""}`}>
+                          <tr key={appt.id} className={`h-[98px] hover:bg-[#F8F9FF] dark:hover:bg-[#1E2D4A]/50 transition-colors ${displayStatus.label === "CANCELLED" || displayStatus.label === "MISSED" ? "opacity-80" : ""}`}>
                             <td className="px-6 py-2">
                               <div className="flex flex-col">
                                 <span className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white transition-colors">{formatLongDate(dateStr)}</span>
@@ -342,7 +342,7 @@ export default function AppointmentsPage() {
                               {appt.department || "Consultation"}
                             </td>
                             <td className="px-6 py-2">
-                              <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[10px] font-[700] tracking-[0.2px] uppercase select-none font-sans transition-colors`}>
+                              <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded-[2px] text-[11px] font-[700] tracking-[0.2px] uppercase select-none font-sans transition-colors`}>
                                 {displayStatus.label}
                               </span>
                             </td>
@@ -507,7 +507,7 @@ export default function AppointmentsPage() {
             <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay opacity-20 pointer-events-none" />
 
             <div className="relative z-20 flex flex-col gap-4">
-              <span className="px-2.5 py-1 bg-[#00355F] dark:bg-[#1B6CA8] text-white text-[10px] font-[700] tracking-[0.5px] uppercase rounded-full select-none w-max transition-colors">
+              <span className="px-2.5 py-1 bg-[#00355F] dark:bg-[#1B6CA8] text-white text-[11px] font-[700] tracking-[0.5px] uppercase rounded-full select-none w-max transition-colors">
                 Featured
               </span>
               <h4 className="text-[18px] font-[600] leading-8 text-[#D3DDEA] dark:text-white font-sans transition-colors">

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { 
   Phone, Video, Info, Plus, Smile, Send, Paperclip, 
   FileText, Download, CreditCard, ArrowLeft, Loader2, 
-  MessageSquare, UserPlus, AlertCircle, ShoppingBag, ShieldCheck, Zap
+  MessageSquare, UserPlus, AlertCircle, ShoppingBag, ShieldCheck, Bot, Stethoscope
 } from "lucide-react";
 
 interface Conversation {
@@ -336,7 +336,7 @@ export default function MessagesPage() {
             >
               <Plus className="w-4 h-4" />
             </button>
-            <span className="px-2 py-0.5 bg-[#0F4C81] dark:bg-[#1B6CA8] rounded-[2px] text-[10px] font-[700] text-[#D9E6F8] dark:text-white transition-colors">
+            <span className="px-2 py-0.5 bg-[#0F4C81] dark:bg-[#1B6CA8] rounded-[2px] text-[11px] font-[700] text-[#D9E6F8] dark:text-white transition-colors">
               {filteredConversations.length} CHATS
             </span>
           </div>
@@ -384,7 +384,7 @@ export default function MessagesPage() {
                   }}
                   className={`flex flex-col px-4 md:px-6 py-5 cursor-pointer transition-colors ${
                     active
-                      ? "bg-[#DCE9FF] dark:bg-[#1E2D4A] border-l-4 border-[#00355F] dark:border-[#5F9EA0]"
+                      ? "bg-[#DCE9FF] dark:bg-[#1E2D4A]"
                       : "border-b border-[rgba(194,199,209,0.3)] dark:border-[#22354A]/30 hover:bg-[#EFF4FF] dark:hover:bg-[#121E2C]/50"
                   }`}
                 >
@@ -407,15 +407,16 @@ export default function MessagesPage() {
                         <span className={`text-[15px] leading-5 text-[#0D1C2E] dark:text-white truncate ${active ? "font-[700]" : "font-[600]"}`}>
                           {conv.participant_b_name}
                         </span>
-                        <span className="text-[10px] font-[400] text-[#42474F] dark:text-[#A5AAB5] shrink-0">{conv.time}</span>
+                        <span className="text-[11px] font-[400] text-[#42474F] dark:text-[#A5AAB5] shrink-0">{conv.time}</span>
                       </div>
                       <p className={`text-[13px] leading-4 truncate ${active ? "font-[600] text-[#00355F] dark:text-[#5F9EA0]" : "font-[400] text-[#42474F] dark:text-[#A5AAB5]"}`}>
                         {conv.preview}
                       </p>
                       
                       {!conv.is_billing && (
-                        <span className="text-[10px] font-[600] mt-1 text-[#0f4c81]/80 dark:text-[#5F9EA0]/80 tracking-wide uppercase px-1 bg-white/40 dark:bg-black/20 w-fit rounded">
-                          {conv.is_ai ? "🤖 AI Assistant" : "👨‍⚕️ Provider Live"}
+                        <span className="inline-flex items-center gap-1 text-[11px] font-[600] mt-1 text-[#0f4c81] dark:text-[#5F9EA0] tracking-wide uppercase px-1 bg-white/40 dark:bg-black/20 w-fit rounded">
+                          {conv.is_ai ? <Bot className="w-3 h-3" aria-hidden="true" /> : <Stethoscope className="w-3 h-3" aria-hidden="true" />}
+                          {conv.is_ai ? "AI Assistant" : "Provider Live"}
                         </span>
                       )}
                     </div>
@@ -472,13 +473,14 @@ export default function MessagesPage() {
                   <div className="flex items-center bg-[#EFF4FF] dark:bg-[#1E2D4A] rounded-full p-1 border border-[#00355F]/10 text-xs">
                     <button
                       onClick={() => setClientMode('ai')}
-                      className={`px-3 py-1.5 rounded-full font-bold cursor-pointer transition-all ${
+                      className={`px-3 py-1.5 rounded-full font-bold cursor-pointer transition-all flex items-center gap-1 ${
                         clientMode === 'ai' 
                           ? 'bg-[#00355F] text-white shadow'
                           : 'text-[#42474F] dark:text-[#A5AAB5]'
                       }`}
                     >
-                      🤖 AI Free
+                      <Bot className="w-3.5 h-3.5" aria-hidden="true" />
+                      AI Free
                     </button>
                     <button
                       onClick={() => setClientMode('real')}
@@ -488,8 +490,8 @@ export default function MessagesPage() {
                           : 'text-[#42474F] dark:text-[#A5AAB5]'
                       }`}
                     >
-                      👨‍⚕️ Real Chat
-                      <Zap className="w-3 h-3fill-amber-400 text-amber-400" />
+                      <Stethoscope className="w-3.5 h-3.5" aria-hidden="true" />
+                      Real Chat
                     </button>
                   </div>
                 )}
@@ -523,7 +525,7 @@ export default function MessagesPage() {
                 </div>
                 <button 
                   onClick={() => setIsBuyModalOpen(true)}
-                  className="px-3 py-1 bg-amber-600 dark:bg-amber-800 hover:opacity-90 text-white rounded text-[10px] font-bold tracking-wider cursor-pointer"
+                  className="px-3 py-1 bg-amber-600 dark:bg-amber-800 hover:opacity-90 text-white rounded text-[11px] font-bold tracking-wider cursor-pointer"
                 >
                   BUY MINUTES
                 </button>
@@ -557,7 +559,7 @@ export default function MessagesPage() {
                             {selectedConv.is_billing ? (
                               <CreditCard className="w-3 h-3 text-[#576867] dark:text-[#5F9EA0]" />
                             ) : (
-                              <span className="text-[10px] font-[700] text-[#00355F] dark:text-slate-800">{selectedConv.participant_b_initials}</span>
+                              <span className="text-[11px] font-[700] text-[#00355F] dark:text-slate-800">{selectedConv.participant_b_initials}</span>
                             )}
                           </div>
                         )}
@@ -573,7 +575,7 @@ export default function MessagesPage() {
                             </p>
                           </div>
                           
-                          <span className={`text-[9px] font-[600] text-[#727780] dark:text-[#A5AAB5] px-1 ${isUser ? "text-right" : "text-left"}`}>
+                          <span className={`text-[11px] font-[600] text-[#727780] dark:text-[#A5AAB5] px-1 ${isUser ? "text-right" : "text-left"}`}>
                             {formattedTime} {isUser && "· Delivered"}
                           </span>
                         </div>
@@ -587,12 +589,12 @@ export default function MessagesPage() {
               {isTyping && (
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-[12px] ${selectedConv.participant_b_avatar_bg} flex items-center justify-center shrink-0`}>
-                    <span className="text-[10px] font-[700] text-[#00355F] dark:text-slate-800">{selectedConv.participant_b_initials}</span>
+                    <span className="text-[11px] font-[700] text-[#00355F] dark:text-slate-800">{selectedConv.participant_b_initials}</span>
                   </div>
                   <div className="flex items-center gap-1.5 bg-white dark:bg-[#1C2C3E] border border-[rgba(194,199,209,0.3)] dark:border-[#22354A] rounded-[12px] px-4 py-3">
-                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-bounce [animation-delay:-0.15s]" />
-                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-bounce" />
+                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-pulse [animation-delay:-0.3s]" />
+                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-pulse [animation-delay:-0.15s]" />
+                    <span className="w-1.5 h-1.5 bg-[#727780] dark:bg-[#A5AAB5] rounded-full animate-pulse" />
                   </div>
                 </div>
               )}
@@ -642,7 +644,7 @@ export default function MessagesPage() {
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center bg-white dark:bg-[#121E2C] text-[#727780] dark:text-[#A5AAB5] p-8 text-center">
-            <MessageSquare className="w-16 h-16 opacity-20 mb-4 animate-bounce" />
+            <MessageSquare className="w-16 h-16 opacity-20 mb-4" />
             <h3 className="text-lg font-bold text-[#0D1C2E] dark:text-white mb-1">No Chat Selected</h3>
             <p className="text-xs max-w-xs leading-relaxed">
               Select one of your existing chat threads from the inbox or start a new conversation with a care provider.
@@ -693,7 +695,7 @@ export default function MessagesPage() {
                       <p className="text-xs font-bold text-[#0D1C2E] dark:text-white truncate group-hover:text-[#00355F] dark:group-hover:text-[#1B6CA8] transition-colors">
                         {doc.full_name}
                       </p>
-                      <p className="text-[10px] text-[#727780] dark:text-[#A5AAB5] truncate">{doc.specialty}</p>
+                      <p className="text-[11px] text-[#727780] dark:text-[#A5AAB5] truncate">{doc.specialty}</p>
                     </div>
                   </button>
                 ))
@@ -747,12 +749,12 @@ export default function MessagesPage() {
                     </span>
                   )}
                   <span className="text-xs font-bold text-[#0D1C2E] dark:text-white mt-1">{pkg.label}</span>
-                  <span className="text-[10px] text-[#727780] dark:text-[#A5AAB5]">{pkg.price}</span>
+                  <span className="text-[11px] text-[#727780] dark:text-[#A5AAB5]">{pkg.price}</span>
                 </button>
               ))}
             </div>
 
-            <div className="flex gap-2 p-3 bg-[#EFF4FF]/30 dark:bg-black/10 rounded-lg text-[10px] text-[#576867] dark:text-[#A5AAB5]">
+            <div className="flex gap-2 p-3 bg-[#EFF4FF]/30 dark:bg-black/10 rounded-lg text-[11px] text-[#576867] dark:text-[#A5AAB5]">
               <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
               <span>Payments are simulated using next-gen ERP models. No actual credit card details will be charged.</span>
             </div>

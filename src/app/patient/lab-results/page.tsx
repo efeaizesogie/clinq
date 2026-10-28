@@ -202,7 +202,7 @@ export default function LabResultsPage() {
               <SlidersHorizontal className="w-[18px] h-3 shrink-0" />
               Filter
               {filterStatus !== "All" && (
-                <span className="ml-1 px-2 py-0.5 bg-[#00355F] dark:bg-[#1B6CA8] text-white rounded-full text-[10px] font-[700]">
+                <span className="ml-1 px-2 py-0.5 bg-[#00355F] dark:bg-[#1B6CA8] text-white rounded-full text-[11px] font-[700]">
                   {filterStatus}
                 </span>
               )}
