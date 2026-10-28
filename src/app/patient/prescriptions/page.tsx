@@ -209,7 +209,7 @@ export default function PrescriptionsPage() {
             <h4 className="text-[18px] font-[700] leading-7 text-[#00355F] dark:text-white transition-colors">Today&apos;s Schedule</h4>
             <div className="flex flex-col gap-4">
               {morningMed && (
-                <div className="flex items-center gap-4 bg-white dark:bg-[#121E2C] border border-[rgba(194,199,209,0.3)] dark:border-[#22354A] rounded-[4px] p-4 transition-colors">
+                <div className="flex items-center gap-4 bg-white dark:bg-[#121E2C] rounded-[6px] p-4 transition-colors">
                   <div className="flex items-center justify-center w-10 h-10 bg-[rgba(0,53,95,0.1)] dark:bg-[#1E2D4A] rounded-[12px] shrink-0 transition-colors">
                     <Sun className="w-[22px] h-[22px] text-[#00355F] dark:text-white" />
                   </div>
@@ -220,7 +220,7 @@ export default function PrescriptionsPage() {
                 </div>
               )}
               {eveningMed && (
-                <div className="flex items-center gap-4 bg-white dark:bg-[#121E2C] border border-[rgba(194,199,209,0.3)] dark:border-[#22354A] rounded-[4px] p-4 transition-colors">
+                <div className="flex items-center gap-4 bg-white dark:bg-[#121E2C] rounded-[6px] p-4 transition-colors">
                   <div className="flex items-center justify-center w-10 h-10 bg-[rgba(81,97,97,0.1)] dark:bg-gray-700 rounded-[12px] shrink-0 transition-colors">
                     <Moon className="w-[18px] h-[18px] text-[#516161] dark:text-white" />
                   </div>
@@ -235,7 +235,7 @@ export default function PrescriptionsPage() {
               )}
             </div>
 
-            <div className="bg-[rgba(255,255,255,0.5)] dark:bg-[#121E2C]/50 border border-[rgba(194,199,209,0.2)] dark:border-[#22354A] rounded-[8px] p-4 flex flex-col gap-2 transition-colors">
+            <div className="bg-[rgba(255,255,255,0.5)] dark:bg-[#121E2C]/50 rounded-[8px] p-4 flex flex-col gap-2 transition-colors">
               <span className="text-[12px] font-[700] tracking-[0.6px] uppercase text-[#42474F] dark:text-[#A5AAB5] transition-colors">PHARMACY ON FILE</span>
               <div className="flex flex-col gap-1 pt-2">
                 <span className="text-[16px] font-[700] leading-6 text-[#00355F] dark:text-white transition-colors">Walgreens #1204</span>
@@ -256,7 +256,7 @@ export default function PrescriptionsPage() {
             <div key={med.id} className="bg-white dark:bg-[#121E2C] border border-[#C2C7D1] dark:border-[#22354A] rounded-[8px] p-6 flex flex-col gap-4 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[16px] font-[700] leading-6 text-[#0D1C2E] dark:text-white transition-colors">{med.medication_name}</span>
-                <span className="px-2 py-0.5 bg-[#D5E3FC] dark:bg-[#1C2C3E] rounded-[2px] text-[10px] font-[700] text-[#42474F] dark:text-[#A5AAB5] transition-colors">ACTIVE</span>
+                <span className="px-2 py-0.5 bg-[#D5E3FC] dark:bg-[#1C2C3E] rounded-[2px] text-[11px] font-[700] text-[#42474F] dark:text-[#A5AAB5] transition-colors">ACTIVE</span>
               </div>
               <p className="text-[14px] font-[400] leading-5 text-[#42474F] dark:text-[#A5AAB5] transition-colors">{med.dosage} • {med.frequency}</p>
               <div className="h-px bg-[rgba(194,199,209,0.3)] dark:bg-[#22354A] transition-colors" />
@@ -289,7 +289,7 @@ export default function PrescriptionsPage() {
               <SlidersHorizontal className="w-[18px] h-3 shrink-0" />
               Filter Records
               {filterStatus !== "All" && (
-                <span className="ml-1 px-2 py-0.5 bg-[#00355F] dark:bg-[#1B6CA8] text-white rounded-full text-[10px] font-[700]">
+                <span className="ml-1 px-2 py-0.5 bg-[#00355F] dark:bg-[#1B6CA8] text-white rounded-full text-[11px] font-[700]">
                   {filterStatus}
                 </span>
               )}

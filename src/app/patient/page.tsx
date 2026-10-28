@@ -257,9 +257,9 @@ export default function PatientDashboardPage() {
                 <div className="text-right">
                   <div className="flex items-baseline justify-end gap-1">
                     <span className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white">{hrVal}</span>
-                    <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">bpm</span>
+                    <span className="text-[11px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">bpm</span>
                   </div>
-                  <div className="flex items-center justify-end gap-1 text-[10px] font-[700] text-[#16A34A]">
+                  <div className="flex items-center justify-end gap-1 text-[11px] font-[700] text-[#15803D] dark:text-[#4ADE80]">
                     <span>+2.1%</span>
                     <ArrowUp className="w-2.5 h-2.5 stroke-[3]" />
                   </div>
@@ -279,9 +279,9 @@ export default function PatientDashboardPage() {
                 <div className="text-right">
                   <div className="flex items-baseline justify-end gap-1">
                     <span className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white">{bpVal}</span>
-                    <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">mmHg</span>
+                    <span className="text-[11px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">mmHg</span>
                   </div>
-                  <div className="flex items-center justify-end gap-1 text-[10px] font-[700] text-[#16A34A]">
+                  <div className="flex items-center justify-end gap-1 text-[11px] font-[700] text-[#15803D] dark:text-[#4ADE80]">
                     <span>+1.2%</span>
                     <ArrowUp className="w-2.5 h-2.5 stroke-[3]" />
                   </div>
@@ -308,9 +308,9 @@ export default function PatientDashboardPage() {
                 <div className="text-right">
                   <div className="flex items-baseline justify-end gap-1">
                     <span className="text-[16px] font-[700] text-[#0D1C2E] dark:text-white">{weightVal}</span>
-                    <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">lbs</span>
+                    <span className="text-[11px] text-[#42474F] dark:text-[#A5AAB5] font-[400]">lbs</span>
                   </div>
-                  <div className="flex items-center justify-end gap-1 text-[10px] font-[700] text-[#EF4444]">
+                  <div className="flex items-center justify-end gap-1 text-[11px] font-[700] text-[#B91C1C] dark:text-[#F87171]">
                     <span>-2.3%</span>
                     <ArrowDown className="w-2.5 h-2.5 stroke-[3]" />
                   </div>
@@ -424,7 +424,7 @@ export default function PatientDashboardPage() {
                           <span className="text-[12px] font-[600] tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] uppercase transition-colors">
                             {appt.is_urgent ? "URGENT VISIT" : "CLINICAL VISIT"}
                           </span>
-                          <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded text-[10px] font-[700] tracking-wide uppercase`}>
+                          <span className={`px-2 py-0.5 ${displayStatus.bg} ${displayStatus.text} rounded text-[11px] font-[700] tracking-wide uppercase`}>
                             {displayStatus.label}
                           </span>
                         </div>
@@ -479,7 +479,7 @@ export default function PatientDashboardPage() {
                 <div key={event.id} className="relative flex flex-col items-start gap-1">
                   <div className={`absolute -left-[29px] top-1 w-5 h-5 rounded-full border-4 border-[#F8F9FF] dark:border-[#080F18] ${index === 0 ? "bg-[#00355F] dark:bg-[#1B6CA8]" : "bg-[#C2C7D1] dark:bg-[#22354A]"} z-10 transition-colors`} />
                   <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] transition-colors">{formatTimelineDate(event.event_date)}</span>
-                  <h5 className="text-[12px] font-[700] tracking-[0.6px] text-[#0D1C2E] dark:text-white transition-colors">{event.title}</h5>
+                  <h4 className="text-[12px] font-[700] tracking-[0.6px] text-[#0D1C2E] dark:text-white transition-colors">{event.title}</h4>
                   <p className="text-[14px] leading-[20px] text-[#42474F] dark:text-[#A5AAB5] mt-1 transition-colors">
                     {event.description}
                   </p>
@@ -494,7 +494,7 @@ export default function PatientDashboardPage() {
               <div className="relative flex flex-col items-start gap-1">
                 <div className="absolute -left-[29px] top-1 w-5 h-5 rounded-full border-4 border-[#F8F9FF] dark:border-[#080F18] bg-[#C2C7D1] dark:bg-[#22354A] z-10 transition-colors" />
                 <span className="text-[12px] font-[600] tracking-[0.6px] text-[#42474F] dark:text-[#A5AAB5] transition-colors">Oct 02, 2023</span>
-                <h5 className="text-[12px] font-[700] tracking-[0.6px] text-[#0D1C2E] dark:text-white transition-colors">Registered Account</h5>
+                <h4 className="text-[12px] font-[700] tracking-[0.6px] text-[#0D1C2E] dark:text-white transition-colors">Registered Account</h4>
                 <p className="text-[14px] leading-[20px] text-[#42474F] dark:text-[#A5AAB5] mt-1 transition-colors">
                   Your patient portal account has been successfully provisioned.
                 </p>
@@ -525,14 +525,14 @@ export default function PatientDashboardPage() {
                   {idx > 0 && <div className="w-full h-px bg-[#C2C7D1] dark:bg-[#22354A] transition-colors" />}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-6">
                     <div className="flex flex-col">
-                      <h5 className="text-[14px] font-[700] text-[#0D1C2E] dark:text-white transition-colors">{presc.medication_name} {presc.dosage}</h5>
-                      <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 transition-colors">{presc.frequency}</span>
+                      <h4 className="text-[14px] font-[700] text-[#0D1C2E] dark:text-white transition-colors">{presc.medication_name} {presc.dosage}</h4>
+                      <span className="text-[12px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 transition-colors">{presc.frequency}</span>
                     </div>
                     <div className="flex items-center gap-4 sm:self-center">
-                      <span className={`px-2 py-0.5 ${presc.status === "Active" ? "bg-[#DCFCE7] dark:bg-[#1B3E2F] text-[#15803D] dark:text-[#4ADE80]" : "bg-[#FEF3C7] dark:bg-[#3E2F1E] text-[#B45309] dark:text-[#FBBF24]"} rounded-[2px] text-[9px] font-[700] tracking-[0.2px] uppercase select-none transition-colors`}>
+                      <span className={`px-2 py-0.5 ${presc.status === "Active" ? "bg-[#DCFCE7] dark:bg-[#1B3E2F] text-[#15803D] dark:text-[#4ADE80]" : "bg-[#FEF3C7] dark:bg-[#3E2F1E] text-[#B45309] dark:text-[#FBBF24]"} rounded-[2px] text-[11px] font-[700] tracking-[0.2px] uppercase select-none transition-colors`}>
                         {presc.status === "Active" ? "REFILL READY" : "COMPLETED"}
                       </span>
-                      <span className="text-[9px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">{presc.expires}</span>
+                      <span className="text-[12px] text-[#42474F] dark:text-[#A5AAB5] font-[400] transition-colors">{presc.expires}</span>
                     </div>
                   </div>
                 </div>
@@ -570,18 +570,18 @@ export default function PatientDashboardPage() {
                         <FileSpreadsheet className="w-4 h-5" />
                       </div>
                       <div className="flex flex-col">
-                        <h5 className="text-[14px] font-[700] text-[#0D1C2E] dark:text-white truncate max-w-[125px] transition-colors">
+                        <h4 className="text-[14px] font-[700] text-[#0D1C2E] dark:text-white truncate max-w-[125px] transition-colors">
                           {lab.name}
-                        </h5>
-                        <span className="text-[10px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 transition-colors">{lab.date}</span>
+                        </h4>
+                        <span className="text-[12px] text-[#42474F] dark:text-[#A5AAB5] mt-0.5 transition-colors">{lab.date}</span>
                       </div>
                     </div>
                     {lab.status === "Reviewed" ? (
-                      <Link href="/patient/lab-results" className="px-3 py-1 bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002b4d] dark:hover:bg-[#2582C7] text-white rounded-[12px] text-[9px] font-[700] uppercase tracking-[0.2px] select-none transition-colors cursor-pointer flex items-center justify-center">
+                      <Link href="/patient/lab-results" className="px-3 py-1 bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002b4d] dark:hover:bg-[#2582C7] text-white rounded-[12px] text-[11px] font-[700] uppercase tracking-[0.2px] select-none transition-colors cursor-pointer flex items-center justify-center">
                         View Report
                       </Link>
                     ) : (
-                      <span className="px-3 py-1 bg-[#FFDAD6] dark:bg-[#3F1E1E] text-[#BA1A1A] dark:text-[#E85B5B] rounded-[12px] text-[9px] font-[700] uppercase tracking-[0.2px] select-none text-center transition-colors">
+                      <span className="px-3 py-1 bg-[#FFDAD6] dark:bg-[#3F1E1E] text-[#BA1A1A] dark:text-[#E85B5B] rounded-[12px] text-[11px] font-[700] uppercase tracking-[0.2px] select-none text-center transition-colors">
                         Needs Review
                       </span>
                     )}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Calendar, FileText, Settings, LogOut, Plus, X } from "lucide-react";
+import { LayoutDashboard, Calendar, FileText, Settings, LogOut, Plus, X, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface PatientSidebarProps {
@@ -67,6 +67,12 @@ const iconMap: Record<string, React.ElementType> = {
   LogOut,
 };
 
+/** Menu labels are stored upper-case; show them in sentence case ("MEDICAL RECORDS" → "Medical records"). */
+function toSentenceCase(label: string) {
+  const lower = label.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -116,17 +122,28 @@ export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps)
     }
   };
 
+  const itemClass = (isActive: boolean) =>
+    `group relative flex items-center gap-3 h-10 px-3 rounded-[8px] text-[14px] tracking-[-0.01em] transition-colors select-none ${
+      isActive
+        ? "bg-canvas text-navy font-[600]"
+        : "text-steel font-[500] hover:text-navy hover:bg-canvas/70"
+    }`;
+
+  const iconClass = (isActive: boolean) =>
+    `w-[17px] h-[17px] shrink-0 transition-colors ${isActive ? "text-teal-ink" : "text-fog group-hover:text-steel"}`;
+
   const renderContent = () => (
-    <div className="flex flex-col h-full bg-[#EFF4FF] dark:bg-[#121E2C] transition-colors duration-300">
+    <div className="flex flex-col h-full bg-surface transition-colors duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 h-[65px] border-b border-[#C2C7D1] dark:border-[#22354A] shrink-0">
-        <Link href="/" className="text-[24px] font-[700] leading-8 tracking-[-0.6px] text-[#00355F] dark:text-[#5F9EA0] font-sans">
+      <div className="flex items-center justify-between px-5 h-16 border-b border-line shrink-0">
+        <Link href="/" className="text-[21px] font-[800] tracking-[-0.04em] text-brand-blue dark:text-white">
           Clinq
         </Link>
         {onClose && (
           <button
             onClick={onClose}
-            className="md:hidden flex items-center justify-center p-1 rounded-lg text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#D9E6F8] dark:hover:bg-[#1E2E40]"
+            aria-label="Close menu"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-[8px] text-steel hover:text-navy hover:bg-canvas"
           >
             <X className="w-5 h-5" />
           </button>
@@ -134,100 +151,84 @@ export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps)
       </div>
 
       {/* Nav */}
-      <div className="flex flex-col flex-grow justify-between py-2 overflow-y-auto">
-        <div className="flex flex-col px-4 gap-1">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href || pathname === link.href + "/book";
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`flex items-center gap-4 px-4 py-3 rounded-[8px] h-[42px] transition-colors cursor-pointer select-none ${
-                  isActive
-                    ? "bg-[#0F4C81] text-[#D9E6F8] dark:bg-[#1B6CA8] dark:text-white"
-                    : "text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#D9E6F8]/30 dark:hover:bg-[#1E2E40]/30"
-                }`}
-              >
-                {(() => {
-                  if (link.svgIcon && customSvgIcons[link.svgIcon]) {
-                    const IconComp = customSvgIcons[link.svgIcon];
-                    return (
-                      <IconComp
-                        className={`w-[18px] h-[18px] shrink-0 ${
-                          isActive ? "text-[#D9E6F8] dark:text-white" : "text-[#42474F] dark:text-[#A5AAB5]"
-                        }`}
-                      />
-                    );
-                  }
-                  if (link.svgIcon) {
-                    return (
-                      <Image
-                        src={link.svgIcon}
-                        alt={link.label}
-                        width={18}
-                        height={18}
-                        className={`shrink-0 ${isActive ? "brightness-[10]" : "dark:brightness-75"}`}
-                      />
-                    );
-                  }
-                  if (link.icon) {
-                    return (
-                      <link.icon
-                        className={`w-[18px] h-[18px] shrink-0 ${
-                          isActive ? "text-[#D9E6F8] dark:text-white" : "text-[#42474F] dark:text-[#A5AAB5]"
-                        }`}
-                      />
-                    );
-                  }
-                  return null;
-                })()}
-                <span className="text-[12px] font-[600] tracking-[0.6px] font-sans">
-                  {link.label}
-                </span>
-              </Link>
-            );
-          })}
+      <div className="flex flex-col flex-grow justify-between overflow-y-auto">
+        <nav aria-label="Patient portal" className="flex flex-col px-3 pt-5">
+          <p className="px-3 pb-2 text-[12px] font-[500] text-fog">Menu</p>
+          <div className="flex flex-col gap-0.5">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || pathname === link.href + "/book";
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={onClose}
+                  aria-current={isActive ? "page" : undefined}
+                  className={itemClass(isActive)}
+                >
+                  {(() => {
+                    if (link.svgIcon && customSvgIcons[link.svgIcon]) {
+                      const IconComp = customSvgIcons[link.svgIcon];
+                      return <IconComp className={iconClass(isActive)} />;
+                    }
+                    if (link.svgIcon) {
+                      return (
+                        <Image
+                          src={link.svgIcon}
+                          alt=""
+                          width={17}
+                          height={17}
+                          className={`shrink-0 ${isActive ? "" : "opacity-60"} dark:invert`}
+                        />
+                      );
+                    }
+                    if (link.icon) {
+                      return <link.icon className={iconClass(isActive)} />;
+                    }
+                    return null;
+                  })()}
+                  <span>{toSentenceCase(link.label)}</span>
+                </Link>
+              );
+            })}
+          </div>
 
           {/* Book Appointment Button */}
-          <div className="pt-4 px-2">
+          <div className="pt-5 px-1">
             <Link
               href="/patient/appointments/book"
-              className="flex items-center justify-center gap-2 w-full h-[48px] bg-[#00355F] dark:bg-[#1B6CA8] hover:bg-[#002645] dark:hover:bg-[#2582C7] text-white rounded-[12px] shadow-[0px_10px_15px_-3px_rgba(0,53,95,0.2),_0px_4px_6px_-4px_rgba(0,53,95,0.2)] transition-colors font-sans select-none"
+              onClick={onClose}
+              className="flex items-center justify-center gap-2 w-full h-10 rounded-[8px] bg-action text-action-fg text-[14px] font-[600] shadow-[var(--shadow-btn)] transition-colors hover:bg-action-hover select-none"
             >
-              <Plus className="w-[14px] h-[14px] stroke-[2.5]" />
-              <span className="text-[16px] font-[700] leading-6 tracking-[0.2px]">
-                Book Appointment
-              </span>
+              <Plus className="w-4 h-4" strokeWidth={2.25} />
+              Book appointment
             </Link>
           </div>
-        </div>
+        </nav>
 
         {/* Bottom Links */}
-        <div className="mt-8 border-t border-[#C2C7D1] dark:border-[#22354A] pt-4 px-4 flex flex-col gap-1 pb-4">
-          {bottomLinks.map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={(e) => handleBottomLinkClick(e, href, label)}
-                className={`flex items-center gap-4 px-4 py-3 rounded-[8px] h-[42px] transition-colors cursor-pointer select-none ${
-                  isActive
-                    ? "bg-[#0F4C81] text-[#D9E6F8] dark:bg-[#1B6CA8] dark:text-white"
-                    : "text-[#42474F] dark:text-[#A5AAB5] hover:bg-[#D9E6F8]/30 dark:hover:bg-[#1E2E40]/30"
-                }`}
-              >
-                <Icon
-                  className={`w-[18px] h-[18px] shrink-0 ${
-                    isActive ? "text-[#D9E6F8] dark:text-white" : "text-[#42474F] dark:text-[#A5AAB5]"
-                  }`}
-                />
-                <span className="text-[12px] font-[600] tracking-[0.6px] font-sans">
-                  {label}
-                </span>
-              </Link>
-            );
-          })}
+        <div className="px-3 pb-4 pt-6">
+          <p className="px-3 pb-2 text-[12px] font-[500] text-fog">Account</p>
+          <div className="flex flex-col gap-0.5">
+            {bottomLinks.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={(e) => handleBottomLinkClick(e, href, label)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={itemClass(isActive)}
+                >
+                  <Icon className={iconClass(isActive)} />
+                  <span>{toSentenceCase(label)}</span>
+                </Link>
+              );
+            })}
+          </div>
+          <p className="mt-5 mx-3 pt-4 border-t border-line flex items-center gap-2 text-[12px] text-steel">
+            <ShieldCheck className="w-3.5 h-3.5 text-teal-ink" />
+            HIPAA compliant, 256-bit encrypted
+          </p>
         </div>
       </div>
     </div>
@@ -236,18 +237,15 @@ export default function PatientSidebar({ isOpen, onClose }: PatientSidebarProps)
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="fixed left-0 top-0 bottom-0 z-30 hidden md:flex flex-col w-[256px] border-r border-[#C2C7D1] dark:border-[#22354A] bg-[#EFF4FF] dark:bg-[#121E2C] transition-colors duration-300">
+      <aside className="fixed left-0 top-0 bottom-0 z-30 hidden md:flex flex-col w-[256px] border-r border-line bg-surface transition-colors duration-300">
         {renderContent()}
       </aside>
 
       {/* Mobile Drawer */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden animate-fade-in">
-          <div
-            onClick={onClose}
-            className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
-          />
-          <div className="relative flex flex-col w-[256px] h-full shadow-2xl border-r border-[#C2C7D1] dark:border-[#22354A] animate-slide-in">
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div onClick={onClose} className="absolute inset-0 bg-[#0D1C2E]/40 backdrop-blur-sm" />
+          <div className="relative flex flex-col w-[272px] h-full shadow-[var(--shadow-float)] border-r border-line">
             {renderContent()}
           </div>
         </div>

@@ -109,7 +109,7 @@ export default function AdminDashboardPage() {
               <span className="text-[12px] font-[700] leading-4 tracking-[0.6px] text-[#0D1C2E]">
                 Dr. Sarah Chen
               </span>
-              <span className="text-[10px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
+              <span className="text-[11px] font-[400] leading-[15px] tracking-[0.5px] uppercase text-[#0D1C2E]">
                 Hospital Admin
               </span>
             </div>
@@ -419,7 +419,7 @@ export default function AdminDashboardPage() {
                           <td className="px-6 py-6 pl-12">
                             <div className="flex items-start gap-2">
                               <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-[700] leading-[15px] uppercase text-[#42474F]">
+                                <span className="text-[11px] font-[700] leading-[15px] uppercase text-[#42474F]">
                                   BPM
                                 </span>
                                 <span
@@ -433,7 +433,7 @@ export default function AdminDashboardPage() {
                               </div>
                               <div className="w-px h-6 bg-[#C2C7D1] self-end mb-[0px]" />
                               <div className="flex flex-col items-center">
-                                <span className="text-[10px] font-[700] leading-[15px] uppercase text-[#42474F]">
+                                <span className="text-[11px] font-[700] leading-[15px] uppercase text-[#42474F]">
                                   SPO2
                                 </span>
                                 <span
@@ -489,7 +489,7 @@ export default function AdminDashboardPage() {
                         />
                       </div>
                       {isOver && (
-                        <span className="text-[10px] font-[700] leading-[15px] text-[#BA1A1A]">
+                        <span className="text-[11px] font-[700] leading-[15px] text-[#BA1A1A]">
                           Overflow Active: 12 patients in waiting
                         </span>
                       )}
@@ -511,7 +511,7 @@ export default function AdminDashboardPage() {
                 <span className="text-[16px] font-[400] leading-6 text-[#0D1C2E]">
                   On-Duty Doctors
                 </span>
-                <span className="px-2 py-[2px] bg-[#D4E6E5] rounded-[12px] text-[10px] font-[700] leading-[15px] text-[#576867]">
+                <span className="px-2 py-[2px] bg-[#D4E6E5] rounded-[12px] text-[11px] font-[700] leading-[15px] text-[#576867]">
                   {isLoading ? "—" : onDutyCount} ACTIVE
                 </span>
               </div>

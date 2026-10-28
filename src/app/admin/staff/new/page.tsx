@@ -148,7 +148,7 @@ export default function OnboardPersonnelPage() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-end">
             <span className="text-[12px] font-[700] text-[#0D1C2E]">Hospital Admin</span>
-            <span className="text-[10px] text-[#727780] uppercase">Admin Terminal</span>
+            <span className="text-[11px] text-[#727780] uppercase">Admin Terminal</span>
           </div>
           <div className="w-9 h-9 rounded-[12px] bg-[#E6EEFF] border border-[#C2C7D1] flex items-center justify-center font-[700] text-sm text-[#00355F]">
             AD
@@ -419,7 +419,7 @@ export default function OnboardPersonnelPage() {
                 <div className="bg-[#E6EEFF] border border-[#C2C7D1]/50 rounded-[4px] p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center w-full">
                     <span className="text-[12px] font-[600] text-[#576867] tracking-[0.6px]">SHIFT TYPE</span>
-                    <span className="bg-[#D4E6E5] text-[#576867] text-[10px] font-[700] px-2 py-0.5 rounded-[2px] uppercase">
+                    <span className="bg-[#D4E6E5] text-[#576867] text-[11px] font-[700] px-2 py-0.5 rounded-[2px] uppercase">
                       Weekday
                     </span>
                   </div>
@@ -431,7 +431,7 @@ export default function OnboardPersonnelPage() {
                 <div className="bg-[#E6EEFF] border border-[#C2C7D1]/50 rounded-[4px] p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center w-full">
                     <span className="text-[12px] font-[600] text-[#576867] tracking-[0.6px]">OVERTIME</span>
-                    <span className="bg-[#FFDAD6] text-[#93000A] text-[10px] font-[700] px-2 py-0.5 rounded-[2px] uppercase">
+                    <span className="bg-[#FFDAD6] text-[#93000A] text-[11px] font-[700] px-2 py-0.5 rounded-[2px] uppercase">
                       Weekend
                     </span>
                   </div>
@@ -484,7 +484,7 @@ export default function OnboardPersonnelPage() {
                   placeholder="https://images.unsplash.com/..."
                   className="w-full h-[40px] bg-[#F8F9FF] border border-[#C2C7D1] rounded-[4px] px-3 py-1 text-[13px] text-[#0D1C2E] placeholder-[#6B7280] focus:outline-none focus:border-[#00355F] transition-all"
                 />
-                <span className="text-[10px] text-[#727780] text-center mt-1">
+                <span className="text-[11px] text-[#727780] text-center mt-1">
                   Provide custom Unsplash Doctor image link or leave blank for random seed.
                 </span>
               </div>
